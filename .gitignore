@@ -1,0 +1,9 @@
+#忽略如下
+
+bin
+.project
+.settings
+.svn
+"*
+.*
+
