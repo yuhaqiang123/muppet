@@ -1,0 +1,10 @@
+  
+
+ 1.3版本维护记录
+ 
+ 2016.7.1
+ 1.修改了table注解处理类中关于缓存的问题，缓存时应该只缓存Field域但不应该缓存
+ value值，同时注意缓存map的顺序与缓存的sql语句的顺序
+ 2.修改多表查询时，Select大小写识别，From大小写识别，as大小写识别的问题
+ 3.修改wheres查询子句为空的情况，以及wherevalues为空的情况
+ 4.修改selectcontext中values字段没有注入PreparedStatement的问题，敲代码一定要谨慎

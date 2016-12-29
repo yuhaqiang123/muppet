@@ -1,0 +1,24 @@
+DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();  
+		Document document;
+    DocumentBuilder builder;
+		
+			try {
+				builder = dfactory.newDocumentBuilder();
+				String classPath = Thread.class.getResource("/").getPath();
+				
+				/**
+				 * URLDecoder.decode(classPath,"UTF-8")对中文路径进行转码
+				 */
+				document = builder.parse(new File(URLDecoder.decode(classPath,"UTF-8")+xmlPath));  
+				XMLConfigResource resource = new XMLConfigResource();
+				resource.setDocument(document);
+				this.resource = resource;
+				
+			} catch (ParserConfigurationException e){
+				throw new ResourceConfigException(ExcpMsg.CANNOT_CONFIG_FILES+xmlPath);
+			}
+			catch (SAXException e) {
+				throw new ResourceConfigException(ExcpMsg.CANNOT_CONFIG_FILES+xmlPath);
+			}catch (IOException e) {
+				throw new ResourceConfigException(ExcpMsg.CANNOT_CONFIG_FILES+xmlPath);
+			}
