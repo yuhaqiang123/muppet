@@ -1,0 +1,14 @@
+<beans>
+		<bean id="" class="cn.bronzeware.muppet.core.">
+			<constructor type="" value=""><!-- 如何根据类型转换value -->
+				
+			</constructor>
+			
+			<constructor type="" ref=""></constructor>
+			
+		</bean>
+		
+
+
+
+</beans>

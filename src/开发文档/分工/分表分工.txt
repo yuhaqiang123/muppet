@@ -1,0 +1,7 @@
+
+
+
+1. FilterWrapper 
+StandardFilterXMLConfig  负责解析xml文件，并创建FilterWrapper类，包括过滤器name,url,Filter.
+StandardFilterChain      创建过滤器链，并实现FilterChain接口 其中doFilter
+2.

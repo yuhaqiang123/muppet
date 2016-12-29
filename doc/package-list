@@ -1,0 +1,17 @@
+cn.bronzeware.muppet
+cn.bronzeware.muppet.Annotation
+cn.bronzeware.muppet.context
+cn.bronzeware.muppet.converter
+cn.bronzeware.muppet.datasource
+cn.bronzeware.muppet.entities
+cn.bronzeware.muppet.exceptions
+cn.bronzeware.muppet.filters
+cn.bronzeware.muppet.init
+cn.bronzeware.muppet.init.resource
+cn.bronzeware.muppet.listener
+cn.bronzeware.muppet.sql
+cn.bronzeware.muppet.sqlgenerate
+cn.bronzeware.muppet.test
+cn.bronzeware.muppet.util
+cn.bronzeware.muppet.util.log
+cn.bronzeware.util.reflect

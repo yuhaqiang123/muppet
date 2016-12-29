@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT square EMPTY>
+<!ATTLIST square width CDATA "#REQUIRED">
+<!ATTLIST square length CDATA "#REQUIRED">

@@ -1,0 +1,54 @@
+
+此工具类用于根据制定信息创建.java文件
+
+/********************************************************/
+下面的代码示例了简单的使用方法:
+
+		//指定要创建的类的类名（请符合类名命名规范），指定待创建类的输出包名（不存在则创建）
+        ICreateClass createClass = new CreateClass("School", "cn.muppet.domain");
+
+		//创建要添加的字段（默认不提供getter, setter方法，可以手动指定）
+		Field f1 = new Field("String", "sName");
+		//使用此段代码生成getter setter方法
+		//f1.setNeedGetAndSet(true);
+		Field f2 = new Field("int", "age");
+		
+		//将字段添加进去
+		createClass.addField(f1);
+		createClass.addField(f2);
+		
+		//创建方法（默认是public void）
+		Method method = new Method("helloWorld");
+		//为方法添加方法体
+		method.setMethodBody("System.out.println(\"Hello World!\");");
+		
+		//将方法添加进去
+		createClass.addMethod(method);
+
+		//根据指定信息创建类
+		createClass.create();
+/********************************************************/
+输出结果如下：
+	package cn.muppet.domain;
+
+		public class School{
+	
+		private String sName;
+		private int age;
+	
+		/*自动生成的方法如下
+		public void setSname(String obj1){
+			this.sName=obj1;
+		}
+		public String getSname(){
+			return this.sName;
+		}*/
+		public void helloWorld(){
+			System.out.println("Hello World!");
+		}
+
+	}
+/********************************************************/
+功能待完善...
+1.完善异常处理机制
+2.提供一系列扩展功能...
