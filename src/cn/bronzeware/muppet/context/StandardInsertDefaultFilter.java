@@ -23,6 +23,7 @@ import cn.bronzeware.muppet.sqlgenerate.SqlGenerateException;
 import cn.bronzeware.muppet.sqlgenerate.SqlGenerateHelper;
 import cn.bronzeware.muppet.transaction.Transaction;
 
+
 public class StandardInsertDefaultFilter implements DefaultFilter{
 
 	
@@ -38,7 +39,7 @@ public class StandardInsertDefaultFilter implements DefaultFilter{
 		this.ps = ps;
 	}
 	
-	
+
 	@Override
 	public void doFilter(FilterChain chain, SqlContext context) {
 		SqlRequest request  = context.getSqlRequest();
@@ -48,11 +49,12 @@ public class StandardInsertDefaultFilter implements DefaultFilter{
 		PreparedStatement ps = null;
 		ResultSet results = null;
 		Boolean success = false;
+		/*
 		try {
 			Transaction transaction = request.getTransaction();
 			connection = transaction.getConnection();
 			
-			
+
 			
 			Map<Field, Object> map = sql.getValues();
 			ps = connection.prepareStatement(sqlString,Statement.RETURN_GENERATED_KEYS);
@@ -74,6 +76,7 @@ public class StandardInsertDefaultFilter implements DefaultFilter{
 	             num = results.getInt(1);
 	          }
 			ObjectConvertor.loadField(sql.getPrimarykey(), object, num);
+
 		} catch (SQLException e) {
 			// 
 			e.printStackTrace();
@@ -104,7 +107,7 @@ public class StandardInsertDefaultFilter implements DefaultFilter{
 			}
 		}
 		//return success;
-		
+		*/
 		
 		
 	}

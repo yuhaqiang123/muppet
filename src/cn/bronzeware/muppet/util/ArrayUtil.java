@@ -26,7 +26,17 @@ public class ArrayUtil {
 			System.out.println(object);
 		}
 	}
-	
+
+	public static String getValues(Collection<?> collection, String split){
+		StringBuffer buffer = new StringBuffer();
+		for(Object object:collection){
+			buffer.append(object.toString());
+			buffer.append(split);
+		}
+		buffer.delete(buffer.length() - split.length(), buffer.length());
+		return buffer.toString();
+	}
+
 	
 	public static void println(Collection<?> collection){
 		if(collection==null){

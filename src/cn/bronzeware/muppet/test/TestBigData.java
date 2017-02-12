@@ -9,12 +9,14 @@ import cn.bronzeware.muppet.entities.BlogHouse;
 import cn.bronzeware.muppet.util.ArrayUtil;
 
 public class TestBigData {
-	static SessionFactory factroy = new SessionFactory("muppet.xml");
+	//static SessionFactory factroy = new SessionFactory("muppet.xml");
 	public static Session muppet ;
+	/*
 	static
 	{
 		muppet = factroy.getSession(true);
 	}
+	*/
 	public static void test1(){
 		long start = System.currentTimeMillis();
 		

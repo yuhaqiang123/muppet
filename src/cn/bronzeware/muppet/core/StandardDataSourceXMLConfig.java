@@ -12,7 +12,7 @@ import com.sun.org.apache.regexp.internal.recompile;
 import cn.bronzeware.muppet.exceptions.ExcpMsg;
 import cn.bronzeware.muppet.util.log.Logger;
 
-import sun.jdbc.odbc.OdbcDef;
+//import sun.jdbc.odbc.OdbcDef;
 
 public class StandardDataSourceXMLConfig extends AbstractConfig implements DataSourceXMLConfig{
 

@@ -9,13 +9,13 @@ import cn.bronzeware.muppet.transaction.Transaction;
 
 public class TestMuppet {
 
-	static SessionFactory factroy = new SessionFactory("muppet.xml");
+//	static SessionFactory factroy = new SessionFactory("muppet.xml");
 	public static Session muppet ;
-	static
+/*	static
 	{
 		muppet = factroy.getSession(true);
 	}
-	
+*/
 	public static void test0(){
 		
 		Note note = new Note();

@@ -37,7 +37,7 @@ public class ListenerFactory{
 					try {
 						method = clazz.getDeclaredMethod("eventType", null);
 						InvocationHandler handler = new ListernInvocationHandler();
-						Listener targetLisener = ReflectUtil.getClassProxy(clazz,handler);
+						Listener targetLisener = (Listener) ReflectUtil.getClassProxy(clazz,handler);
 						EventType type = (EventType) method.invoke(targetLisener, null);
 						listeners.addListener(type, targetLisener);
 					} catch (NoSuchMethodException e) {

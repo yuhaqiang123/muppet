@@ -4,11 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.sun.org.apache.xerces.internal.parsers.StandardParserConfiguration;
@@ -18,6 +14,7 @@ import cn.bronzeware.muppet.test.A;
 import cn.bronzeware.muppet.test.StaticClass;
 import cn.bronzeware.muppet.test.TestHashMap1;
 import cn.bronzeware.muppet.util.log.Logger;
+import net.sf.cglib.core.ReflectUtils;
 
 /**
  * 反射工具类
@@ -30,7 +27,14 @@ public class ReflectUtil {
 			new ConcurrentHashMap<>(30);
 	private final static Map<Class<?>,Field[]> fieldsMap = 
 			new ConcurrentHashMap();
-	
+
+
+
+	public static List<Class<?>> getClasses(String packageName){
+		return ClassUtils.getClasses(packageName);
+	}
+
+
 	/**
 	 * 默认的代理实现,实现了{@link BindInvocationHandler}接口
 	 */
