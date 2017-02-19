@@ -1,5 +1,8 @@
 package cn.bronzeware.util.reflect;
 
+import cn.bronzeware.core.ioc.BeanInitializationException;
+import cn.bronzeware.muppet.util.log.Logger;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -10,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -75,11 +79,13 @@ public class ClassUtils {
                                     if (name.endsWith(".class") && !entry.isDirectory()) {
                                         //去掉后面的".class" 获取真正的类名
                                         String className = name.substring(packageName.length() + 1, name.length() - 6);
-                                        try {
-                                            //添加到classes
-                                            classes.add(Class.forName(packageName + '.' + className));
-                                        } catch (ClassNotFoundException e) {
-                                            e.printStackTrace();
+                                       //添加到classes
+                                        Class clazz = ReflectUtil.getClass(
+                                                String.format("%s.%s", packageName, className));
+                                        if(Objects.nonNull(clazz)){
+                                            classes.add(clazz);
+                                        }else{
+                                            Logger.info(String.format("unable to load class :%s ", packageName + className));
                                         }
                                     }
                                 }

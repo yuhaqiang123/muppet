@@ -29,6 +29,18 @@ public class ReflectUtil {
 			new ConcurrentHashMap();
 
 
+	public static Method[] getMethods(Class clazz, String methodName){
+		Method[] methods = clazz.getDeclaredMethods();
+		List<Method> list = new ArrayList();
+		for(Method method:methods){
+			if(method.getName().equals(methodName)){
+				list.add(method);
+			}
+		}
+		return list.toArray(new Method[list.size()]);
+	}
+
+
 
 	public static List<Class<?>> getClasses(String packageName){
 		return ClassUtils.getClasses(packageName);
@@ -249,7 +261,18 @@ public class ReflectUtil {
 				if(classMap.containsKey(name)){
 					return classMap.get(name);
 				}
-				Class<?> clazz = Class.forName(name);
+				Class<?> clazz = null;
+				try{
+					clazz = Class.forName(name);
+				}catch (ClassNotFoundException e){
+					ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+					if(Objects.nonNull(classLoader)){
+						clazz = Class.forName(name, true, classLoader);
+						//如果发生异常被外层异常捕获，返回null
+					}else{
+						return null;
+					}
+				}
 				classMap.put(name, clazz);
 				return clazz;
 			}

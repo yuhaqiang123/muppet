@@ -2,6 +2,9 @@ package cn.bronzeware.muppet.util;
 
 public class StringUtil {
 
+
+
+
 	public static boolean equals(String[] string,String[] string2){
 		
 		/**

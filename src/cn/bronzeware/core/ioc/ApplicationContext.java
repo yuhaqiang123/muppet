@@ -9,5 +9,5 @@ public interface ApplicationContext extends BeanFactory{
 
     public Object registerBean(String beanName,Object object);
     public Object registerBean(Object object);
-
+    public Object registerBean(Class clazz, Object object);
 }

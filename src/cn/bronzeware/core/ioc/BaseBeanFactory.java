@@ -1,5 +1,7 @@
 package cn.bronzeware.core.ioc;
 
+import cn.bronzeware.muppet.util.ArrayUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -97,6 +99,10 @@ public class BaseBeanFactory implements BeanFactory{
 
     public Object registerBean(Object object){
         Class clazz = object.getClass();
+       return registerBean(clazz, object);
+    }
+
+    public Object registerBean(Class clazz, Object object){
         Object oldObject = null;
         if(clazzMap.containsKey(clazz)){
             oldObject = clazzMap.get(clazz);
@@ -107,11 +113,11 @@ public class BaseBeanFactory implements BeanFactory{
 
     @Override
     public Object[] getBeans() {
-        Object[] beanNameObjects = beanNameMap.entrySet().toArray();
-        Object[] clazzObjects = clazzMap.entrySet().toArray();
+        Object[] beanNameObjects = beanNameMap.values().toArray();
+        Object[] clazzObjects = clazzMap.values().toArray();
         Object[] result = new Object[beanNameObjects.length + clazzObjects.length];
-        System.arraycopy(result,0,beanNameObjects,0,beanNameObjects.length);
-        System.arraycopy(result, beanNameObjects.length, clazzObjects, 0, clazzObjects.length);
+        System.arraycopy(beanNameObjects,0,result,0,beanNameObjects.length);
+        System.arraycopy(clazzObjects, 0, result, beanNameObjects.length, clazzObjects.length);
         return result ;
     }
 }
