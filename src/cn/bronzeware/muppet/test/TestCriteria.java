@@ -9,14 +9,18 @@ public class TestCriteria {
 
 	
 //	static SessionFactory factroy = new SessionFactory("muppet.xml");
-	public static Session muppet ;
+	public  Session muppet ;
+	public TestCriteria(){
+		SessionFactory factroy = new SessionFactory("muppet.xml");
+		muppet = factroy.getSession(true);
+	}
 /*	static
 	{
 		muppet = factroy.getSession(true);
 	}
 */
-	public static void test1(){
-		Criteria criteria = muppet.createCriteria(Note.class);
+	public  void test1(){
+		Criteria<Note> criteria = muppet.createCriteria(Note.class);
 		//criteria.andPropEqual("id", 37);
 		//criteria.andPropGreater("id", 36);
 		//criteria.andPropGreaterEq("id", 39);
@@ -27,14 +31,16 @@ public class TestCriteria {
 		/*Criteria criteria1 = muppet.createCriteria(Note.class);
 		criteria1.andPropEqual("user_id", 35);
 		criteria.or(criteria1);*/
-		System.out.print(criteria.list());
+		System.out.print(criteria.select("id,value,username").list());
 		
 	}
 	
 	
 	public static void main(String[] args){
 		
-		test1();
+		TestCriteria criteria = new TestCriteria();
+		criteria.test1();
+
 		
 	}
 	

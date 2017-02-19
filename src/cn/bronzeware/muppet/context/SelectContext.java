@@ -304,7 +304,6 @@ public class SelectContext  extends AbstractContext implements DefaultFilter{
 				}
 			}
 			reString[i] = querykey;
-			System.out.println(querykey);
 		}
 		return reString;
 	}

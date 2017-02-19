@@ -6,11 +6,11 @@ import cn.bronzeware.muppet.annotations.Table;
 import cn.bronzeware.muppet.annotations.Type;
 import cn.bronzeware.muppet.sql.SqlType;
 
-//@Table(tablename="t_note3")
+@Table(tablename="t_note")
 public class Note {
 
 	@PrimaryKey
-	@Column(columnname="id",type=@Type(type=SqlType.INT,length=10),defaultvalue="0")
+	@Column(columnname="id",cannull = false,type=@Type(type=SqlType.INT,length=10),defaultvalue="0")
 	private int id;
 
 	

@@ -27,10 +27,14 @@ public interface Criteria<T> {
 	Criteria andPropLessEq(String prop,Object value);
 	
 	Criteria andPropGreaterEq(String prop,Object value);
-	
-	
-	
-	
+
+	Criteria select(String string);
+
+	//Criteria each();
+
+	//Criteria each(int size);
+
+	static final int EACH_SIZE = 100;
 	
 	//Criteria page();
 	

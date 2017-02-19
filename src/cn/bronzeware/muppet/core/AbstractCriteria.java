@@ -1,6 +1,7 @@
 package cn.bronzeware.muppet.core;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import cn.bronzeware.muppet.context.SelectContext;
 import cn.bronzeware.muppet.resource.ColumnInfo;
 import cn.bronzeware.muppet.resource.Container;
 import cn.bronzeware.muppet.resource.ResourceInfo;
+import cn.bronzeware.muppet.util.log.Logger;
 
 abstract class AbstractCriteria<T> implements Criteria<T>{
 
@@ -44,7 +46,8 @@ abstract class AbstractCriteria<T> implements Criteria<T>{
 	private boolean isWheres = true;
 	private List<Object> whereValues = new ArrayList<>();
 	private StringBuffer whereBuffer = new StringBuffer();
-	
+
+
 	
 
 
@@ -62,15 +65,14 @@ abstract class AbstractCriteria<T> implements Criteria<T>{
 		return whereBuffer.toString();
 		
 	}
-	
-	
+
 	public AbstractCriteria(Container container,
-			SelectContext selectContext
-			,Class<T> clazz) throws RuntimeException{
+	                        SelectContext selectContext
+			, Class<T> clazz) throws RuntimeException{
 		this.clazz = clazz;
 		/*String name = ((ParameterizedType) this.getClass().getGenericSuperclass())
 				.getActualTypeArguments()[0].toString();
-		
+
 		System.out.println(name);*/
 		this.container = container;
 		if(container.contains(clazz.getName())){
@@ -80,12 +82,29 @@ abstract class AbstractCriteria<T> implements Criteria<T>{
 		}else{
 			throw new IllegalArgumentException("请指定正确的实体类型");
 		}
-		
-		selectBuffer.append(" select * from "+name);
-		selectBuffer.append(" where ");
-		
+
+		/**
+		Type genType = getClass().getGenericSuperclass();
+		Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+
+		Logger.debugln(params[0]);
+
+		 */
 		this.context = selectContext;
 	}
+	private boolean isSelect = false;
+
+	@Override
+	public Criteria select(String string) {
+		if(isSelect == false){
+			selectBuffer.append(String.format(" select %s from %s", string, info.getName()));
+			isSelect = true;
+			return this;
+		}else{
+			throw new IllealInvokeException(" select the operating illegal operation, can only be called once  ");
+		}
+	}
+
 
 	
 
@@ -287,13 +306,18 @@ abstract class AbstractCriteria<T> implements Criteria<T>{
 				buffer.append(orderByValues);
 				values.addAll(orderByValues);
 			}
-			
+			if(isSelect == false){
+				return this.context.execute(clazz, buffer.toString(), values.toArray());
+			}else{
+				buffer.insert(0, selectBuffer.toString());
+				return this.context.execute(buffer.toString(),values.toArray(), this.clazz);
+			}
 			//System.out.println(values.toArray()[1]);
-			return this.context.execute(clazz, buffer.toString(), values.toArray());
+
+
 		} catch (ContextException e) {
-			
+			throw new RuntimeException("未捕获的异常");
 		}
-		throw new RuntimeException("未捕获的异常");
 	}
 
 

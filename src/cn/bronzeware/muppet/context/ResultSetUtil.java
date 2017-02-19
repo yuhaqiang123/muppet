@@ -20,6 +20,7 @@ class ResultSetUtil {
 			/**
 			 * ignore
 			 */
+			e.printStackTrace();
 		}
 		throw new RuntimeException("获取结果集元数据出错");
 	}

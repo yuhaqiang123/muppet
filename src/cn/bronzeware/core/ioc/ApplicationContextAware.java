@@ -1,4 +1,4 @@
-package cn.bronzeware.core.ioc.test;
+package cn.bronzeware.core.ioc;
 
 import cn.bronzeware.core.ioc.Aware;
 

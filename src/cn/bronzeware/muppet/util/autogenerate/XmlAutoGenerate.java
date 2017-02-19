@@ -25,7 +25,9 @@ public class XmlAutoGenerate extends DefaultAutoGenerate{
 			
 				TableCheck tableCheck = check.createTableCheck(tableName);
 				if(!tableCheck.isExist()){
-					new GenerateException("  无法生成实体类"+getClassName(tableName)).printStackTrace();
+					new GenerateException(
+							String.format("Unable to generate entity class :%s, related table with name %s does not exist"
+									,getClassName(tableName),tableName)).printStackTrace();
 					continue;
 				}
 				createClass(tableCheck);
