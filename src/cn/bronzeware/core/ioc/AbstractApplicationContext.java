@@ -126,7 +126,7 @@ public class AbstractApplicationContext implements ApplicationContext {
 				return beanFactory.getBean(clazz);
 			} else {
 				// 如果获取不到相应bean，那么抛出异常
-				throw e;
+				throw new InitializeException(e.getMessage());
 			}
 		}
 	}
