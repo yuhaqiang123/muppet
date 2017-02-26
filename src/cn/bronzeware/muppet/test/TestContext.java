@@ -15,7 +15,6 @@ public class TestContext {
 		session = factory.getSession();
 		Note note = new Note();
 		note.setId(1);
-		
 		ArrayUtil.println(session.query(String.format("select * from t_note"), null, Note.class));
 	}
 	
