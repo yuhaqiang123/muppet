@@ -2,6 +2,7 @@ package cn.bronzeware.muppet.core;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import cn.bronzeware.muppet.transaction.Transaction;
 
@@ -32,5 +33,9 @@ public interface Session {
 			,Object[] wherevalues);
 	
 	public <T> List<T>  query(String queryString,Object[] values,Class<T> clazz);
+	
+	public Map<String, Object> queryOne(String sql,Object[] values);
+	
+	public List<Map<String, Object>> query(String sql,Object[] values);
 	
 }

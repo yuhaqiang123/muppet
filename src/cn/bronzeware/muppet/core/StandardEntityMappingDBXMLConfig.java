@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
+import javax.swing.event.DocumentEvent;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -15,7 +16,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import cn.bronzeware.muppet.exceptions.ExcpMsg;
+import cn.bronzeware.muppet.util.Utils;
 import cn.bronzeware.muppet.util.autogenerate.EntityMappingDBResource;
+import cn.bronzeware.muppet.util.log.Logger;
 
 
 /**
@@ -33,6 +36,7 @@ public class StandardEntityMappingDBXMLConfig extends AbstractConfig implements 
 	
 	private String[] packetNames = null;
 	private String configPaths;
+	private boolean buildTable = false;
 	
 	private EntityMappingDBResource entityMappingDBXMLResource = new EntityMappingDBResource(); 
 	
@@ -57,19 +61,14 @@ public class StandardEntityMappingDBXMLConfig extends AbstractConfig implements 
 	 * @throws ResourceConfigException
 	 */
 	private void config(Document document) throws ResourceConfigException{
-		
-	
 		configPackage(document);
-
+		configBuildTable(document);
 	}
 	
 	
 	private void configPackage(Document document) throws ResourceConfigException{
-		try
-		{	
+		try{
 			NodeList packetList = document.getElementsByTagName("package");
-			
-			
 			if(packetList==null||packetList.getLength()<1){
 				throw new ResourceConfigException(configPaths+ExcpMsg.CANNOT_FOUND_RESOURCE_PACKAGE_TAGS);
 			}
@@ -86,13 +85,33 @@ public class StandardEntityMappingDBXMLConfig extends AbstractConfig implements 
 			}
 			throw new ResourceConfigException(ExcpMsg.CANNOT_CONFIG_RESOURCE_PACKAGENAMES+":"+configPaths);
 		}
-		
+	}
+	
+	/**
+	 * 解析xml,解析
+	 * <buildtable value="true|false"></buildtable>
+	 * @param document
+	 * @throws ResourceConfigException
+	 */
+	private void configBuildTable(Document document) throws ResourceConfigException{
+		NodeList nodes = document.getElementsByTagName("buildtable");
+		if(Utils.notEmpty(nodes) || nodes.getLength() < 1){
+			try{
+				NamedNodeMap map = nodes.item(0).getAttributes();
+				String buildTableString = map.getNamedItem("value").getNodeValue();
+				this.buildTable = Boolean.valueOf(buildTableString);
+			}catch (Exception e) {
+				throw new ResourceConfigException(String.format("解析buildtable出错，value只能为true或false"));
+			}
+		}else{
+			this.buildTable = false;
+		}
 	}
 
 
 	@Override
 	public boolean isBuilded() {
-		return false;
+		return this.buildTable;
 	}
 
 }

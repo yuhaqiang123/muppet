@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import cn.bronzeware.muppet.filters.FilterChain;
 import cn.bronzeware.muppet.filters.FilterChainWrapper;
 import cn.bronzeware.muppet.filters.StandardFilterChain;
+import cn.bronzeware.muppet.util.ExceptionUtil;
 
 public abstract class AbstractContext implements Context{
 
@@ -30,15 +31,12 @@ public abstract class AbstractContext implements Context{
 			int count = data.getColumnCount();
 			String[] results = new String[count];
 			for(int i = 0;i<count;i++){
-				results[i] = data.getColumnName(i);
+				results[i] = data.getColumnName( i + 1);
 			}
 			return results;
 		}catch(SQLException e){
-			/**
-			 * ignore
-			 */
+			throw ExceptionUtil.getRuntimeException(e);
 		}
-		throw new RuntimeException("获取结果集元数据出错");
 	}
 	
 	/*public int getRSCounts(ResultSet rs){

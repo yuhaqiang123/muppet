@@ -3,6 +3,7 @@ package cn.bronzeware.muppet.core;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import cn.bronzeware.muppet.context.ContextException;
@@ -111,7 +112,6 @@ class StandardSession implements Session,Closed{
 		try {
 			success = updateContext.execute(object, wheres, wherevalues);
 		} catch (SqlGenerateContextException e) {
-			// 
 			e.printStackTrace();
 		}
 		
@@ -179,6 +179,7 @@ class StandardSession implements Session,Closed{
 		return list;
 	}
 	
+	
 	/**
 	 * 多表查询
 	 */
@@ -187,6 +188,24 @@ class StandardSession implements Session,Closed{
 		return list;
 	}
 	
+	
+	
+	@Override
+	public Map<String, Object> queryOne(String sql, Object[] values) {
+		return this.selectContext.executeToMap(sql, values);
+	}
+
+
+
+
+	@Override
+	public List<Map<String, Object>> query(String sql, Object[] values) {
+		return this.selectContext.executeToList(sql, values);
+	}
+
+
+
+
 	public Container<String, ResourceInfo> getContainer() {
 		return container;
 	}
