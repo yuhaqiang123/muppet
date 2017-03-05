@@ -26,7 +26,7 @@ public class ComponentExecutor {
 		Component component = (Component)clazz.getAnnotation(Component.class);
 		if (Utils.notEmpty(component)) {
 			//如果Component 声明的子类型０
-			if ( !component.type().isAssignableFrom(clazz)){
+			if ( !component.type().equals(Component.TYPE_DEFAULT) && !component.type().isAssignableFrom(clazz)){
 				throw new BeanInitializationException(
 						String.format("bean initialization error happened ,the bean which type is %s has inconrrect %s annotation ,"
 								+ "the type property in %s must be the bean's parent type ", clazz.getName(), Component.class.getName(), Component.class.getName()) );

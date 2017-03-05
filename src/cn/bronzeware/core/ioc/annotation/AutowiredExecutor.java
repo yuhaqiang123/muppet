@@ -5,7 +5,9 @@ import java.lang.reflect.Field;
 import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.core.ioc.BeanInitializationException;
 import cn.bronzeware.core.ioc.InitializeException;
+import cn.bronzeware.muppet.util.ArrayUtil;
 import cn.bronzeware.muppet.util.Utils;
+import cn.bronzeware.muppet.util.log.Logger;
 import cn.bronzeware.util.reflect.ReflectUtil;
 
 
@@ -19,10 +21,10 @@ public class AutowiredExecutor {
 	}
 	
 	public void execute(Field field, Object target){
-		Autowired autowired = field.getAnnotation(Autowired.class);
+		Autowired autowired = field.getDeclaredAnnotation(Autowired.class);
 		if ( Utils.notEmpty(autowired) ){
 			String beanName = autowired.beanName();
-			Class beanClazz = autowired.getClass();
+			Class beanClazz = autowired.type();
 			boolean required = autowired.required();
 			if( !beanName.equals(Autowired.BEAN_NAME_DEFAULT)){
 				Object object = null;
@@ -45,32 +47,30 @@ public class AutowiredExecutor {
 					throw new BeanInitializationException(
 							String.format("the bean named %s is not the child type of %s", beanName, field.getType().getName()));
 				}
-				
-			}else{
-				if( !beanClazz.equals(Autowired.TYPE_DEFAULT)){
-					Object object = null;
-					try{
-						object = this.context.getBean(beanClazz);
-					}catch (InitializeException e) {
-						if(required){
-							throw new BeanInitializationException(
-									String.format("the bean which type is %s has the property named  %s without mapping bean ,autowired failed "
-											,target.getClass(), field.getName()));
-						}else{
-							return;
-						}
-					}
-					if(field.getType().isAssignableFrom( object.getClass())){
-						ReflectUtil.setValue(field, target, object);
-					}else{
-						throw new BeanInitializationException(
-								String.format("bean type of %s initialization error happend ,the bean which type is %s is not the child type of property named %s "
-										, target.getClass()
-										, object.getClass().getName()
-										, field.getName()));
-					}
-					
+			}else if( beanClazz.equals(Autowired.TYPE_DEFAULT)){
+				beanClazz = field.getType();
+			}
+			
+			Object object = null;
+			try{
+				object = this.context.getBean(beanClazz);
+			}catch (InitializeException e) {
+				if(required){
+					throw new BeanInitializationException(
+							String.format("the bean which type is %s has the property named  %s without mapping bean ,autowired failed "
+									,target.getClass(), field.getName()));
+				}else{
+					return;
 				}
+			}
+			if(field.getType().isAssignableFrom( object.getClass())){
+				ReflectUtil.setValue(field, target, object);
+			}else{
+				throw new BeanInitializationException(
+						String.format("bean type of %s initialization error happend ,the bean which type is %s is not the child type of property named %s "
+								, target.getClass()
+								, object.getClass().getName()
+								, field.getName()));
 			}
 		}else{
 			//如果没有Autowired注释，直接返回

@@ -1,6 +1,5 @@
 package cn.bronzeware.util.reflect;
 
-import cn.bronzeware.muppet.Test;
 import cn.bronzeware.muppet.test.TestReflect;
 import cn.bronzeware.muppet.util.ArrayUtil;
 import cn.bronzeware.muppet.util.log.Logger;

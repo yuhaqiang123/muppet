@@ -70,7 +70,8 @@ abstract class AbstractApplicationContext implements ApplicationContext {
 				throw e1;
 			}
 			this.registerBean(object);
-			t = this.getBean(clazz);
+			this.registerBean(clazz, object);
+			return (T)object;
 		}
 		return t;
 	}
