@@ -1,6 +1,5 @@
 package cn.bronzeware.core.ioc.test;
 
-import cn.bronzeware.core.ioc.AbstractApplicationContext;
 import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.muppet.util.log.Logger;
 

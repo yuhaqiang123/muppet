@@ -12,7 +12,7 @@ public class TestAbstractApplicationContext {
 
     public static void main(String[] args){
 
-        ApplicationContext context = new AbstractApplicationContext();
+        //ApplicationContext context = new AbstractApplicationContext();
         //Class clazz = C.class;
         //ArrayUtil.println(ReflectUtil.getMethods(clazz, "setB"));
 

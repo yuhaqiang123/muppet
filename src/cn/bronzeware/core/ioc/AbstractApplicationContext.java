@@ -13,54 +13,47 @@ import java.util.Objects;
 /**
  * Created by yuhaiqiang on 17/2/12.
  */
-public class AbstractApplicationContext implements ApplicationContext {
+abstract class AbstractApplicationContext implements ApplicationContext {
 
 	/**
 	 * beanFactory 存放具体的bean
 	 */
-	private final BeanFactory beanFactory;
+	protected final BeanFactory beanFactory = new BaseBeanFactory();;
 
 	@Override
 	public Object[] getBeans() {
 		return beanFactory.getBeans();
 	}
 
-	/**
-	 * 自动扫描所在的包
-	 */
-	private String autoScanPackage = "";
-
+	
 	/**
 	 * bean初始化工具
 	 */
-	private BeanInitialize beanInitializor;
+	protected final BeanInitialize beanInitializor  = new AbstractBeanInitializator(this);;
 
 	/**
 	 * 初始化实现 {@link Aware}接口的对象
 	 */
-	private AwareInitialize awareInitialize = new AwareInitialize(this);
+	protected final AwareInitialize awareInitialize = new AwareInitialize(this);
 
 	/**
 	 * 初始化实现 {@link Capable}接口的类
 	 */
-	private CapableInitialize capableInitialize = new CapableInitialize(this);
+	protected final CapableInitialize capableInitialize = new CapableInitialize(this);
 
-	private ComponentExecutor componentExecutor = new ComponentExecutor(this);
-
+	
+	protected ApplicationConfig config = new StandardApplicationConfig();
+	
+	
 	public AbstractApplicationContext() {
-		ApplicationConfig config = new StandardApplicationConfig();
-		autoScanPackage = (String) config.getProperty(ApplicationConfig.AUTO_SCAN_PACKAGE_KEY);
-		List<Class<?>> clazzList = ReflectUtil.getClasses(autoScanPackage);
-		beanFactory = new BaseBeanFactory();
-		this.registerBean(ComponentExecutor.class, componentExecutor);
-		beanInitializor = new AbstractBeanInitializator(this);
+		
+		
+	}
+	
+	
+	protected List initialieBeans(List<Class<?>> clazzList){
 		List list = beanInitializor.initializeBeans(clazzList);
-		for (Object object : list) {
-			this.registerBean(object);
-		}
-		this.registerBean(ApplicationContext.class, this);
-		awareAndCapable();
-		boot();
+		return list;
 	}
 
 	@Override
@@ -138,34 +131,12 @@ public class AbstractApplicationContext implements ApplicationContext {
 
 	@Override
 	public Object registerBean(Object object) {
-		Component component = this.componentExecutor.execute(object);
-		if (Utils.notEmpty(component)) {
-			Object result = null;
-			if (!component.type().equals(Component.TYPE_DEFAULT)) {
-				result = this.registerBean(component.type(), object);
-			}
-			if (!component.name().equals(Component.NAME_DEFAULT)) {
-				result = this.registerBean(component.name(), object);
-			}
-
-			return result;
-		}
-		else{
 			return ((BaseBeanFactory)this.beanFactory).registerBean(object);
-		}
 	}
 
 	@Override
 	public Object registerBean(Class clazz, Object object) {
 		return ((BaseBeanFactory) beanFactory).registerBean(clazz, object);
-	}
-
-	protected void boot() {
-
-	}
-
-	protected void awareAndCapable(Object object) {
-
 	}
 
 	protected void awareAndCapable() {
@@ -181,4 +152,10 @@ public class AbstractApplicationContext implements ApplicationContext {
 		}
 
 	}
+
+	protected void awareAndCapable(Object object) {
+
+	}
+
+	
 }

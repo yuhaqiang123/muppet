@@ -20,7 +20,7 @@ public class Utils {
 
 
     public static boolean empty(String string){
-        if(empty(string) == true){
+        if(string == null){
             return true;
         }else{
             if(string.equals("") == true){
@@ -33,7 +33,7 @@ public class Utils {
     }
 
     public static boolean notEmpty(String string){
-        return !notEmpty(string);
+        return !empty(string);
     }
     
     
