@@ -1,6 +1,7 @@
 package cn.bronzeware.core.ioc;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.bronzeware.core.ioc.annotation.AutowiredExecutor;
@@ -21,6 +22,9 @@ public class AutowiredApplicationContext extends AbstractApplicationContext{
 	
 	public AutowiredApplicationContext(){
 		super();
+		this.registerBean(ComponentExecutor.class, componentExecutor);
+		this.registerBean(ApplicationContext.class, this);
+		this.registerBean(BeanMetaContext.class, metas);
 		//获取自动扫描包的目录
 		autoScanPackage = (String) config.getProperty(ApplicationConfig.AUTO_SCAN_PACKAGE_KEY);
 		if(Utils.notEmpty(autoScanPackage)){
@@ -28,24 +32,36 @@ public class AutowiredApplicationContext extends AbstractApplicationContext{
 			List<Class<?>> clazzList = ReflectUtil.getClasses(autoScanPackage);
 			//获取所有添加Component注解的类
 			clazzList = this.componentExecutor.execute(clazzList);
-			//初始化所有Class实例
+			//获取所有单例类
+			//clazzList = this.singletonBeans(clazzList);
+			//初始化所有 singleton Class实例
 			List list = initialieBeans(clazzList);
 			for (Object object : list) {
 				this.registerBean(object);//根据Component注解上的信息配置
 			}
 			//将componentExecutor和ApplicationContext放进去
-			this.registerBean(ComponentExecutor.class, componentExecutor);
-			this.registerBean(ApplicationContext.class, this);
+			
 			//自动装配
 			autowireds(list);
 			
 			//解析aware和capable
 			awareAndCapable();
+			isRefresh = true;
 		}else{
 			throw new BeanInitializationException("bean initialization has error happend , can not found autowird configs, please check");
 		}
 	}
 	
+	protected List<Class<?>> singletonBeans(List<Class<?>> list){
+		List<Class<?>> results = new ArrayList<>(list.size() * 9/10);
+		for(Class clazz:list){
+			BeanMeta meta = metas.getMeta(clazz);
+			if(meta.getSocpe().equals(Component.Scope.singleton)){
+				results.add(clazz);
+			}
+		}
+		return results;
+	}
 	
 
 	@Override
@@ -74,7 +90,15 @@ public class AutowiredApplicationContext extends AbstractApplicationContext{
 		}
 	}
 	
-	private void autowired(Object object){
+	protected void refreshBean(Object object){
+		super.refreshBean(object);
+		if(isRefresh){
+			autowired(object);
+		}
+	}
+	
+	
+	protected void autowired(Object object){
 		Field[] fields = object.getClass().getDeclaredFields();
 		for(Field field:fields){
 			autowiredExecutor.execute(field, object);
@@ -86,5 +110,4 @@ public class AutowiredApplicationContext extends AbstractApplicationContext{
 			autowired(object);
 		}
 	}
-	
 }

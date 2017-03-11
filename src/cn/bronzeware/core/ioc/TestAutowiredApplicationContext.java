@@ -21,6 +21,10 @@ public class TestAutowiredApplicationContext {
 			Logger.println("ok");
 		}
 		B b = context.getBean(B.class);
+		B b1 = context.getBean(B.class);
+		if(b != b1){
+			Logger.println("prototype　success");
+		}
 		Logger.println(b.a);
 		if(b.a !=null && b.c!=null && b.applicationContext!=null ){
 			Logger.println("autowried ok");

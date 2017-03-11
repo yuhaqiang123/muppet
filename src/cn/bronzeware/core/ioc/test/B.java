@@ -8,7 +8,7 @@ import cn.bronzeware.muppet.util.log.Logger;
 /**
  * Created by yuhaiqiang on 17/2/12.
  */
-@Component(name = "B")
+@Component(name = "B",scope=Component.Scope.prototype)
 public class B {
     public B(A a){
         Logger.println("BBB");

@@ -15,4 +15,10 @@
 <generate packageName="cn.bronzeware.test1"></generate>
 
 
+<beans>
+<bean name="" class="" ></bean>
+
+</beans>
+
+
 </muppet>

@@ -17,8 +17,10 @@ public @interface Component {
 	
 	public Class type() default Class.class;
 	
+	public Scope scope() default Scope.singleton;
 	
-	
-	
-	
+	enum Scope{
+		singleton,
+		prototype
+	}
 }
