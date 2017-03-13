@@ -9,6 +9,9 @@ import java.io.UnsupportedEncodingException;
 
 public class FileUtil {
 
+	public static String getClassPath(){
+		return Thread.class.getResource(File.separator).getPath();
+	}
 	
 	public static void write(byte[] data,String path){
 		try {

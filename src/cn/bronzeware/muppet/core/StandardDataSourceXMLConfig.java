@@ -1,18 +1,17 @@
 package cn.bronzeware.muppet.core;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.sun.org.apache.regexp.internal.recompile;
 
 import cn.bronzeware.muppet.exceptions.ExcpMsg;
 import cn.bronzeware.muppet.util.log.Logger;
 
-//import sun.jdbc.odbc.OdbcDef;
 
 public class StandardDataSourceXMLConfig extends AbstractConfig implements DataSourceXMLConfig{
 
@@ -22,35 +21,35 @@ public class StandardDataSourceXMLConfig extends AbstractConfig implements DataS
 		config(resource);
 	}
 	private XMLConfigResource xmlConfigResource;
-
 	private DataSourceResource resource;
 	
+	public static final String XML_DATA_SOURCE_ROOT = "#" + XMLConfig.XML_ROOT_KEY + "#" +"datasource";
+	
 	private void config(XMLConfigResource xmlConfigResource){
-		Document document = xmlConfigResource.getDocument();
 		try
 		{	
+			Map<String,List<Node>> map = (Map)xmlConfigResource.getProp(XML_MAP);
+			List<Node> dataSources  = map.get(XML_DATA_SOURCE_ROOT);
 			
-			NodeList packetList = document.getElementsByTagName("datasource");
-			
-			if(packetList==null||packetList.getLength()<1){
+			if(dataSources==null||dataSources.size()<1){
 				throw new ResourceConfigException(xmlConfigResource.getXmlpath()
 						+ExcpMsg.CANNOT_FOUND_RESOURCE_PACKAGE_TAGS);
 			}
 		
-			for (int i = 0;i<1;i++) {
-				 NodeList nodeList = packetList.item(i).getChildNodes();
+			for (Node node:dataSources) {
+				 NodeList nodeList = node.getChildNodes();
 				 Properties prop = new Properties();
 				 for(int j = 0;j<nodeList.getLength();j++){
-					 	Node node = nodeList.item(j);
-					 	NamedNodeMap map = node.getAttributes();
-					 	if(map==null){
+					 	Node node1 = nodeList.item(j);
+					 	NamedNodeMap map1 = node1.getAttributes();
+					 	if(map1==null){
 					 		continue;
 					 	}
-					 	Node value = map.getNamedItem("value");
+					 	Node value = map1.getNamedItem("value");
 					 	if(value==null){
 					 		continue;
 					 	}
-						set(prop,node.getNodeName(),value.getNodeValue());
+						set(prop,node1.getNodeName(),value.getNodeValue());
 				 }
 				 	
 				DataSourceResource resource = new DataSourceResource();
