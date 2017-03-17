@@ -1,3 +1,10 @@
+
+**
+添加单表Criteria批量查询，例如一个结果集过大，可以分页获取，但是客户端调用的list应该是无法感知的，目前完成get(index)…
+
+…及iterator，foreach 正向遍历
+**
+
 ****新增ioc部分功能，例如bean存取，constructor实例化依赖启动，aware,capable依赖及服务bean的支持，
 打算在框架内部引入ioc，实现模块间的解耦****
 
