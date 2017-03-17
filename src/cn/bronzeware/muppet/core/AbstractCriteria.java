@@ -48,8 +48,11 @@ abstract class AbstractCriteria<T> implements Criteria<T>{
 	private StringBuffer whereBuffer = new StringBuffer();
 
 
+	private boolean isLimit = true;
+	private long start = -1;
+	private int offset = -1;
+	private StringBuffer limit = new StringBuffer(" limit ");
 	
-
 
 	private SelectContext context ;
 	
@@ -306,11 +309,23 @@ abstract class AbstractCriteria<T> implements Criteria<T>{
 				buffer.append(orderByValues);
 				values.addAll(orderByValues);
 			}
+			
+			if(isLimit == false){
+				buffer.append(limit);
+			}
+			String resultBuffer =  null;
+
+			Object[] valuesArray = values.toArray();
+			values.clear();
 			if(isSelect == false){
-				return this.context.execute(clazz, buffer.toString(), values.toArray());
+				resultBuffer = buffer.toString();
+				buffer = new StringBuffer();
+				return this.context.execute(clazz, resultBuffer, valuesArray);
 			}else{
 				buffer.insert(0, selectBuffer.toString());
-				return this.context.execute(buffer.toString(),values.toArray(), this.clazz);
+				resultBuffer = buffer.toString();
+				buffer = new StringBuffer();
+				return this.context.execute(resultBuffer, valuesArray, this.clazz);
 			}
 			//System.out.println(values.toArray()[1]);
 
@@ -321,6 +336,25 @@ abstract class AbstractCriteria<T> implements Criteria<T>{
 	}
 
 
+	private EachArrayList<T> eachList;
+	
+	@Override
+	public List<T> each(){
+		
+		eachList = new EachArrayList<T>(this,300);
+		return eachList;
+	}
+	
+	public Criteria<T> limit(long start, int offset){
+		if(isLimit == false){
+			limit = new StringBuffer(String.format(" limit %d, %d", start, offset));
+		}else{
+			isLimit = false;
+			limit.append(String.format("%d, %d", start, offset));
+		}
+		return this;
+	}
+	
 
 	public StringBuffer getOrderByBuffer() {
 		return orderByBuffer;

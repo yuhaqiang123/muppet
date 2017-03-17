@@ -8,6 +8,10 @@ public interface Criteria<T> {
 	
 	public List<T> list();
 	
+	public List<T> each();
+	
+	public Criteria<T> limit(long start,int offset);
+	
 	/*Criteria createCriteria(Class<T> clazz);*/
 	
 	Criteria andPropEqual(String prop,Object value);
