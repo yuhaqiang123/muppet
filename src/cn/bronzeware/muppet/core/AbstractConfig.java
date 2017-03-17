@@ -3,20 +3,26 @@ package cn.bronzeware.muppet.core;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import cn.bronzeware.muppet.exceptions.ExcpMsg;
+import cn.bronzeware.muppet.util.XMLUtil;
 
 public abstract class AbstractConfig implements XMLConfig{
 
 	private XMLConfigResource resource;
 	private String xmlPath;
+	private Map<String, List<Node>> map = null;
+	protected  final String XML_MAP = "xml_map";
 	
 	public AbstractConfig(XMLConfigResource resource){
 		this.xmlPath = resource.getXmlpath();
@@ -28,38 +34,31 @@ public abstract class AbstractConfig implements XMLConfig{
 	public AbstractConfig(String xmlPath){
 		this.xmlPath = xmlPath;
 		config();
-		  //使用工厂创建文件解析类  
-		
+		resource = new XMLConfigResource();
+		resource.setProp(XML_MAP, map);
 	}
-
 	
-	private final void config(){
-
-		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();  
-		Document document;
-		DocumentBuilder builder;
-		
-			try {
-				builder = dfactory.newDocumentBuilder();
-				String classPath = Thread.class.getResource("/").getPath();
-				
-				/**
-				 * URLDecoder.decode(classPath,"UTF-8")对中文路径进行转码
-				 */
-				document = builder.parse(new File(URLDecoder.decode(classPath,"UTF-8")+xmlPath));  
-				XMLConfigResource resource = new XMLConfigResource();
-				resource.setDocument(document);
-				resource.setXmlpath(xmlPath);
-				this.resource = resource;
-				
-			} catch (ParserConfigurationException e){
-				throw new ResourceConfigException(ExcpMsg.CANNOT_CONFIG_FILES+xmlPath);
+	private void merge(Map<String, List<Node>> map1,Map<String, List<Node>> map2){
+		for(Map.Entry<String, List<Node>> nodes:map2.entrySet()){
+			if(map1.containsKey(nodes.getKey())){
+				List<Node> list = map1.get(nodes.getKey());
+				list.addAll(nodes.getValue());
+			}else{
+				map1.put(nodes.getKey(), nodes.getValue());
 			}
-			catch (SAXException e) {
-				throw new ResourceConfigException(ExcpMsg.CANNOT_CONFIG_FILES+xmlPath);
-			}catch (IOException e) {
-				throw new ResourceConfigException(ExcpMsg.CANNOT_CONFIG_FILES+xmlPath);
+		}
+	}
+	
+	
+	public void config(){
+		map = XMLUtil.parse(this.xmlPath);
+		if(map.containsKey(XMLConfig.XML_LINKS)){
+			List<Node> nodes = map.get(XMLConfig.XML_LINK);
+			for(Node node:nodes){
+				String xml = node.getNodeValue();
+				merge(map, XMLUtil.parse(xml));
 			}
+		}
 	}
 	
 	

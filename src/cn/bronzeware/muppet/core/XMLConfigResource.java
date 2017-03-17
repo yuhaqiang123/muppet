@@ -1,20 +1,33 @@
 package cn.bronzeware.muppet.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.w3c.dom.Document;
 
 public class XMLConfigResource {
 
-	private Document document;
 	private String xmlpath;
+	
+	private Map<String, Object> map = new HashMap<>();
 	
 	public XMLConfigResource(){
 		
 	}
 	
 	
+	public Object getProp(String key){
+		return map.get(key);
+	}
+	
+	public void setProp(String key,Object value){
+		map.put(key, value);
+	}
+	
+	
 	protected final void setXMLConfigResource(Document document,String xmlpath
 			,Object... args){
-		this.document = document;
+		
 		this.xmlpath = xmlpath;
 	}
 	
@@ -28,12 +41,5 @@ public class XMLConfigResource {
 		this.xmlpath = xmlpath;
 	}
 
-	public Document getDocument() {
-		return document;
-	}
-
-	public void setDocument(Document document) {
-		this.document = document;
-	}
 	
 }
