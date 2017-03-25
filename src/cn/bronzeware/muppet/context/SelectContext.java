@@ -261,7 +261,7 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 		try {
 			Transaction transaction = ThreadLocalTransaction.get();
 			Connection connection = transaction.getConnection();
-			System.out.println(queryString);
+			Logger.println(queryString);
 			////////
 			ps = connection.prepareStatement(queryString);
 

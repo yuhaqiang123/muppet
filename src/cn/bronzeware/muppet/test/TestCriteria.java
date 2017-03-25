@@ -1,5 +1,6 @@
 package cn.bronzeware.muppet.test;
 
+import java.util.Iterator;
 import java.util.List;
 
 import cn.bronzeware.muppet.core.Criteria;
@@ -7,6 +8,7 @@ import cn.bronzeware.muppet.core.Session;
 import cn.bronzeware.muppet.core.SessionFactory;
 import cn.bronzeware.muppet.entities.Note;
 import cn.bronzeware.muppet.util.ArrayUtil;
+import cn.bronzeware.muppet.util.log.Logger;
 
 public class TestCriteria {
 
@@ -34,11 +36,14 @@ public class TestCriteria {
 		/*Criteria criteria1 = muppet.createCriteria(Note.class);
 		criteria1.andPropEqual("user_id", 35);
 		criteria.or(criteria1);*/
-		List<Note> list = criteria.select("id,value,username").each();
+		List<Note> list = criteria.select("id,value,username,password,user_id")
+				.andPropGreater("user_id", 100).list();
 		//list.get(200);
 		//list.add(new Note());
-		ArrayUtil.println(list);
-		
+		//list.get(-1);
+		//System.out.println(criteria.one());
+		Logger.println(criteria.one());
+		//ArrayUtil.println(list);
 	}
 	
 	public void test2(){

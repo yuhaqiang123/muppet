@@ -4,7 +4,9 @@ import java.util.List;
 
 public interface Criteria<T> {
 
+	public T one();
 	
+	public int count();
 	
 	public List<T> list();
 	
