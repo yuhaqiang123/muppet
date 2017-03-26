@@ -8,7 +8,7 @@ public class SimpleDataSourceXMLConfig extends AbstractConfig implements DataSou
 	}
 
 	@Override
-	public DataSourceResource getDataSourceInfo() {
+	public DataSourceResource[] getDataSourceInfo() {
 		
 		return null;
 	}

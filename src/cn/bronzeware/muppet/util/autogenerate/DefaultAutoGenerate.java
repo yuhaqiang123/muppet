@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.mysql.jdbc.DatabaseMetaData;
 
+import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.muppet.core.DataBaseCheck;
 import cn.bronzeware.muppet.core.DataBaseCheck.ColumnCheck;
 import cn.bronzeware.muppet.core.DataBaseCheck.TableCheck;
@@ -24,11 +25,12 @@ import cn.bronzeware.muppet.util.log.Logger;
  *
  */
  class DefaultAutoGenerate implements AutoGenerate{
-
-	protected DataBaseCheck check = new DataBaseCheck();
+	protected DataBaseCheck check ;
+	protected ApplicationContext applicationContext;
 	private AutoInfo info;
-	public DefaultAutoGenerate(AutoInfo info){
+	public DefaultAutoGenerate(AutoInfo info,ApplicationContext applicationContext){
 		this.info = info;
+		check = new DataBaseCheck(applicationContext);
 	}
 	
 	/**

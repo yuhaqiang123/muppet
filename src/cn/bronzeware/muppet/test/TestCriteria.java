@@ -36,13 +36,14 @@ public class TestCriteria {
 		/*Criteria criteria1 = muppet.createCriteria(Note.class);
 		criteria1.andPropEqual("user_id", 35);
 		criteria.or(criteria1);*/
-		List<Note> list = criteria.select("id,value,username,password,user_id")
-				.andPropGreater("user_id", 100).list();
+		ArrayUtil.println(criteria.select("id,value,username,password,user_id")
+				.andPropGreater("user_id", 100).list());
 		//list.get(200);
 		//list.add(new Note());
 		//list.get(-1);
 		//System.out.println(criteria.one());
 		Logger.println(criteria.one());
+		Logger.println(criteria.count());
 		//ArrayUtil.println(list);
 	}
 	

@@ -21,7 +21,7 @@ public class StandardDataSourceXMLConfig extends AbstractConfig implements DataS
 		config(resource);
 	}
 	private XMLConfigResource xmlConfigResource;
-	private DataSourceResource resource;
+	private DataSourceResource[] resources;
 	
 	public static final String XML_DATA_SOURCE_ROOT = "#" + XMLConfig.XML_ROOT_KEY + "#" +"datasource";
 	
@@ -35,26 +35,33 @@ public class StandardDataSourceXMLConfig extends AbstractConfig implements DataS
 				throw new ResourceConfigException(xmlConfigResource.getXmlpath()
 						+ExcpMsg.CANNOT_FOUND_RESOURCE_PACKAGE_TAGS);
 			}
-		
+			resources = new DataSourceResource[dataSources.size()];
+			int i = 0;
 			for (Node node:dataSources) {
-				 NodeList nodeList = node.getChildNodes();
-				 Properties prop = new Properties();
-				 for(int j = 0;j<nodeList.getLength();j++){
-					 	Node node1 = nodeList.item(j);
-					 	NamedNodeMap map1 = node1.getAttributes();
-					 	if(map1==null){
-					 		continue;
-					 	}
-					 	Node value = map1.getNamedItem("value");
-					 	if(value==null){
-					 		continue;
-					 	}
-						set(prop,node1.getNodeName(),value.getNodeValue());
+				Properties prop = new Properties();
+				try{
+					String dataSourceName = node.getAttributes().getNamedItem("name").getNodeValue();
+					set(prop, "datasource_name", dataSourceName);
+				}catch (NullPointerException e) {
+					throw new DataSourceException(String.format("数据源配置错误，datasource没有name标识"));
+				}
+				 
+				NodeList nodeList = node.getChildNodes();
+				for(int j = 0;j<nodeList.getLength();j++){
+					Node node1 = nodeList.item(j);
+				 	NamedNodeMap map1 = node1.getAttributes();
+				 	if(map1==null){
+				 		continue;
+				 	}
+				 	Node value = map1.getNamedItem("value");
+				 	if(value==null){
+				 		continue;
+				 	}
+					set(prop,node1.getNodeName(),value.getNodeValue());
 				 }
-				 	
 				DataSourceResource resource = new DataSourceResource();
 				resource.setProp(prop);
-				this.resource = resource;
+				this.resources[i++] = resource;
 			}
 		}catch(Exception e){
 			if(e instanceof ResourceConfigException){
@@ -83,8 +90,8 @@ public class StandardDataSourceXMLConfig extends AbstractConfig implements DataS
 	
 	
 	@Override
-	public DataSourceResource getDataSourceInfo() {
+	public DataSourceResource[] getDataSourceInfo() {
 		
-		return this.resource;
+		return this.resources;
 	}
 }

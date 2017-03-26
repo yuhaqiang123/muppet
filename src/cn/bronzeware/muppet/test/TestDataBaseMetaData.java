@@ -17,7 +17,7 @@ public class TestDataBaseMetaData {
 	 * @throws SQLException 
 	 */
 	public static void main(String[] args) throws SQLException{
-		Connection connection = DataSourceUtil.getConnection();
+		Connection connection = new DataSourceUtil().getConnection();
 		DatabaseMetaData metaData = connection.getMetaData();
 		ResultSet rs = metaData.getTypeInfo();
 		while (rs.next()) {

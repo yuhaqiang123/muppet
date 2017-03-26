@@ -1,6 +1,9 @@
 package cn.bronzeware.muppet.sqlgenerate;
 
 
+import cn.bronzeware.core.ioc.ApplicationContext;
+import cn.bronzeware.muppet.core.DataSourceManager;
+import cn.bronzeware.muppet.datasource.DataSourceUtil;
 import cn.bronzeware.muppet.resource.ColumnInfo;
 import cn.bronzeware.muppet.resource.ResourceInfo;
 import cn.bronzeware.muppet.resource.TableInfo;
@@ -10,6 +13,18 @@ import cn.bronzeware.muppet.sql.TypeConvertMapper;
 
 public class TableGenerate implements Generate{
 
+	private ApplicationContext context;
+	private DataSourceUtil dataSourceUtil;
+	public TableGenerate(ApplicationContext applicationContext){
+		context = applicationContext;
+		dataSourceUtil = context.getBean(DataSourceManager.class)
+				.getDefaultDataSource();
+	}
+	
+	public TableGenerate(DataSourceUtil dataSourceUtil){
+		this.dataSourceUtil = dataSourceUtil;
+	}
+	
 	public String generate(ResourceInfo resourceInfo) throws
 		SqlGenerateException{
 		if(resourceInfo!=null && resourceInfo instanceof TableInfo)
@@ -52,9 +67,9 @@ public class TableGenerate implements Generate{
 		buffer.append(name);
 		buffer.append(" ");
 		buffer.append(TypeConvertMapper.sqlTypeToString(type));
-		if(SqlMetaData.getDefaultLength(type)>0){
+		if(SqlMetaData.getDefaultLength(type, dataSourceUtil)>0){
 			if(length==-1||length==0){
-				buffer.append(" ("+SqlMetaData.getDefaultLength(type)+")");
+				buffer.append(" ("+SqlMetaData.getDefaultLength(type, dataSourceUtil)+")");
 			}else{
 				buffer.append(" ("+length+")");
 			}

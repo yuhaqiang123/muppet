@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-
+import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.muppet.datasource.DataSourceUtil;
 import cn.bronzeware.muppet.resource.ColumnInfo;
 import cn.bronzeware.muppet.resource.ResourceNotFoundException;
@@ -34,9 +34,13 @@ public class DataBaseCheck {
 	private static String[] TABLE_TYPE = new String[]{"TABLE"};
 	private static String[] VIEW_TYPE = new String[]{"VIEW"};
 	DatabaseMetaData databaseMetaData = null;
-	public DataBaseCheck(){
+	DataSourceUtil dataSourceUtil ;
+	ApplicationContext applicationContext;
+	public DataBaseCheck(ApplicationContext context){
 		try {
-			connection = DataSourceUtil.getConnection();
+			applicationContext  = context;
+			dataSourceUtil = applicationContext.getBean(DataSourceManager.class).getDefaultDataSource();
+			connection = dataSourceUtil.getConnection();
 			databaseMetaData = connection.getMetaData();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -44,8 +48,8 @@ public class DataBaseCheck {
 	}
 	
 	public static void main(String[] args){
-		DataBaseCheck check = new DataBaseCheck();
-		DataBaseCheck.TableCheck tableCheck = check.createTableCheck("fji");
+		//DataBaseCheck check = new DataBaseCheck();
+		//DataBaseCheck.TableCheck tableCheck = check.createTableCheck("fji");
  
 	}
 	

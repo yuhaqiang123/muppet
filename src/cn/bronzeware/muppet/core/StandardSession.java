@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.muppet.context.ContextException;
 import cn.bronzeware.muppet.context.DeleteContext;
 import cn.bronzeware.muppet.context.InsertContext;
@@ -22,6 +23,8 @@ import cn.bronzeware.muppet.transaction.Transaction;
  */
 class StandardSession implements Session,Closed{
 
+	protected ApplicationContext applicationContext = null;
+	
 	private static final String Boolean = null;
 	
 	private ResourceContext context ;
@@ -38,15 +41,9 @@ class StandardSession implements Session,Closed{
 	private Transaction transaction;
 	
 	private  Container<String,ResourceInfo> container;
-	
-
-
-	
-
-
-
-	public StandardSession(Transaction transaction){
+	public StandardSession(Transaction transaction,ApplicationContext applicationContext){
 		this.transaction = transaction;
+		this.applicationContext = applicationContext;
 	}
 	
 	

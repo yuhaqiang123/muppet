@@ -9,7 +9,7 @@ import cn.bronzeware.muppet.annotations.Table;
 import cn.bronzeware.muppet.annotations.Type;
 import cn.bronzeware.muppet.sql.SqlType;
 
-//@Table(tablename="t_note2")
+@Table(tablename="t_user")
 public class User {
 
 	private String username;

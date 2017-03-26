@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.swing.text.View;
 import javax.swing.text.StyledEditorKit.BoldAction;
 
+import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.muppet.datasource.DataSourceUtil;
 import cn.bronzeware.muppet.resource.ColumnInfo;
 import cn.bronzeware.muppet.resource.ResourceInfo;
@@ -39,17 +40,23 @@ import cn.bronzeware.muppet.util.log.Msg;
  */
 public class StandardResourceBuilder {
 	
+	
+	protected ApplicationContext applicationContext;
+	
 	/**
 	 * 
 	 * @param check {@link DataBaseCheck} 类实例，负责查询数据库
 	 */
-	public StandardResourceBuilder(DataBaseCheck check) {
-		this.dataBaseCheck = check;
+	public StandardResourceBuilder(ApplicationContext context) {
+		this.applicationContext = context;
+		tableGenerate = new TableGenerate(applicationContext);
+		this.dataBaseCheck = context.getBean(DataBaseCheck.class);
+		this.dataSourceUtil = context.getBean(DataSourceManager.class).getDefaultDataSource();
 	}
 	private DataBaseCheck dataBaseCheck ;
-	private TableGenerate tableGenerate = new TableGenerate();
+	private TableGenerate tableGenerate = null;
 	
-	
+	private DataSourceUtil dataSourceUtil;
 	/**
 	 * 根据用户的输入资源结构进行构建，首先检查是否是TableInfo的实例
 	 * 目前仅支持table的构建
@@ -102,7 +109,6 @@ public class StandardResourceBuilder {
 		boolean flag = true;
 		if(columnInfos!=null){
 			for(ColumnInfo columnInfo:columnInfos){
-				
 				DataBaseCheck.ColumnCheck columnCheck = 
 						dataBaseCheck.createColumnCheck(columnInfo.getTableName(),
 								columnInfo.getName());
@@ -153,13 +159,8 @@ public class StandardResourceBuilder {
 						flag = false;
 						Logger.println("添加" + columnInfo.getTableName() + "表中的" + columnInfo.getName() + "失败");
 					}
-					
-					
-					
 				}
 			}
-			
-			
 		}
 		return flag;
 	}
@@ -168,7 +169,7 @@ public class StandardResourceBuilder {
 		Connection connection = null;
 		PreparedStatement ps = null;
 		try {
-			connection = DataSourceUtil.getConnection();
+			connection = this.dataSourceUtil.getConnection();
 			for(Map.Entry<String, String> entry:map.entrySet()){
 				if(!entry.getValue().equals("")){
 					ps = connection.prepareStatement(entry.getValue());
@@ -281,14 +282,13 @@ public class StandardResourceBuilder {
 	private boolean buildTableSql(TableInfo info) throws InitException{
 		try {
 			tableGenerate.generate(info);
-			
 		} catch (SqlGenerateException e) {
 			throw new BuildException("构建Sql语句时出错->\n"+e.getMessage());
 		}
 			Connection connection = null;
 			PreparedStatement ps = null;
 			try {
-				connection = DataSourceUtil.getConnection();
+				connection = dataSourceUtil.getConnection();
 				Logger.println(Msg.CREATE_TABLE+":"+info.getTableName()
 				+"\n"+
 						info.getSql()
@@ -321,7 +321,7 @@ public class StandardResourceBuilder {
 			tableInfo = (TableInfo) info;
 		}
 		try {
-			connection = DataSourceUtil.getConnection();
+			connection = dataSourceUtil.getConnection();
 			DatabaseMetaData database = connection.getMetaData();
 			
 			//PreparedStatement ps = connection.prepareStatement(info.getSql());

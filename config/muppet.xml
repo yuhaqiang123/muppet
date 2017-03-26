@@ -1,5 +1,11 @@
 <muppet>
-<datasource>
+<datasource name="main">
+	<url value="jdbc:mysql://localhost:3306/study?Unicode=true"/>
+	<username value="root"/>
+	<password value="yuhaiqiang"/>
+</datasource>
+
+<datasource name="datasource2">
 	<url value="jdbc:mysql://localhost:3306/study?Unicode=true"/>
 	<username value="root"/>
 	<password value="yuhaiqiang"/>
@@ -8,6 +14,7 @@
 <entity>
 <package name="cn.bronzeware.muppet.entities"/>
 </entity>
+
 <buildtable value="false"></buildtable>
 
 <table tableName="tb_bloghouse" domainObjectName="BlogHouse"></table>

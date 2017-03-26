@@ -2,11 +2,13 @@ package cn.bronzeware.muppet.core;
 
 import java.lang.reflect.Field;
 
+import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.muppet.annotations.Column;
 import cn.bronzeware.muppet.annotations.NotInTable;
 import cn.bronzeware.muppet.annotations.PrimaryKey;
 import cn.bronzeware.muppet.annotations.Table;
 import cn.bronzeware.muppet.annotations.Type;
+import cn.bronzeware.muppet.datasource.DataSourceUtil;
 import cn.bronzeware.muppet.entities.Note;
 import cn.bronzeware.muppet.resource.ColumnInfo;
 import cn.bronzeware.muppet.resource.ResourceInfo;
@@ -35,7 +37,15 @@ public class StandardAnnoResolver implements ResourceResolve{
 		Column column = (Column) clazz.getAnnotation(Column.class);
 		
 	}
-private String lyy;
+	
+	private ApplicationContext applicationContext;
+	
+	private DataSourceUtil dataSourceUtil;
+	public StandardAnnoResolver(ApplicationContext applicationContext){
+		this.applicationContext = applicationContext;
+		this.dataSourceUtil = applicationContext.getBean(DataSourceManager.class).getDefaultDataSource();
+	}
+	
 	/**
 	 * 解析 {@link Column } ，以及  {@link  NotInTable} 
 	 * @param clazz
@@ -178,7 +188,7 @@ private String lyy;
 		}
 		
 		if(length<0){
-			length = SqlMetaData.getDefaultLength(sqlType);
+			length = SqlMetaData.getDefaultLength(sqlType, dataSourceUtil);
 		}
 		
 		if(SqlMetaData.isNummic(sqlType)){
@@ -239,7 +249,7 @@ private String lyy;
 		columnInfo.setTableName(tableName);
 		SqlType sqlType = TypeConvertMapper.typeToSqlType(field.getType());
 		if (sqlType != null) {
-			Integer length = SqlMetaData.getDefaultLength(sqlType);
+			Integer length = SqlMetaData.getDefaultLength(sqlType, dataSourceUtil);
 			if (length != -1) {
 				columnInfo.setType(sqlType);
 				columnInfo.setLength(length);

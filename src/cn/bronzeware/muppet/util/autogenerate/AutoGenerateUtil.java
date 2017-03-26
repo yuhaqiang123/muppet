@@ -1,5 +1,7 @@
 package cn.bronzeware.muppet.util.autogenerate;
 
+import cn.bronzeware.core.ioc.ApplicationContext;
+import cn.bronzeware.core.ioc.AutowiredApplicationContext;
 import cn.bronzeware.muppet.core.EntityMappingDBXMLConfig;
 import cn.bronzeware.muppet.core.StandardEntityMappingDBXMLConfig;
 import cn.bronzeware.muppet.core.StandardXMLConfig;
@@ -15,10 +17,11 @@ public class AutoGenerateUtil {
 
 	public static void generate(String xmlPath)
 	{
-		XMLConfig config = new StandardXMLConfig(xmlPath);
+		ApplicationContext applicationContext = new AutowiredApplicationContext();
+		XMLConfig config = new StandardXMLConfig(xmlPath, applicationContext);
 		EntityMappingDBXMLConfig resourceConfig = new StandardEntityMappingDBXMLConfig(config.getXMLConfigResource());
 		AutoGenerateConfig autoGenerateConfig = new StandardDB2EntityAutoGenereateXMLConfig(resourceConfig.getXMLConfigResource());
-		AutoGenerate autoGenerate = new XmlAutoGenerate(autoGenerateConfig.getAutoInfo());
+		AutoGenerate autoGenerate = new XmlAutoGenerate(autoGenerateConfig.getAutoInfo(), applicationContext);
 		autoGenerate.generate();
 	}
 	

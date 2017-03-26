@@ -11,6 +11,7 @@ import javax.xml.transform.Source;
 import org.apache.commons.dbcp.BasicDataSource;
 
 import com.sun.istack.internal.NotNull;
+import com.sun.org.apache.xalan.internal.utils.XMLSecurityManager.NameMap;
 
 import cn.bronzeware.muppet.sqlgenerate.ParamCanNotBeNullException;
 import cn.bronzeware.muppet.util.log.Logger;
@@ -19,6 +20,8 @@ import cn.bronzeware.muppet.util.log.Logger;
 
 public class DataSourceUtil {
 
+	private String name;
+	
 	/**
 	 * &generateSimpleParameterMetadata=true
 	 */
@@ -60,12 +63,20 @@ public class DataSourceUtil {
 	public DataSourceUtil(){
 		
 	}
+	public String getName(){
+		return name;
+	}
 	
 	public DataSourceUtil(Properties properties){
 		if(properties == null){
 			new ParamCanNotBeNullException("properties").printStackTrace();
 			return ;
 		}else {
+			if(properties.containsKey("datasource_name"))
+			{
+				name = properties.getProperty("datasource_name");
+			}
+			
 			if(properties.containsKey(DRIVERNAME)){
 				driverName = properties.getProperty(DRIVERNAME);
 			}
@@ -173,7 +184,7 @@ public class DataSourceUtil {
 		
 	}
 
-	public static Connection getConnection()
+	public  Connection getConnection()
 			throws SQLException {
 		initial();
 		return source.getConnection();

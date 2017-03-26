@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.activation.DataSource;
+
 import cn.bronzeware.muppet.datasource.DataSourceUtil;
 import cn.bronzeware.muppet.resource.ColumnInfo;
 import cn.bronzeware.muppet.sqlgenerate.Sql;
@@ -17,7 +19,7 @@ public class SqlMetaData {
 	private static Map<SqlType, Integer> map = new HashMap<SqlType,Integer>();
 	
 	public static void main(String[] args){
-		System.out.println(getDefaultLength(SqlType.BLOB));
+		//System.out.println(getDefaultLength(SqlType.BLOB));
 	}
 	
 	public static boolean isAddDefault(ColumnInfo info){
@@ -62,9 +64,9 @@ public class SqlMetaData {
 	 * @param sqlType
 	 * @return
 	 */
-	public static Integer getDefaultLength(SqlType sqlType){
+	public static Integer getDefaultLength(SqlType sqlType,DataSourceUtil dataSourceUtil){
 		assert sqlType!=null;
-		map = getDefaultSqlLengths();
+		map = getDefaultSqlLengths(dataSourceUtil);
 		if(map.containsKey(sqlType)){
 			return map.get(sqlType);
 		}else{
@@ -72,14 +74,14 @@ public class SqlMetaData {
 		}
 	}
 	
-	private static Map<SqlType, Integer> getDefaultSqlLengths(){
+	private static Map<SqlType, Integer> getDefaultSqlLengths(DataSourceUtil dataSourceUtil){
 		if(map.size()!=0){
 			return map;
 		}
 		Connection connection = null;
 		ResultSet rs = null;
 		try {
-			connection = DataSourceUtil.getConnection();
+			connection = dataSourceUtil.getConnection();
 			DatabaseMetaData metaData = connection.getMetaData();
 			rs = metaData.getTypeInfo();
 			while (rs.next()) {

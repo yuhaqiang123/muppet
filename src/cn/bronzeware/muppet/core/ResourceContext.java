@@ -3,6 +3,8 @@ package cn.bronzeware.muppet.core;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import cn.bronzeware.core.ioc.ApplicationContext;
+import cn.bronzeware.core.ioc.AutowiredApplicationContext;
 import cn.bronzeware.muppet.context.ContextFactory;
 import cn.bronzeware.muppet.listener.Event;
 import cn.bronzeware.muppet.listener.EventType;
@@ -18,6 +20,7 @@ import cn.bronzeware.muppet.resource.TableInfo;
 
 public class ResourceContext implements Contained,Listened{
 
+	protected  ApplicationContext applicationContext = null;
 	
 	public Container<String, ResourceInfo> getContainer(){
 		return this.container;
@@ -34,6 +37,10 @@ public class ResourceContext implements Contained,Listened{
 	
 	private Listeners listeners = ListenerFactory.getListeners();
 
+	public ResourceContext(String configFilePath, ApplicationContext applicationContext) throws InitException{
+		this.applicationContext = applicationContext;
+		init(configFilePath);
+	}
 	
 	
 	public ContextFactory getContextFactory(){
@@ -45,6 +52,7 @@ public class ResourceContext implements Contained,Listened{
 		}
 	}
 	
+	//public void setApplicationContext(ApplicationContext context = )
 	
 	private void init(String configFilePath) throws InitException{
 		if(hasStarted()){
@@ -59,18 +67,32 @@ public class ResourceContext implements Contained,Listened{
 		}
 		//初始化前事件 RESOURCE_CONTEXT_INIT_PRE
 		listeners.event(EventType.RESOURCE_CONTEXT_INIT_PRE, new Event());
-		XMLConfig config = new StandardXMLConfig(configFilePath);
+		
+		applicationContext.registerBean(ResourceContext.class, this);
+		
+		XMLConfig config = new StandardXMLConfig(configFilePath, applicationContext);
+		applicationContext.registerBean(StandardXMLConfig.class, config);
+		
 		resourceConfig = new StandardEntityMappingDBXMLConfig(config.getXMLConfigResource());
+		applicationContext.registerBean(StandardEntityMappingDBXMLConfig.class, resourceConfig);
+		
 		isBuilded = resourceConfig.isBuilded();
-		check = new DataBaseCheck();
-		resourceBuild = new StandardResourceBuilder(check);
+		check = new DataBaseCheck(applicationContext);
+		applicationContext.registerBean(DataBaseCheck.class, check);
+		
+		resourceBuild = new StandardResourceBuilder(applicationContext);
+		applicationContext.registerBean(StandardResourceBuilder.class , resourceBuild);
+		
 		if(isBuilded){
-			resolver = new StandardAnnoResolver();
+			resolver = new StandardAnnoResolver(applicationContext);
 		}else{
 			resolver = new StandardDBCheckResolver(check);
 		}
 		String[] basePackets = resourceConfig.getResourcePackageNames();
 		resourceLoader = new StandardResourceLoader();
+		applicationContext.registerBean(StandardResourceLoader.class, resourceLoader);
+		
+		applicationContext.registerBean(Container.class, this.container);
 		Map<String, Class<?>[]> map = resourceLoader.loadClass(basePackets);
 		resolveResource(map);
 		
@@ -85,12 +107,15 @@ public class ResourceContext implements Contained,Listened{
 	}
 	
 	private void started(){
-		
 		isBooted = true;
+		afterStart(applicationContext);
+	}
+	protected void afterStart(ApplicationContext applicationContext){
+		
 	}
 	
 	public static void main(String[] args){
-		new ResourceContext("muppet.xml");
+		//new ResourceContext("muppet.xml");
 	}
 	
 	
@@ -101,14 +126,7 @@ public class ResourceContext implements Contained,Listened{
 	 * key 为Clazz的名字getName
 	 */
 	private Container<String,ResourceInfo> container = new StandardContainer();
-	//private ResourceBuild build = new ResourceBuild();
 	
-	public ResourceContext(String configFilePath) throws InitException{
-		init(configFilePath);
-	}
-	
-	
-
 	private void resolveResource(Map<String, Class<?>[]> map) throws InitException{
 		if(map!=null&&map.size()>0){
 			for(Entry<String, Class<?>[]> clazzs:map.entrySet())
@@ -116,13 +134,10 @@ public class ResourceContext implements Contained,Listened{
 				Class<?>[] clazz = clazzs.getValue();
 				String packetName = clazzs.getKey();
 				try {
-					
 					for (int i = 0; i < clazz.length; i++) {
 						if(clazz!=null){
-							
 								ResourceInfo resourceInfo = resolver.resolve(clazz[i]);
 								if(resourceInfo==null){
-									
 									continue;
 								}else{
 									if(resourceInfo instanceof TableInfo)
@@ -138,8 +153,6 @@ public class ResourceContext implements Contained,Listened{
 										
 									}
 								}
-								
-							
 						}
 					}
 					

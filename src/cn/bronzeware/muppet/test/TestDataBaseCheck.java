@@ -5,6 +5,7 @@ import cn.bronzeware.muppet.core.DataBaseCheck;
 public class TestDataBaseCheck {
 
 	public static void main(String[] args){
+		/*
 		DataBaseCheck check = new DataBaseCheck();
 		DataBaseCheck.TableCheck tableCheck = check.createTableCheck("t_n1");
 		DataBaseCheck.ColumnCheck columnCheck = check.createColumnCheck("t_test", "pasd");
@@ -17,5 +18,6 @@ public class TestDataBaseCheck {
 		System.out.println(columnCheck.getLength());
 		System.out.println(columnCheck.getSqlType());
 		System.out.println(columnCheck.isForeignKey());
+		*/
 	}
 }

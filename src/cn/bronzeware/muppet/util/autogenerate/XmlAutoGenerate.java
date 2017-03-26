@@ -1,5 +1,6 @@
 package cn.bronzeware.muppet.util.autogenerate;
 
+import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.muppet.core.DataBaseCheck.TableCheck;
 import cn.bronzeware.muppet.resource.ResourceNotFoundException;
 import cn.bronzeware.muppet.util.log.Logger;
@@ -8,8 +9,8 @@ public class XmlAutoGenerate extends DefaultAutoGenerate{
 
 	private AutoInfo info;
 	
-	public XmlAutoGenerate(AutoInfo info){
-		super(info);
+	public XmlAutoGenerate(AutoInfo info, ApplicationContext applicationContext){
+		super(info, applicationContext);
 		this.info = info;
 	}
 	
