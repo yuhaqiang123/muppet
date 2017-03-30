@@ -2,6 +2,10 @@ package cn.bronzeware.core.ioc;
 
 import cn.bronzeware.core.ioc.annotation.Component;
 import cn.bronzeware.core.ioc.annotation.ComponentExecutor;
+import cn.bronzeware.muppet.listener.Event;
+import cn.bronzeware.muppet.listener.EventType;
+import cn.bronzeware.muppet.listener.ListenerFactory;
+import cn.bronzeware.muppet.listener.Listeners;
 import cn.bronzeware.muppet.util.ArrayUtil;
 import cn.bronzeware.muppet.util.Utils;
 import cn.bronzeware.muppet.util.log.Logger;
@@ -20,6 +24,10 @@ abstract class AbstractApplicationContext implements ApplicationContext {
 	 */
 	protected final BeanFactory beanFactory = new BaseBeanFactory();;
 
+	protected ListenerFactory listenerFactory = new ListenerFactory(this, "cn.bronzeware.core.ioc");
+	
+	protected Listeners listeners = null;
+	
 	@Override
 	public Object[] getBeans() {
 		return beanFactory.getBeans();
@@ -48,14 +56,22 @@ abstract class AbstractApplicationContext implements ApplicationContext {
 	protected boolean isRefresh = false;
 	
 	public AbstractApplicationContext() {
-		
+		listeners = listenerFactory.getListeners();
 	}
+	
+
 
 	protected List initialieBeans(List<Class<?>> clazzList) {
 		List list = beanInitializor.initializeBeans(clazzList);
 		return list;
 	}
 
+	protected void configBeanClass(List<Class<?>> list){
+		for(Class<?> clazz:list){
+			listeners.event(EventType.BEAN_CLASS_CONFIG, new Event(this, clazz));
+		}
+	}
+	
 	protected boolean isSingleton(String beanName) {
 		BeanMeta meta = metas.getMeta(beanName);
 		if(Utils.empty(meta)){
@@ -167,22 +183,50 @@ abstract class AbstractApplicationContext implements ApplicationContext {
 		}
 	}
 
+	protected void beforeRegister() {
+		
+	}
+	
+	protected void afterRegister(){
+		
+	}
+	
+	@Override
+	public <T> T containsBean(Class<T> clazz){
+		T instance;
+		try{
+			instance = beanFactory.getBean(clazz);
+			return instance;
+		}catch (SuchBeanNotFoundException e) {
+			return null;
+		}
+	}
+	
 	@Override
 	public Object registerBean(String beanName, Object object) {
 		refreshBean(object);
-		return ((BaseBeanFactory) beanFactory).registerBean(beanName, object);
+		beforeRegister();
+		Object result =  ((BaseBeanFactory) beanFactory).registerBean(beanName, object);
+		afterRegister();
+		return result;
 	}
 
 	@Override
 	public Object registerBean(Object object) {
 		refreshBean(object);
-		return ((BaseBeanFactory) this.beanFactory).registerBean(object);
+		beforeRegister();
+		Object result = ((BaseBeanFactory) this.beanFactory).registerBean(object);
+		afterRegister();
+		return result;
 	}
 
 	@Override
 	public Object registerBean(Class clazz, Object object) {
 		refreshBean(object);
-		return ((BaseBeanFactory) beanFactory).registerBean(clazz, object);
+		beforeRegister();
+		Object result = ((BaseBeanFactory) beanFactory).registerBean(clazz, object);
+		afterRegister();
+		return result;
 	}
 
 	protected void awareAndCapable() {

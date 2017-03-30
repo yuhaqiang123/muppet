@@ -7,6 +7,11 @@ import java.io.File;
  */
 public class Utils {
 
+	
+	public static void assertNotEmpty(Object object, String msg){
+		assert object != null : msg;
+	}
+	
     public static boolean empty(Object object){
         if(object == null){
             return true;

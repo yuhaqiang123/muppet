@@ -36,6 +36,7 @@ public class TestCriteria {
 		/*Criteria criteria1 = muppet.createCriteria(Note.class);
 		criteria1.andPropEqual("user_id", 35);
 		criteria.or(criteria1);*/
+		
 		ArrayUtil.println(criteria.select("id,value,username,password,user_id")
 				.andPropGreater("user_id", 100).list());
 		//list.get(200);
@@ -57,14 +58,9 @@ public class TestCriteria {
 			muppet.insert(note);
 		}
 	}
-	
-	
 	public static void main(String[] args){
-		
 		TestCriteria criteria = new TestCriteria();
 		criteria.test1();
-		
-		
 	}
 	
 }

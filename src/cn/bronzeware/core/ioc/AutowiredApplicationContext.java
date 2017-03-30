@@ -30,16 +30,19 @@ public class AutowiredApplicationContext extends AbstractApplicationContext{
 		if(Utils.notEmpty(autoScanPackage)){
 			//获取包下所有的类
 			List<Class<?>> clazzList = ReflectUtil.getClasses(autoScanPackage);
+			//System.out.println(autoScanPackage);
+			//ArrayUtil.println(clazzList);
 			//获取所有添加Component注解的类
 			clazzList = this.componentExecutor.execute(clazzList);
 			//获取所有单例类
 			//clazzList = this.singletonBeans(clazzList);
+			configBeanClass(clazzList);
 			//初始化所有 singleton Class实例
 			List list = initialieBeans(clazzList);
-			for (Object object : list) {
-				this.registerBean(object);//根据Component注解上的信息配置
-			}
+			//ArrayUtil.println(list);
+			
 			//将componentExecutor和ApplicationContext放进去
+			
 			
 			//自动装配
 			autowireds(list);
@@ -47,6 +50,7 @@ public class AutowiredApplicationContext extends AbstractApplicationContext{
 			//解析aware和capable
 			awareAndCapable();
 			isRefresh = true;
+			
 		}else{
 			throw new BeanInitializationException("bean initialization has error happend , can not found autowird configs, please check");
 		}
@@ -110,4 +114,6 @@ public class AutowiredApplicationContext extends AbstractApplicationContext{
 			autowired(object);
 		}
 	}
+
+	
 }

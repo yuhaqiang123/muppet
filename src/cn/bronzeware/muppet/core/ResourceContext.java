@@ -66,7 +66,7 @@ public class ResourceContext implements Contained,Listened{
 			};
 		}
 		//初始化前事件 RESOURCE_CONTEXT_INIT_PRE
-		listeners.event(EventType.RESOURCE_CONTEXT_INIT_PRE, new Event());
+		listeners.event(EventType.RESOURCE_CONTEXT_INIT_PRE, new Event(applicationContext, null));
 		
 		applicationContext.registerBean(ResourceContext.class, this);
 		
@@ -98,7 +98,7 @@ public class ResourceContext implements Contained,Listened{
 		
 		started();
 		//RESOURCE_CONTEXT_INIT_POST
-		listeners.event(EventType.RESOURCE_CONTEXT_INIT_POST, new Event());
+		listeners.event(EventType.RESOURCE_CONTEXT_INIT_POST, new Event(applicationContext, null));
 	}
 	
 	

@@ -180,6 +180,8 @@ public class ReflectUtil {
 		return handler.getClassProxy(target,constructorArgsClazzs,constructorArgsValues);
 	}
 	
+	
+	
 	public static <T> T  getClassProxy(Class<T> target
 			,InvocationHandler invocationHandler
 			,Class[] constructorArgsClazzs

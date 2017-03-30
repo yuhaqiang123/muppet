@@ -3,45 +3,60 @@ package cn.bronzeware.muppet.listener;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 
+import cn.bronzeware.core.ioc.ApplicationContext;
+import cn.bronzeware.core.ioc.aop.InterceptorConfigListener;
 import cn.bronzeware.muppet.core.ResourceLoad;
 import cn.bronzeware.muppet.core.StandardResourceLoader;
+import cn.bronzeware.muppet.util.ArrayUtil;
 import cn.bronzeware.muppet.util.log.Logger;
 import cn.bronzeware.util.reflect.ReflectUtil;
 
 public class ListenerFactory{
 
 	private static Listeners listeners = new Listeners();
-	private static final String LISTENER_ROOT_PACKAGE= "cn.bronzeware.muppet.listener";
+	private  String LISTENER_ROOT_PACKAGE= "cn.bronzeware.muppet.listener";
 	private static ResourceLoad standardResourceLoader = 
 			new StandardResourceLoader();
-	static{
-		loadListener();
+	private ApplicationContext applicationContext;
+	
+	public ListenerFactory(ApplicationContext applicationContext, String rootPackage){
+		this.applicationContext = applicationContext;
+		this.LISTENER_ROOT_PACKAGE = rootPackage;
+		loadListeners();
 	}
+	
+	
 	
 	public static Listeners getListeners(){
 		return listeners;
 	}
 	
+	protected void loadListeners(){
+		Listener interceptor = new InterceptorConfigListener();
+		listeners.addListener(interceptor.eventType(), interceptor);
+	}
 	
-	private static void loadListener(){
-		Map<String,Class<?>[]> map = standardResourceLoader.loadClass(new String[]{LISTENER_ROOT_PACKAGE});
-		Class<?>[] rootlisteners = map.get(LISTENER_ROOT_PACKAGE);
+	
+	public  void loadListener(){
+		//Map<String,Class<?>[]> map = standardResourceLoader.loadClass(new String[]{LISTENER_ROOT_PACKAGE});
+		//Class<?>[] rootlisteners = map.get(LISTENER_ROOT_PACKAGE);
+		List<Class<?>> list = ReflectUtil.getClasses(LISTENER_ROOT_PACKAGE);
+		Class<?>[] rootlisteners = list.toArray(new Class[list.size()]);
 		if(rootlisteners==null){
 			return;
 		}else{
 			for(Class clazz:rootlisteners){
-				if(Listener.class.isAssignableFrom(clazz)&&!Listener.class.equals(clazz)){
+				if(Listener.class.isAssignableFrom(clazz) && !Listener.class.equals(clazz)){
 					Method method;
 					try {
 						method = clazz.getDeclaredMethod("eventType", null);
-						InvocationHandler handler = new ListernInvocationHandler();
-						Listener targetLisener = (Listener) ReflectUtil.getClassProxy(clazz,handler);
+						Listener targetLisener = (Listener) applicationContext.getBean(clazz);
 						EventType type = (EventType) method.invoke(targetLisener, null);
 						listeners.addListener(type, targetLisener);
 					} catch (NoSuchMethodException e) {
-						
 						e.printStackTrace();
 					} catch (SecurityException e) {
 					

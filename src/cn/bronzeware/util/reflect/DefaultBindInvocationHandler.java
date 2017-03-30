@@ -163,7 +163,7 @@ class DefaultBindInvocationHandler implements BindInvocationHandler
 	        
 	        enhancer.setCallback(this);// 设置回调  
 	        enhancer.setClassLoader(targetClass.getClassLoader());
-	         
+	        
 	        return (T)enhancer.create(clazzs,objects);
 	    }
 	

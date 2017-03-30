@@ -21,7 +21,7 @@ public class ResourceContextInitPostListener implements Listener{
 	public static void main(String [] args) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException{
 		Class clazz = ResourceContextInitPostListener.class;
 		Method method = clazz.getDeclaredMethod("event",new Class[]{EventType.class,Event.class});
-		Object result = method.invoke(clazz.newInstance(),new Object[]{EventType.RESOURCE_CONTEXT_INIT_POST,new Event()});
-		System.out.println(result);
+		//Object result = method.invoke(clazz.newInstance(),new Object[]{EventType.RESOURCE_CONTEXT_INIT_POST,new Event()});
+		//System.out.println(result);
 	}
 }
