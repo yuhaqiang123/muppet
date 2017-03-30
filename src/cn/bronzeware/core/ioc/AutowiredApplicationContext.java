@@ -38,7 +38,7 @@ public class AutowiredApplicationContext extends AbstractApplicationContext{
 			//clazzList = this.singletonBeans(clazzList);
 			configBeanClass(clazzList);
 			//初始化所有 singleton Class实例
-			List list = initialieBeans(clazzList);
+			List list = initializeBeans(clazzList);
 			//ArrayUtil.println(list);
 			
 			//将componentExecutor和ApplicationContext放进去

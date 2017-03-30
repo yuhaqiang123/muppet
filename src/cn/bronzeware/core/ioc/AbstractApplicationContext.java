@@ -11,6 +11,7 @@ import cn.bronzeware.muppet.util.Utils;
 import cn.bronzeware.muppet.util.log.Logger;
 import cn.bronzeware.util.reflect.ReflectUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,10 +62,36 @@ abstract class AbstractApplicationContext implements ApplicationContext {
 	
 
 
-	protected List initialieBeans(List<Class<?>> clazzList) {
+/*	protected List initialieBeans(List<Class<?>> clazzList) {
 		List list = beanInitializor.initializeBeans(clazzList);
 		return list;
+	}*/
+	
+	/**
+	 * 初始化Class List，返回实例list
+	 * @param classList 需要生成bean实例的Class　List
+	 * @author yuhaiqiang
+	 * 2017年3月30日下午6:12:32
+	 * @throws NullPointerException classList
+	 */
+	public List<Object> initializeBeans(List<Class<?>> clazzList) {
+		List<Object> list = new ArrayList<Object>(clazzList.size());
+		for (Class<?> clazz : clazzList) {
+			try {
+				if(containsBean(clazz) == null){
+					Object bean = beanInitializor.initializeBean(clazz);
+					if (Objects.nonNull(bean)) {
+						list.add(bean);
+					}
+					registerBean(clazz, bean);
+				}
+			} catch (InitializeException e) {
+				throw e;
+			}
+		}
+		return list;
 	}
+	
 
 	protected void configBeanClass(List<Class<?>> list){
 		for(Class<?> clazz:list){

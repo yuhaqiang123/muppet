@@ -42,7 +42,9 @@ public class AbstractBeanInitializator implements BeanInitialize {
 		return interceptorManager;
 	}
 	
-	
+	/**
+	 * 实例化一个bean.根据Class对象检查容器是否存在相应bean实例
+	 */
 	public <T> T initializeBean(Class<T> clazz) {
 		// 如果是接口不做处理，返回null
 		if (clazz.isInterface() == true) {
@@ -53,10 +55,10 @@ public class AbstractBeanInitializator implements BeanInitialize {
 			// clazz.getName() + " initializing faild ");
 		}
 		T instance = null;
-		instance = context.containsBean(clazz);
-		if(instance != null){
-			return instance;
-		}
+		//instance = context.containsBean(clazz);
+		//if(instance != null){
+			//return instance;
+		//}
 		Constructor[] constructors = clazz.getConstructors();
 		Constructor<T> defaultConstructor = null;
 		// 获取默认的构造方法
@@ -64,7 +66,6 @@ public class AbstractBeanInitializator implements BeanInitialize {
 			for (Constructor constructor : constructors) {
 				// 如果该构造方法声明了{@link DefaultConstructor }注解，那么将其视为默认构造器
 				if (Objects.nonNull(constructor.getAnnotation(DefaultConstructor.class))) {
-
 					// 默认构造器为空时，赋值。由于默认构造器只能存在一个，如果赋值时不为空，说明存在多个，抛出异常，
 					if (Objects.isNull(defaultConstructor)) {
 						defaultConstructor = constructor;
@@ -120,8 +121,14 @@ public class AbstractBeanInitializator implements BeanInitialize {
 			// 准备好所有的参数，可以实例化了
 			try {
 				instance = defaultConstructor.newInstance(objects);
+				/**
+				 * 根据默认构造方法生成对象实例后，需要InterceptorManager生成相关代理
+				 * 这样便于容器对bean实现更强大的管理，例如Aop需要bean的代理支持，
+				 * 代理逻辑的实现即由InterceptorManager查询客户端相关aop配置，生成相应代理增强类
+				 */
 				instance = (T)getInterceptorManager().intercept(instance, paramClazzs, objects);
-				this.context.registerBean(clazz, instance);
+				//将代理类注册进ioc
+				//this.context.registerBean(clazz, instance);
 				return instance;
 			} catch (Exception e) {
 				// 会失败吗
@@ -134,7 +141,7 @@ public class AbstractBeanInitializator implements BeanInitialize {
 			try {
 				instance = clazz.newInstance();
 				instance = (T) interceptorManager.intercept(instance,new Class[]{}, new Object[]{});
-				this.context.registerBean(clazz, instance);
+				//this.context.registerBean(clazz, instance);
 				return instance;
 			} catch (Exception e) {
 				throw new InitializeException("initializing faild , the bean Class " + clazz + " initializing faild ");
@@ -142,23 +149,7 @@ public class AbstractBeanInitializator implements BeanInitialize {
 		}
 	}
 
-	public List<Object> initializeBeans(List<Class<?>> clazzList) {
-		List<Object> list = new ArrayList<Object>(clazzList.size());
-		for (Class<?> clazz : clazzList) {
-			try {
-				Object bean = initializeBean(clazz);
-				if (Objects.nonNull(bean)) {
-					list.add(bean);
-				}
-			} catch (InitializeException e) {
-				throw e;
-			}
-		}
-		return list;
-	}
-
-	public static void main(String[] args) {
-
-	}
+	
+	
 
 }
