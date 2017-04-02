@@ -29,13 +29,13 @@ public class AbstractBeanInitializator implements BeanInitialize {
 	// 需要实例化的Bean，如果添加时发现该实例已经存在，那么将抛出异常。
 	private Set<Class> toInitializateBean = new HashSet<Class>();
 
-	private InterceptorManager interceptorManager = null;
+	private InterceptorManage interceptorManager = null;
 	
 	public AbstractBeanInitializator(ApplicationContext context) {
 		this.context = context;
 	}
 
-	protected InterceptorManager getInterceptorManager(){
+	protected InterceptorManage getInterceptorManager(){
 		if(interceptorManager == null){
 			interceptorManager = context.getBean(InterceptorManager.class);
 		}
@@ -120,27 +120,29 @@ public class AbstractBeanInitializator implements BeanInitialize {
 			
 			// 准备好所有的参数，可以实例化了
 			try {
-				instance = defaultConstructor.newInstance(objects);
+				//instance = defaultConstructor.newInstance(objects);
 				/**
 				 * 根据默认构造方法生成对象实例后，需要InterceptorManager生成相关代理
 				 * 这样便于容器对bean实现更强大的管理，例如Aop需要bean的代理支持，
 				 * 代理逻辑的实现即由InterceptorManager查询客户端相关aop配置，生成相应代理增强类
 				 */
-				instance = (T)getInterceptorManager().intercept(instance, paramClazzs, objects);
+				instance = (T)getInterceptorManager().intercept(clazz, paramClazzs, objects);
 				//将代理类注册进ioc
 				//this.context.registerBean(clazz, instance);
 				return instance;
 			} catch (Exception e) {
 				// 会失败吗
-				throw new InitializeException("initializing faild , the bean Class " + clazz + " initializing faild ");
+				e.printStackTrace();
+				throw new InitializeException("initializing faild , the bean Class " + clazz + " initializing faild " + e.getMessage());
 			}
 		} else {
 			/**
 			 * 没有构造函数时
 			 */
 			try {
-				instance = clazz.newInstance();
-				instance = (T) interceptorManager.intercept(instance,new Class[]{}, new Object[]{});
+				//instance = clazz.newInstance();
+				
+				instance = (T) interceptorManager.intercept(clazz,new Class[]{}, new Object[]{});
 				//this.context.registerBean(clazz, instance);
 				return instance;
 			} catch (Exception e) {

@@ -10,8 +10,10 @@ import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.core.ioc.annotation.After;
 import cn.bronzeware.core.ioc.annotation.Around;
 import cn.bronzeware.core.ioc.annotation.Before;
+import cn.bronzeware.util.reflect.ProxyInvocationHandler;
+import net.sf.cglib.proxy.MethodProxy;
 
-public class InterceptorInvocationHandler implements InvocationHandler{
+public class InterceptorInvocationHandler implements ProxyInvocationHandler{
 
 	private ApplicationContext applicationContext;
 	
@@ -22,6 +24,10 @@ public class InterceptorInvocationHandler implements InvocationHandler{
 	private InterceptorMetaData[] postInterceptorArray = null;
 	
 	private InterceptorMetaData aroundMetaData = null;
+	
+	private String interceptorInvokeExeceptionOnIllealArgumentMsg =  
+				String.format("拦截方法应该包括 %s　参数"
+				, PointCut.class.getName());
 	
 	public InterceptorInvocationHandler(ApplicationContext applicationContext, List<InterceptorMetaData> list) {
 		this.applicationContext = applicationContext;
@@ -38,6 +44,12 @@ public class InterceptorInvocationHandler implements InvocationHandler{
 				postMethods.add(metaData);
 			}
 			if(Around.class.isAssignableFrom(annotation.annotationType())){
+				if(aroundMetaData!=null){
+					throw new InterceptorInvokeExeception(
+							String.format("%s 类的 %s　方法所环绕的方法，被多次环绕拦截"
+									, aroundMetaData.getInterceptorClazz().getName()
+									, aroundMetaData.getInterceptorMethod().getName()));
+				}
 				aroundMetaData = metaData;
 			}
 			
@@ -46,7 +58,7 @@ public class InterceptorInvocationHandler implements InvocationHandler{
 		postInterceptorArray = postMethods.toArray(new InterceptorMetaData[postMethods.size()]);
 	}
 	
-	protected void before(Object proxy, Method method, Object[] args){
+	protected void before(Object proxy, Method method, Object[] args, MethodProxy methodProxy){
 		if(preInterceptorArray == null){
 			return;
 		}
@@ -54,15 +66,15 @@ public class InterceptorInvocationHandler implements InvocationHandler{
 		for(InterceptorMetaData preInterceptorMetaData:preInterceptorArray){
 			Method preMethod = preInterceptorMetaData.getInterceptorMethod();
 			Object interceptorObject = preInterceptorMetaData.getInterceptorObject();
-			PointCut pointCut = initializePointCut(proxy, method, args);
+			PointCut pointCut = initializePointCut(proxy, method, args, methodProxy);
 			try {
 				preMethod.invoke(interceptorObject, new Object[]{pointCut});
 			} catch (IllegalAccessException e) {
 				throw new InterceptorInvokeExeception(e.getCause());
 			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-				throw new InterceptorInvokeExeception(e.getCause());
+				throw new InterceptorInvokeExeception(interceptorInvokeExeceptionOnIllealArgumentMsg);
 			} catch (InvocationTargetException e) {
+				e.printStackTrace();
 				throw new InterceptorInvokeExeception(e.getCause());
 			}
 		}
@@ -70,7 +82,7 @@ public class InterceptorInvocationHandler implements InvocationHandler{
 	
 	
 	
-	protected void after(Object proxy, Method method, Object[] args){
+	protected void after(Object proxy, Method method, Object[] args,MethodProxy methodProxy){
 		if(postInterceptorArray == null){
 			return;
 		}
@@ -78,50 +90,47 @@ public class InterceptorInvocationHandler implements InvocationHandler{
 		for(InterceptorMetaData preInterceptorMetaData:postInterceptorArray){
 			Method postMethod = preInterceptorMetaData.getInterceptorMethod();
 			Object interceptorObject = preInterceptorMetaData.getInterceptorObject();
-			PointCut pointCut = initializePointCut(proxy, method, args);
+			PointCut pointCut = initializePointCut(proxy, method, args, methodProxy);
 			try {
 				postMethod.invoke(interceptorObject, pointCut);
 			} catch (IllegalAccessException e) {
 				throw new InterceptorInvokeExeception(e.getCause());
 			} catch (IllegalArgumentException e) {
-				throw new InterceptorInvokeExeception(e.getCause());
+				throw new InterceptorInvokeExeception(interceptorInvokeExeceptionOnIllealArgumentMsg);
 			} catch (InvocationTargetException e) {
 				throw new InterceptorInvokeExeception(e.getCause());
 			}
 		}
 	}
 	
-	private PointCut initializePointCut(Object proxy, Method method, Object[] args){
+	private PointCut initializePointCut(Object proxy, Method method, Object[] args, MethodProxy methodProxy){
 		PointCut pointCut = new PointCut();
 		pointCut.setParam(args);
 		pointCut.setTargetMethod(method);
+		pointCut.setMethodProxy(methodProxy);
 		pointCut.setTargetObject(proxy);
 		return pointCut;
 	}
 	
-	protected Object around(Object proxy, Method method, Object[] args){
+	protected Object around(Object proxy, Method method, Object[] args, MethodProxy methodProxy){
 		Object result = null;
 		if(aroundMetaData == null){
-			try{
-				result = method.invoke(proxy, args);
-				return result;
-			} catch (IllegalAccessException e) {
-				throw new InterceptorInvokeExeception(e.getCause());
-			} catch (IllegalArgumentException e) {
-				throw new InterceptorInvokeExeception(e.getCause());
-			} catch (InvocationTargetException e) {
+			try {
+				result = methodProxy.invokeSuper(proxy, args);
+			} catch (Throwable e) {
 				throw new InterceptorInvokeExeception(e.getCause());
 			}
+			return result;
 		}
 		Method aroundMethod = aroundMetaData.getInterceptorMethod();
 		Object interceptorObject = aroundMetaData.getInterceptorObject();
-		PointCut pointCut = initializePointCut(proxy, method, args);
+		PointCut pointCut = initializePointCut(proxy, method, args, methodProxy);
 		try {
 			result = aroundMethod.invoke(interceptorObject, pointCut);
 		} catch (IllegalAccessException e) {
 			throw new InterceptorInvokeExeception(e.getCause());
 		} catch (IllegalArgumentException e) {
-			throw new InterceptorInvokeExeception(e.getCause());
+			throw new InterceptorInvokeExeception(interceptorInvokeExeceptionOnIllealArgumentMsg);
 		} catch (InvocationTargetException e) {
 			throw new InterceptorInvokeExeception(e.getCause());
 		}
@@ -132,12 +141,17 @@ public class InterceptorInvocationHandler implements InvocationHandler{
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		
-		before(proxy, method, args);
-		Object result = around(proxy, method, args);
-		after(proxy, method, args);
+		before(proxy, method, args, null);
+		Object result = around(proxy, method, args, null);
+		after(proxy, method, args, null);
 		return result;
 	}
 
-	
-	
+	@Override
+	public Object intercept(Object proxy, Method method, Object[] params, MethodProxy methodProxy) throws Throwable {
+		before(proxy, method, params, methodProxy);
+		Object result = around(proxy, method, params, methodProxy);
+		after(proxy, method, params, methodProxy);
+		return result;
+	}
 }

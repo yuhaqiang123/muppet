@@ -7,9 +7,12 @@ public class InterceptorInvokeExeception extends RuntimeException{
 		super(throwable);
 	}
 	
-	
 	public InterceptorInvokeExeception(String msg){
 		super(msg);
+	}
+	public InterceptorInvokeExeception(String msg, Throwable throwable){
+		super(msg);
+		this.initCause(throwable);
 	}
 	
 	public InterceptorInvokeExeception(){

@@ -13,8 +13,5 @@ public class TestInterceptorApplication {
 		ApplicationContext applicationContext = new AutowiredApplicationContext();
 		C c = applicationContext.getBean(C.class);
 		c.test();
-		System.out.println(applicationContext.getBean(A.class).hashCode());
-		System.out.println(applicationContext.getBean(A.class).hashCode());
-		System.out.println(applicationContext.getBean(B.class).hashCode());
 	}
 }

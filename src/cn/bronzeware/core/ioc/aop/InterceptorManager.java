@@ -11,18 +11,20 @@ import com.sun.corba.se.impl.logging.InterceptorsSystemException;
 import com.sun.xml.internal.ws.api.model.wsdl.WSDLBoundOperation.ANONYMOUS;
 
 import cn.bronzeware.core.ioc.ApplicationContext;
+import cn.bronzeware.core.ioc.InterceptorManage;
 import cn.bronzeware.muppet.util.ArrayUtil;
 import cn.bronzeware.muppet.util.Utils;
+import cn.bronzeware.util.reflect.ProxyInvocationHandler;
 import cn.bronzeware.util.reflect.ReflectUtil;
 
-public class InterceptorManager {
+public class InterceptorManager implements InterceptorManage{
 
 	
 	private ApplicationContext applicationContext;
 	public InterceptorManager(ApplicationContext applicationContext){
 		this.applicationContext = applicationContext;
 		applicationContext.registerBean(InterceptorManager.class, this);
-		invocationHandler = new StandardBeanInterceptorInvocationHandler(applicationContext);
+		defaultInvocationHandler = new StandardBeanInterceptorInvocationHandler(applicationContext);
 	}
 	
 	private List<InterceptorMetaData> interceptors = new ArrayList<>();
@@ -43,24 +45,25 @@ public class InterceptorManager {
 		return list;
 	}
 	
-	private InvocationHandler invocationHandler;
+	private ProxyInvocationHandler defaultInvocationHandler;
 	
-	public Object intercept(Object target, Class[] paramClazzs,Object[] params){
-		Class clazz = target.getClass();
+	@Override
+	public Object intercept(Class targetClass, Class[] paramClazzs,Object[] params){
+		Class clazz = targetClass;
 		Annotation[] annotations = clazz.getDeclaredAnnotations();
 		if(Utils.notEmpty(annotations)){
 			for(Annotation annotation:annotations){
 				List<InterceptorMetaData> list = interceptorByAnnotation(annotation);
 				//ArrayUtil.println(list);
 				if(list !=null && list.size()> 0){
-					InvocationHandler invocationHandler = new InterceptorInvocationHandler(applicationContext, list);
-					return ReflectUtil.getClassProxy(target, invocationHandler, paramClazzs, params);
+					ProxyInvocationHandler invocationHandler = new InterceptorInvocationHandler(applicationContext, list);
+					return ReflectUtil.getClassProxy(clazz, invocationHandler, paramClazzs, params);
 				}
 			}
 		}else{
 			
 		}
-		return ReflectUtil.getClassProxy(target, invocationHandler, paramClazzs, params);
+		return ReflectUtil.getClassProxy(clazz, defaultInvocationHandler, paramClazzs, params);
 	}
 	
 	

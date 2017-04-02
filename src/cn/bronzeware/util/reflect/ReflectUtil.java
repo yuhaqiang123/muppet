@@ -183,22 +183,11 @@ public class ReflectUtil {
 	
 	
 	public static <T> T  getClassProxy(Class<T> target
-			,InvocationHandler invocationHandler
+			,ProxyInvocationHandler proxyInvocationHandler
 			,Class[] constructorArgsClazzs
 			,Object[] constructorArgsValues){
-		
-
-		try {
-			StandardBindInvocationHandler handler = new StandardBindInvocationHandler(invocationHandler);
-			return handler.getClassProxy(target.newInstance(),constructorArgsClazzs,constructorArgsValues);
-		} catch (InstantiationException e) {
-			
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			
-			e.printStackTrace();
-		}
-		return null;
+		ExtendsionBindInvocationHandler handler = new ExtendsionBindInvocationHandler(proxyInvocationHandler);
+		return handler.getClassProxy(target,constructorArgsClazzs,constructorArgsValues);
 	}
 	
 	

@@ -33,7 +33,7 @@ import net.sf.cglib.proxy.MethodProxy;
  * @author 于海强
  *
  */
-class DefaultBindInvocationHandler implements BindInvocationHandler
+public class DefaultBindInvocationHandler implements BindInvocationHandler
 ,MethodInterceptor{
 
 	private InvocationHandler handler = null;
@@ -53,6 +53,12 @@ class DefaultBindInvocationHandler implements BindInvocationHandler
 	public <T> T getClassProxy(T target,Class[] constructorArgsClazzs,Object[] constructorArgsValues){
 		this.target = target;
 		return  (T) createProxy(target.getClass(),constructorArgsClazzs,constructorArgsValues);
+	}
+	
+	
+	public <T> T getClassProxy(Class<T> target,Class[] constructorArgsClazzs,Object[] constructorArgsValues){
+		this.target = target;
+		return  (T) createProxy(target,constructorArgsClazzs,constructorArgsValues);
 	}
 	
 	/**
@@ -159,9 +165,9 @@ class DefaultBindInvocationHandler implements BindInvocationHandler
 	private final <T> T createProxy(Class<T> targetClass,Class[] clazzs,Object[] objects) {  
 	       
 	        Enhancer enhancer = new Enhancer();  
-	        enhancer.setSuperclass(targetClass);// 设置代理目标  
+	        enhancer.setSuperclass(targetClass);// 设置代理目标
 	        
-	        enhancer.setCallback(this);// 设置回调  
+	        enhancer.setCallback(this);// 设置回调
 	        enhancer.setClassLoader(targetClass.getClassLoader());
 	        
 	        return (T)enhancer.create(clazzs,objects);

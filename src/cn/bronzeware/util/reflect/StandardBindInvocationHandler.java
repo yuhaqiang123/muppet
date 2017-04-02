@@ -37,14 +37,11 @@ class StandardBindInvocationHandler extends DefaultBindInvocationHandler{
 	@Override
 	public Object intercept(Object proxy, Method method, Object[] params,
 			MethodProxy methodProxy) throws Throwable {
+		//methodProxy.
 		before(proxy,method,params,methodProxy);
 		Object object = handler.invoke(target, method, params);
 		after(proxy,method,params,methodProxy);
 		return object;
 	}
-	
-	
-	
-	
 	
 }

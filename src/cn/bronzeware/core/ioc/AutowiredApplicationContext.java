@@ -42,8 +42,7 @@ public class AutowiredApplicationContext extends AbstractApplicationContext{
 			//ArrayUtil.println(list);
 			
 			//将componentExecutor和ApplicationContext放进去
-			
-			
+
 			//自动装配
 			autowireds(list);
 			
