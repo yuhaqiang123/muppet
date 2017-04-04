@@ -37,6 +37,7 @@ public class InterceptorInvocationHandler implements ProxyInvocationHandler{
 		List<InterceptorMetaData> postMethods = new ArrayList<>();
 		for(InterceptorMetaData metaData:list){
 			Annotation annotation = metaData.getInterceptorType();
+			this.annotationType = metaData.getTargetAnnotationType();
 			if(Before.class.isAssignableFrom(annotation.annotationType())){
 				preMethods.add(metaData);
 			}
@@ -56,6 +57,20 @@ public class InterceptorInvocationHandler implements ProxyInvocationHandler{
 		}
 		preInterceptorArray = preMethods.toArray(new InterceptorMetaData[preMethods.size()]);
 		postInterceptorArray = postMethods.toArray(new InterceptorMetaData[postMethods.size()]);
+	}
+	
+	private Class annotationType = null;
+	private boolean isIntercept(Object proxy, Method method, Object[] params, MethodProxy methodProxy){
+		/*System.out.println(String.format("%s.%s.%s"
+				, method.getDeclaringClass().getName()
+				, method.getName()
+				,annotationType));*/
+		Annotation targetAnnotation = method.getDeclaredAnnotation(annotationType);
+		if(targetAnnotation == null){
+			return false;
+		}else{
+			return true;
+		}
 	}
 	
 	protected void before(Object proxy, Method method, Object[] args, MethodProxy methodProxy){
@@ -82,7 +97,7 @@ public class InterceptorInvocationHandler implements ProxyInvocationHandler{
 	
 	
 	
-	protected void after(Object proxy, Method method, Object[] args,MethodProxy methodProxy){
+	protected void after(Object proxy, Method method, Object[] args,MethodProxy methodProxy,Object result){
 		if(postInterceptorArray == null){
 			return;
 		}
@@ -91,6 +106,7 @@ public class InterceptorInvocationHandler implements ProxyInvocationHandler{
 			Method postMethod = preInterceptorMetaData.getInterceptorMethod();
 			Object interceptorObject = preInterceptorMetaData.getInterceptorObject();
 			PointCut pointCut = initializePointCut(proxy, method, args, methodProxy);
+			pointCut.setReturnValue(result);
 			try {
 				postMethod.invoke(interceptorObject, pointCut);
 			} catch (IllegalAccessException e) {
@@ -143,15 +159,23 @@ public class InterceptorInvocationHandler implements ProxyInvocationHandler{
 		
 		before(proxy, method, args, null);
 		Object result = around(proxy, method, args, null);
-		after(proxy, method, args, null);
+		after(proxy, method, args, null, null);
 		return result;
 	}
 
 	@Override
 	public Object intercept(Object proxy, Method method, Object[] params, MethodProxy methodProxy) throws Throwable {
+		if(!isIntercept(proxy, method, params, methodProxy)){
+			try {
+				Object result = methodProxy.invokeSuper(proxy, params);
+				return result;
+			} catch (Throwable e) {
+				throw new InterceptorInvokeExeception(e.getCause());
+			}
+		}
 		before(proxy, method, params, methodProxy);
 		Object result = around(proxy, method, params, methodProxy);
-		after(proxy, method, params, methodProxy);
+		after(proxy, method, params, methodProxy, result);
 		return result;
 	}
 }

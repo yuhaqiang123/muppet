@@ -13,20 +13,43 @@ import cn.bronzeware.util.reflect.ReflectUtil;
 
 public class AutowiredApplicationContext extends AbstractApplicationContext{
 	
-	private String autoScanPackage ;
+	private String[] autoScanPackage ;
 	
 	
 	protected final ComponentExecutor componentExecutor = new ComponentExecutor(this);
 	
 	protected final AutowiredExecutor autowiredExecutor = new AutowiredExecutor(this);
 	
+	public AutowiredApplicationContext(ApplicationConfig applicationConfig){
+		super();
+		config = applicationConfig;
+		beforeInitialize();
+		initialize();
+		afterInitialize();
+	}
+	
+	
 	public AutowiredApplicationContext(){
 		super();
+		beforeInitialize();
+		initialize();
+		afterInitialize();
+	}
+	protected void beforeInitialize(){
+		
+	}
+	
+	protected void afterInitialize(){
+		
+	}
+	
+	
+	private void initialize(){
 		this.registerBean(ComponentExecutor.class, componentExecutor);
 		this.registerBean(ApplicationContext.class, this);
 		this.registerBean(BeanMetaContext.class, metas);
 		//获取自动扫描包的目录
-		autoScanPackage = (String) config.getProperty(ApplicationConfig.AUTO_SCAN_PACKAGE_KEY);
+		autoScanPackage = (String[]) config.getProperty(ApplicationConfig.AUTO_SCAN_PACKAGE_KEY);
 		if(Utils.notEmpty(autoScanPackage)){
 			//获取包下所有的类
 			List<Class<?>> clazzList = ReflectUtil.getClasses(autoScanPackage);

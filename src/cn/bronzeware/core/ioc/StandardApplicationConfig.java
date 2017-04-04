@@ -14,7 +14,7 @@ public class StandardApplicationConfig implements ApplicationConfig{
 
     public StandardApplicationConfig(){
     	
-        props.put(AUTO_SCAN_PACKAGE_KEY, "cn.bronzeware.core.ioc.test");
+        props.put(AUTO_SCAN_PACKAGE_KEY, new String[]{"cn.bronzeware.core.ioc.test"});
         //props.put("", arg1)
     }
     public Object getProperty(String key){
@@ -23,5 +23,17 @@ public class StandardApplicationConfig implements ApplicationConfig{
         }else{
             return null;
         }
+    }
+    
+    public Object setProperty(String key, Object value){
+    	 if(props.containsKey(key)){
+    		 Object object = props.get(key);
+    		 props.put(key, value);
+             return object;
+         }else{
+        	 props.put(key, value);
+             return null;
+         }
+    	
     }
 }

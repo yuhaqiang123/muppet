@@ -13,6 +13,26 @@ public class PointCut {
 	
 	private MethodProxy methodProxy;
 	
+	private Object returnValue;
+	
+	
+	
+	public Object getReturnValue() {
+		return returnValue;
+	}
+
+	public void setReturnValue(Object returnValue) {
+		this.returnValue = returnValue;
+	}
+
+	@Override
+	public String toString() {
+		
+		return String.format("Class %s, Method: %s,"
+				, targetObject.getClass().getSuperclass().getName()
+				, targetMethod.getName());
+	}
+
 	public MethodProxy getMethodProxy() {
 		return methodProxy;
 	}

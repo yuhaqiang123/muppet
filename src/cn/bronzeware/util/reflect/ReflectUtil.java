@@ -29,6 +29,12 @@ public class ReflectUtil {
 			new ConcurrentHashMap();
 
 
+	public static String getMethodFullName(Method method){
+		Class clazz = method.getDeclaringClass();
+		return String.format("%s.%s", clazz.getName(), method.getName());
+	}
+	
+	
 	public static Method[] getMethods(Class clazz, String methodName){
 		Method[] methods = clazz.getDeclaredMethods();
 		List<Method> list = new ArrayList();
@@ -44,6 +50,18 @@ public class ReflectUtil {
 
 	public static List<Class<?>> getClasses(String packageName){
 		return ClassUtils.getClasses(packageName);
+	}
+	
+	public static List<Class<?>> getClasses(String[] pkgNames){
+		List<Class<?>> result = new ArrayList<>(100);
+		for(String pkg:pkgNames){
+			List<Class<?>> list = ClassUtils.getClasses(pkg);
+			if(list == null){
+				continue;
+			}
+			result.addAll(list);
+		}
+		return result;
 	}
 
 

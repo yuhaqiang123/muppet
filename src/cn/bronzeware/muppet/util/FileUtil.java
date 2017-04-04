@@ -13,6 +13,30 @@ public class FileUtil {
 		return Thread.class.getResource(File.separator).getPath();
 	}
 	
+	public static void createFile(File file){
+		createFile(file, false);
+	}
+	
+	private static void createFile(File file, boolean dir){
+		if(!file.getParentFile().exists()){
+			createFile(file.getParentFile(), true);
+		}else{
+			if(!file.exists()){
+				try {
+					if(dir){
+						file.mkdir();
+					}else{
+						file.createNewFile();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	
+	
 	public static void write(byte[] data,String path){
 		try {
 			FileOutputStream out = new FileOutputStream(new File(path));
@@ -49,8 +73,19 @@ public class FileUtil {
 	}
 	
 	public static void main(String[] args) throws UnsupportedEncodingException{
-		byte[]  result = FileUtil.read("F://lyyb474871b-a925-4a72-8821-79c8b78fbc85.html");
-		System.out.println(new String(result,"UTF-8"));
+		//byte[]  result = FileUtil.read("F://lyyb474871b-a925-4a72-8821-79c8b78fbc85.html");
+		//System.out.println(new String(result,"UTF-8"));
+		File file = new File("bin/temp/l.txt");
+		FileUtil.createFile(file);
+		/*if(! file.exists()){
+			try {
+				System.out.println(file.getAbsolutePath());
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		*/
 	}
 	
 	

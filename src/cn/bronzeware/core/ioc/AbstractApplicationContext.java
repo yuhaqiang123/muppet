@@ -136,7 +136,7 @@ abstract class AbstractApplicationContext implements ApplicationContext {
 				Logger.error(e.getMessage());
 				throw e1;
 			}
-			this.registerBean(object);
+			//this.registerBean(object);
 			this.registerBean(clazz, object);
 			return (T) object;
 		}
@@ -210,12 +210,21 @@ abstract class AbstractApplicationContext implements ApplicationContext {
 		}
 	}
 
-	protected void beforeRegister() {
+	protected void beforeRegister(Object key, Object value) {
 		
 	}
 	
-	protected void afterRegister(){
-		
+	protected void afterRegister(Object key, Object value, Object result){
+		if(key instanceof Class){
+			Class clazz = (Class)key;
+			if(result == null){
+				Logger.debugln(String.format("class named %s has been initialized ", clazz.getName()));
+				//ArrayUtil.println(Thread.currentThread().getStackTrace());
+			}
+		}
+		if(key instanceof String){
+			Logger.debugln(String.format("bean named %s has been initialized", key));
+		}
 	}
 	
 	@Override
@@ -232,27 +241,27 @@ abstract class AbstractApplicationContext implements ApplicationContext {
 	@Override
 	public Object registerBean(String beanName, Object object) {
 		refreshBean(object);
-		beforeRegister();
+		beforeRegister(beanName, object);
 		Object result =  ((BaseBeanFactory) beanFactory).registerBean(beanName, object);
-		afterRegister();
+		afterRegister(beanName, object, result);
 		return result;
 	}
 
 	@Override
 	public Object registerBean(Object object) {
 		refreshBean(object);
-		beforeRegister();
+		beforeRegister(object.getClass(), object);
 		Object result = ((BaseBeanFactory) this.beanFactory).registerBean(object);
-		afterRegister();
+		afterRegister(object.getClass(), object, result);
 		return result;
 	}
 
 	@Override
 	public Object registerBean(Class clazz, Object object) {
 		refreshBean(object);
-		beforeRegister();
+		beforeRegister(clazz, object);
 		Object result = ((BaseBeanFactory) beanFactory).registerBean(clazz, object);
-		afterRegister();
+		afterRegister(clazz, object, result);
 		return result;
 	}
 

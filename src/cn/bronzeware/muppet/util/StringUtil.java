@@ -1,9 +1,23 @@
 package cn.bronzeware.muppet.util;
 
+import java.io.UnsupportedEncodingException;
+
 public class StringUtil {
 
 
+	public static String string(byte[] bytes){
+		return string(bytes,"UTF-8");
+	}
 
+	public static String string(byte[] bytes, String charset){
+		try {
+			String result = new String(bytes, charset);
+			return result;
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 
 	public static boolean equals(String[] string,String[] string2){
 		
