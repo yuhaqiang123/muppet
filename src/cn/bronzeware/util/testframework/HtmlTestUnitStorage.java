@@ -7,10 +7,12 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.collections.Unmodifiable;
 
@@ -39,7 +41,18 @@ public class HtmlTestUnitStorage {
 			f.delete();
 		}
 		
-		Map<String, File> fileMap = new HashMap<>();
+		Map<String, File> fileMap = new TreeMap<>(new Comparator<String>() {
+
+			@Override
+			public int compare(String o1, String o2) {
+				if(Long.parseLong(o1) < Long.parseLong(o2)){
+					return 1;
+				}else{
+					return -1;
+				}
+			}
+			
+		});
 		int i = 0;
 		for(Map.Entry<String, Map<String, TestUnitMetaData>> entry : unitMaps.entrySet()){
 			Map<String, TestUnitMetaData> map = entry.getValue();
