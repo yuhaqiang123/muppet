@@ -13,6 +13,7 @@ import com.sun.xml.internal.bind.api.impl.NameConverter.Standard;
 import cn.bronzeware.muppet.test.A;
 import cn.bronzeware.muppet.test.StaticClass;
 import cn.bronzeware.muppet.test.TestHashMap1;
+import cn.bronzeware.muppet.util.ArrayUtil;
 import cn.bronzeware.muppet.util.log.Logger;
 import net.sf.cglib.core.ReflectUtils;
 

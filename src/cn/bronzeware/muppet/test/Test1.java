@@ -23,8 +23,8 @@ public class Test1 {
 	public String test2(){
 		System.out.println("hello test framework test2");
 		System.err.println("error");
-		throw new NullPointerException();
-		//return "2";
+		//throw new NullPointerException();
+		return "2";
 	}
 	@Test
 	public String test3(){
@@ -67,5 +67,20 @@ public class Test1 {
 		//return "2";
 	}
 
+	@Test
+	public String test12(){
+		System.out.println("hello test framework test2");
+		System.err.println("error");
+		return "hahaha";
+		//return "2";
+	}
+	
+	@Test
+	public String test13(){
+		System.out.println("hello test framework test2");
+		System.err.println("error");
+		return "hha";
+		//return "2";
+	}
 	
 }

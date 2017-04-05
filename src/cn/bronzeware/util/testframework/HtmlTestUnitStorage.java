@@ -105,6 +105,7 @@ public class HtmlTestUnitStorage {
 		}
 		
 		ps.println("<html>");
+		ps.println("<meta charset='utf-8'/>");
 		ps.println("<body>");
 		List<TestUnitMetaData> untracked = new ArrayList<TestUnitMetaData>();
 		List<TestUnitMetaData> notModified = new ArrayList<>();
@@ -151,12 +152,9 @@ public class HtmlTestUnitStorage {
 		ps.println("<br/><br/><br/>");
 		
 		ps.println("<h3>modified</h3>");
-		int i = 0;
-		for(TestUnitMetaData m:modified){
-			if(i++%2==0){
-				ps.println("<br/><br/><br/>");
-			}
-			initializePs(ps, m);
+		for(int i = 0;i < modified.size();i +=2){
+			initializeModifiedPs(ps, modified.get(i), modified.get(i+1));
+			ps.println("<br/>");
 		}
 		ps.println("<br/><br/><br/>");
 		
@@ -172,27 +170,86 @@ public class HtmlTestUnitStorage {
 		return file;
 	}
 	
+	private void initializeModifiedPs(PrintStream ps, TestUnitMetaData curr, TestUnitMetaData old){
+		ps.println("<table border=1>");
+		ps.println("<tr>");
+		ps.println(String.format("<td> className: %s </td>", curr.getTargetClass().getName()));
+		ps.println(String.format("<td> methodName : %s</td>", curr.getMethodName()));
+		ps.println("</tr>");
+		ps.println("<br/>");
+		
+
+		ps.println("<tr>");
+		if(TestUnitMetaData.equal(curr.getReturnValue(), old.getReturnValue())){
+			ps.println("<td>returnValue</td>");
+			ps.println(String.format("<td>%s</td>", curr.getReturnValue()));
+		}else{
+			ps.println("<td>ReturnValue New</td>");
+			ps.println(String.format("<td><font color='red'>%s</font></td>", curr.getReturnValue()));
+			ps.println("</tr><tr>");
+			ps.println("<td>ReturnValue Old</td>");
+			ps.println(String.format("<td><font color='red'>%s</font></td>", old.getReturnValue()));
+		}
+		ps.println("</tr>");
+		
+		ps.println("<tr>");
+		if(TestUnitMetaData.equal(curr.getCmdErr(), old.getCmdErr())){
+			ps.println("<td>CmdErr</td>");
+			ps.println(String.format("<td>%s</td>", curr.getCmdErr()));
+		}else{
+			ps.println("<td>CmdErr New</td>");
+			ps.println(String.format("<td><font color='red'>%s</font></td>", curr.getCmdErr()));
+			ps.println("</tr><tr>");
+			ps.println("<td>CmdErr Old</td>");
+			ps.println(String.format("<td><font color='red'>%s</font></td>", old.getCmdErr()));
+		}
+		ps.println("</tr>");
+		
+		ps.println("<tr>");
+		if(TestUnitMetaData.equal(curr.getCmdOutput(), old.getCmdOutput())){
+			ps.println("<td>CmdOut</td>");
+			ps.println(String.format("<td>%s</td>", curr.getCmdOutput()));
+		}else{
+			ps.println("<td>CmdOut New</td>");
+			ps.println(String.format("<td><font color='red'>%s</font></td>", curr.getCmdOutput()));
+			ps.println("</tr><tr>");
+			ps.println("<td>CmdOut Old</td>");
+			ps.println(String.format("<td><font color='red'>%s</font></td>", old.getCmdOutput()));
+		}
+		ps.println("</tr>");
+		
+		
+		ps.println("<br/>");
+		
+		ps.println("</table>");
+	}
+	
+	
 	private void initializePs(PrintStream ps, TestUnitMetaData m){
 		ps.println("<table border=1>");
 		ps.println("<tr>");
 		ps.println(String.format("<td> className: %s </td>", m.getTargetClass().getName()));
 		ps.println(String.format("<td> methodName : %s</td>", m.getMethodName()));
 		ps.println("</tr>");
+		ps.println("<br/>");
 		
 		ps.println("<tr>");
 		ps.println("<td>returnValue</td>");
 		ps.println(String.format("<td>%s</td>", m.getReturnValue()));
 		ps.println("</tr>");
+		ps.println("<br/>");
 		
 		ps.println("<tr>");
 		ps.println(String.format("<td>CmdOut:</td>"));
 		ps.println(String.format("<td>%s</td>", m.getCmdOutput()));
 		ps.println("</tr>");
+		ps.println("<br/>");
 		
 		ps.println("<tr>");
 		ps.println(String.format("<td>CmdErr:</td>"));
 		ps.println(String.format("<td>%s</td>", m.getCmdErr()));
 		ps.println("</tr>");
+		ps.println("<br/>");
 		ps.println("</table>");
 	}
 	

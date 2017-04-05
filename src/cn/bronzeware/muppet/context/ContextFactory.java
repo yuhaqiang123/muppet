@@ -33,11 +33,11 @@ public class ContextFactory {
 		insertContext = new InsertContext(container);
 		deleteContext = new DeleteContext(container);
 		
-		
+		/*
 		selectContext = proxy(selectContext);
 		updateContext = proxy(updateContext);
 		insertContext = proxy(insertContext);
-		deleteContext = proxy(deleteContext);
+		deleteContext = proxy(deleteContext);*/
 		
 	}
 	

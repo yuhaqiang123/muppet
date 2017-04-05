@@ -2,22 +2,32 @@ package cn.bronzeware.muppet.test;
 
 import java.util.List;
 
+import cn.bronzeware.core.ioc.annotation.Component;
 import cn.bronzeware.muppet.core.Criteria;
 import cn.bronzeware.muppet.core.Session;
 import cn.bronzeware.muppet.core.SessionFactory;
 import cn.bronzeware.muppet.entities.BlogHouse;
 import cn.bronzeware.muppet.util.ArrayUtil;
+import cn.bronzeware.util.testframework.Test;
 
+@Component
+@Test
 public class TestBigData {
-	//static SessionFactory factroy = new SessionFactory("muppet.xml");
-	public static Session muppet ;
+	SessionFactory factroy =null;
+	public  Session muppet ;
 	/*
 	static
 	{
 		muppet = factroy.getSession(true);
 	}
 	*/
-	public static void test1(){
+	public TestBigData(){
+		factroy = new SessionFactory("muppet.xml");
+		muppet = factroy.getSession();
+	}
+	
+	@Test
+	public  void test1(){
 		long start = System.currentTimeMillis();
 		
 		Criteria criteria = muppet.createCriteria(BlogHouse.class);
@@ -27,16 +37,16 @@ public class TestBigData {
 		List<BlogHouse> list = criteria.list();
 		//ArrayUtil.println(list);
 		long end = System.currentTimeMillis();
-		System.out.println(end-start);
 	}
-	
-	public static void test2(){
-		muppet.query("SHOW CREATE TABLE tb_blog", null, null);
+	@Test
+	public  void test2(){
+		ArrayUtil.println(muppet.query("SHOW CREATE TABLE tb_bloghouse", null));
 	}
 	
 	
 	public static void main(String[] args){
-		test2();
+		TestBigData bigData = new TestBigData();
+		bigData.test2();
 	}
 	
 	

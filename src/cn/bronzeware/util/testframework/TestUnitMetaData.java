@@ -22,7 +22,7 @@ public class TestUnitMetaData implements Serializable{
 		return builder.toString();
 	}
 
-	public boolean equal(Object s1, Object s2){
+	public static boolean equal(Object s1, Object s2){
 		if(s1 == null && s2!=null){
 			return false;
 		}

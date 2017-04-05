@@ -3,8 +3,10 @@ package cn.bronzeware.muppet.core;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import cn.bronzeware.core.ioc.ApplicationConfig;
 import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.core.ioc.AutowiredApplicationContext;
+import cn.bronzeware.core.ioc.StandardApplicationConfig;
 import cn.bronzeware.muppet.context.ContextFactory;
 import cn.bronzeware.muppet.context.DeleteContext;
 import cn.bronzeware.muppet.context.InsertContext;
@@ -19,7 +21,7 @@ import cn.bronzeware.util.reflect.ReflectUtil;
 
 public class SessionFactory {
 
-	private ApplicationContext applicationContext = new AutowiredApplicationContext();
+	private ApplicationContext applicationContext = null;
 	private StandardSession session;
 	private ResourceContext context;
 	private ContextFactory contextFactory;
@@ -41,6 +43,9 @@ public class SessionFactory {
 		 * 完成实体类加载解析
 		 * 创建Container容器
 		 */
+		StandardApplicationConfig applicationConfig = new StandardApplicationConfig();
+		applicationConfig.setProperty(ApplicationConfig.AUTO_SCAN_PACKAGE_KEY, new String[]{"a"});
+		applicationContext = new AutowiredApplicationContext(applicationConfig);
 		context = new ResourceContext(config, applicationContext);
 		contextFactory = context.getContextFactory();
 		insertContext = (InsertContext) contextFactory.getContext(TYPE.INSERT_CONTEXT);
@@ -78,10 +83,11 @@ public class SessionFactory {
 		session.setContainer(context.getContainer());
 		ThreadLocalTransaction.set(transaction);
 		
-		return ReflectUtil.getClassProxy(session
+		return session;
+		/*return ReflectUtil.getClassProxy(session
 				,closedHandler
 				, new Class[]{Transaction.class, ApplicationContext.class}
-		, new  Object[]{transaction, applicationContext});
+		, new  Object[]{transaction, applicationContext});*/
 	}
 	
 }
