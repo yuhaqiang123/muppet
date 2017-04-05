@@ -25,11 +25,52 @@ import org.xml.sax.SAXException;
 
 import cn.bronzeware.muppet.core.XMLConfig;
 import cn.bronzeware.muppet.util.log.Logger;
+import cn.bronzeware.util.testframework.TestUnitMetaData;
+import cn.bronzeware.util.testframework.TestUnitStorageException;
 
 public class XMLUtil {
 
 	public static void test1(){
 		
+	}
+	
+	public static List<Node> convertNodeList(NodeList nodes){
+		List<Node> list = new ArrayList<>(nodes.getLength());
+		for(int i = 0;i < nodes.getLength(); i++){
+			list.add(nodes.item(i));
+		}
+		return list;
+	}
+	
+	public static List<Node> convertNodeList(NamedNodeMap namedNodeMap){
+		List<Node> list = new ArrayList<>(namedNodeMap.getLength());
+		for(int i = 0;i < namedNodeMap.getLength(); i++){
+			list.add(namedNodeMap.item(i));
+		}
+		return list;
+	}
+	
+	
+	
+	public static Document parseDoc(String path){
+		DocumentBuilderFactory documentBuilderFactory  =  DocumentBuilderFactory.newInstance();
+		Document document = null;
+		DocumentBuilder builder = null;
+		try {
+			builder = documentBuilderFactory.newDocumentBuilder();
+			try {
+				document = builder.parse(new File(URLDecoder.decode(path, "UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				throw new TestUnitStorageException(e.getMessage());
+			} catch (SAXException e) {
+				throw new TestUnitStorageException(e);
+			} catch (IOException e) {
+				throw new TestUnitStorageException(e);
+			}
+		} catch (ParserConfigurationException e){
+			throw new TestUnitStorageException(e);
+		}
+		return document;
 	}
 	
 	
@@ -52,6 +93,8 @@ public class XMLUtil {
 			}
 		}
 	}
+	
+	
 	
 	public static Map<String, List<Node>> parse(String xmlpath){
 		DocumentBuilderFactory documentBuilderFactory  =  DocumentBuilderFactory.newInstance();

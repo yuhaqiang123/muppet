@@ -89,7 +89,6 @@ public class InterceptorInvocationHandler implements ProxyInvocationHandler{
 			} catch (IllegalArgumentException e) {
 				throw new InterceptorInvokeExeception(interceptorInvokeExeceptionOnIllealArgumentMsg);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
 				throw new InterceptorInvokeExeception(e.getCause());
 			}
 		}

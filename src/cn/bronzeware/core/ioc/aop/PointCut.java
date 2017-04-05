@@ -1,5 +1,6 @@
 package cn.bronzeware.core.ioc.aop;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
@@ -15,6 +16,29 @@ public class PointCut {
 	
 	private Object returnValue;
 	
+	private Object[] param;
+	
+	public Object invoke() throws Throwable{
+		Object result = null;
+		if(methodProxy == null){
+			try {
+				result = targetMethod.invoke(targetObject, param);
+			} catch (IllegalAccessException e) {
+				throw e;
+			} catch (IllegalArgumentException e) {
+				throw e;
+			} catch (InvocationTargetException e) {
+				throw e;
+			}
+		}else{
+			try {
+				result = methodProxy.invokeSuper(targetObject, param);
+			} catch (Throwable e) {
+				throw e;
+			}
+		}
+		return result;
+	}
 	
 	
 	public Object getReturnValue() {
@@ -67,6 +91,6 @@ public class PointCut {
 		this.param = param;
 	}
 
-	private Object[] param;
+	
 	
 }

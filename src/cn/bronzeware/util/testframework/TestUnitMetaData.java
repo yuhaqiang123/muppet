@@ -1,10 +1,13 @@
 package cn.bronzeware.util.testframework;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public class TestUnitMetaData {
+import cn.bronzeware.util.reflect.ReflectUtil;
+
+public class TestUnitMetaData implements Serializable{
 
 
 
@@ -19,17 +22,72 @@ public class TestUnitMetaData {
 		return builder.toString();
 	}
 
+	public boolean equal(Object s1, Object s2){
+		if(s1 == null && s2!=null){
+			return false;
+		}
+		if(s2 == null && s1!=null){
+			return false;
+		}
+		if(s1==s2){
+			return true;
+		}
+		if(s1.toString().equals(s2.toString())){
+			return true;
+		}else{
+			return false;
+		}
+		
+	}
+	
+	public boolean equal(TestUnitMetaData metaData){
+		if(!equal(metaData.getCmdErr(), this.getCmdErr())){
+			//System.out.println("err:"+this.getCmdErr());
+			return false;
+		}
+		
+		if(!equal(metaData.getCmdOutput(), this.getCmdOutput())){
+			//System.out.println("out:"+this.getCmdOutput());
+			return false;
+		}
+		
+		if(!equal(metaData.getMethodName(), this.getMethodName())){
+			//System.out.println("method:"+this.getMethodName());
+			return false;
+		}
+		
+		if(!equal(metaData.getReturnValue(), this.getReturnValue())){
+			if(metaData.getReturnValue().equals(this.getReturnValue())){
+				System.out.println("haha");
+			}
+			return false;
+		}
+		return true;
+		
+	}
+	
+	
+	public String getMethodName() {
+		return methodName;
+	}
+
+	public void setMethodName(String methodName) {
+		this.methodName = methodName;
+	}
+
 	private Object returnValue;
 	
 	private Class returnType;
 	
 	private Class targetClass;
 	
-	private Object targetObject;
+	private transient Object targetObject;
 	
-	private Object[] targetParams;
+	private transient Object[] targetParams;
 	
-	private Method targetMethod;
+	private transient Method targetMethod;
+	
+	private String methodName ;
 	
 	private Annotation[] annotationTypes;
 
@@ -98,6 +156,7 @@ public class TestUnitMetaData {
 	}
 
 	public void setTargetMethod(Method targetMethod) {
+		this.methodName = ReflectUtil.getMethodFullName(targetMethod);
 		this.targetMethod = targetMethod;
 	}
 

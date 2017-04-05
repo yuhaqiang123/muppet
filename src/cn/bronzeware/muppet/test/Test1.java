@@ -13,17 +13,59 @@ public class Test1 {
 	}
 	
 	@Test
-	public int test1(){
+	public Integer test1(){
 		System.out.println("hello test framework test1");
 		System.err.println("error");
-		return 1;
+		return 128;
 	}
 	
 	@Test
 	public String test2(){
 		System.out.println("hello test framework test2");
 		System.err.println("error");
-		return "2";
+		throw new NullPointerException();
+		//return "2";
 	}
+	@Test
+	public String test3(){
+		System.out.println("hello test framework test2");
+		System.err.println("error");
+		return null;
+		//return "2";
+	}
+	
+	@Test
+	public String test4(){
+		System.out.println("hello test framework test2");
+		System.err.println("error");
+		return null;
+		//return "2";
+	}
+
+	@Test
+	public String test7(){
+		System.out.println("hello test framework test2");
+		System.err.println("error");
+		return null;
+		//return "2";
+	}
+	
+
+	@Test
+	public String test11(){
+		System.out.println("hello test framework test2");
+		System.err.println("error");
+		return "hahaha";
+		//return "2";
+	}
+	
+	@Test
+	public String test31(){
+		System.out.println("hello test framework test2");
+		System.err.println("error");
+		return "hahaha";
+		//return "2";
+	}
+
 	
 }
