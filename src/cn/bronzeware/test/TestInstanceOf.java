@@ -1,4 +1,4 @@
-package cn.bronzeware.muppet.test;
+package cn.bronzeware.test;
 
 import cn.bronzeware.muppet.resource.ResourceInfo;
 import cn.bronzeware.muppet.resource.TableInfo;

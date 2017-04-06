@@ -1,4 +1,4 @@
-package cn.bronzeware.muppet.test;
+package cn.bronzeware.test;
 
 public interface Interface1 {
 

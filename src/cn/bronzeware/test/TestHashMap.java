@@ -1,4 +1,4 @@
-package cn.bronzeware.muppet.test;
+package cn.bronzeware.test;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -16,21 +16,21 @@ public class TestHashMap implements Runnable{
 	private A a;
 	static int numB = 0;
 	public void run() {
-		for(int i = 0;i<100;i++){
+		for(int i = 0;i<1000;i++){
 			Object object = map.put(""+i, new Object());
 			if(object!=null){
 				numB++;
 			}
 		}
 	}
-	static Map<String, Object> map = Collections.synchronizedMap(new HashMap<String,Object>());
+	static Map<String, Object> map = new HashMap<String,Object>();
 	public static void main(String[] args) throws InterruptedException{
-		
+
+		Map<String, Object> result = new HashMap<String,Object>();
 		Thread thread = new Thread(new TestHashMap());
 		thread.start();
-		Map<String, Object> result = new HashMap<String,Object>();
 		int numA = 0;
-		for(int i = 0;i<100;i++){
+		for(int i = 0;i<1000;i++){
 			Object object = map.put(""+i, new Object());
 			if(object!=null){
 				numA++;
@@ -39,7 +39,7 @@ public class TestHashMap implements Runnable{
 		Thread.currentThread().sleep(3000);
 		System.out.println(map.size()+"   "+map.size());
 		numA+=numB;
-		System.out.println("计算"+(200-numA));
+		System.out.println("计算"+(2000-numA));
 		int i = 0;
 		
 		for(Map.Entry<String, Object> a:map.entrySet())

@@ -1,4 +1,4 @@
-package cn.bronzeware.muppet.test;
+package cn.bronzeware.test;
 
 import cn.bronzeware.muppet.entities.Note;
 

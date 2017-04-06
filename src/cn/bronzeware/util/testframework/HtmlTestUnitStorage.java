@@ -17,6 +17,7 @@ import java.util.TreeMap;
 import org.apache.commons.collections.Unmodifiable;
 
 import cn.bronzeware.muppet.util.FileUtil;
+import cn.bronzeware.muppet.util.TimeUtil;
 
 public class HtmlTestUnitStorage {
 
@@ -77,10 +78,15 @@ public class HtmlTestUnitStorage {
 		}
 		
 		ps.println("<html>");
+		ps.println("<meta charset='utf-8'/>");
 		ps.println("<body>");
+		long curr = System.currentTimeMillis();
 		for(Map.Entry<String, File> entry:fileMap.entrySet()){
-			ps.println(String.format("<a href='%s'>%s</a>", entry.getValue().getName()
-					,new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(entry.getKey())))));			
+			
+			long old = Long.parseLong(entry.getKey());
+			ps.println(String.format("<a href='%s'>%s : %s</a>", entry.getValue().getName()
+					, TimeUtil.interval(old, curr)+"之前的结果比对　"
+					, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(old))));
 			ps.println("<br/><br/><br/>");
 		}
 		ps.println("</body>");
@@ -195,26 +201,26 @@ public class HtmlTestUnitStorage {
 		ps.println("<tr>");
 		if(TestUnitMetaData.equal(curr.getCmdErr(), old.getCmdErr())){
 			ps.println("<td>CmdErr</td>");
-			ps.println(String.format("<td>%s</td>", curr.getCmdErr()));
+			ps.println(String.format("<td>%s</td>", curr.getCmdErr().replace("\n", "<br/>")));
 		}else{
 			ps.println("<td>CmdErr New</td>");
-			ps.println(String.format("<td><font color='red'>%s</font></td>", curr.getCmdErr()));
+			ps.println(String.format("<td><font color='red'>%s</font></td>", curr.getCmdErr().replace("\n", "<br/>")));
 			ps.println("</tr><tr>");
 			ps.println("<td>CmdErr Old</td>");
-			ps.println(String.format("<td><font color='red'>%s</font></td>", old.getCmdErr()));
+			ps.println(String.format("<td><font color='red'>%s</font></td>", old.getCmdErr().replace("\n", "<br/>")));
 		}
 		ps.println("</tr>");
 		
 		ps.println("<tr>");
 		if(TestUnitMetaData.equal(curr.getCmdOutput(), old.getCmdOutput())){
 			ps.println("<td>CmdOut</td>");
-			ps.println(String.format("<td>%s</td>", curr.getCmdOutput()));
+			ps.println(String.format("<td>%s</td>", curr.getCmdOutput().replace("\n", "<br/>")));
 		}else{
 			ps.println("<td>CmdOut New</td>");
-			ps.println(String.format("<td><font color='red'>%s</font></td>", curr.getCmdOutput()));
+			ps.println(String.format("<td><font color='red'>%s</font></td>", curr.getCmdOutput().replace("\n", "<br/>")));
 			ps.println("</tr><tr>");
 			ps.println("<td>CmdOut Old</td>");
-			ps.println(String.format("<td><font color='red'>%s</font></td>", old.getCmdOutput()));
+			ps.println(String.format("<td><font color='red'>%s</font></td>", old.getCmdOutput().replace("\n", "<br/>")));
 		}
 		ps.println("</tr>");
 		
@@ -241,13 +247,13 @@ public class HtmlTestUnitStorage {
 		
 		ps.println("<tr>");
 		ps.println(String.format("<td>CmdOut:</td>"));
-		ps.println(String.format("<td>%s</td>", m.getCmdOutput()));
+		ps.println(String.format("<td>%s</td>", m.getCmdOutput().replace("\n", "<br/>")));
 		ps.println("</tr>");
 		ps.println("<br/>");
 		
 		ps.println("<tr>");
 		ps.println(String.format("<td>CmdErr:</td>"));
-		ps.println(String.format("<td>%s</td>", m.getCmdErr()));
+		ps.println(String.format("<td>%s</td>", m.getCmdErr().replace("\n", "<br/>")));
 		ps.println("</tr>");
 		ps.println("<br/>");
 		ps.println("</table>");

@@ -80,7 +80,6 @@ public class Test1 {
 		System.out.println("hello test framework test2");
 		System.err.println("error");
 		return "hha";
-		//return "2";
 	}
 	
 }

@@ -26,8 +26,8 @@ public class ResourceContext implements Contained,Listened{
 		return this.container;
 	}
 	
-	private static boolean isBooted = false;
-	private static boolean isBuilded = true;
+	private  boolean isBooted = false;
+	private  boolean isBuilded = true;
 
 	private ContextFactory factory = null;
 	private DataBaseCheck check = null;

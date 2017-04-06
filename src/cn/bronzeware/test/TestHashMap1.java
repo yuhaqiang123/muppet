@@ -1,4 +1,4 @@
-package cn.bronzeware.muppet.test;
+package cn.bronzeware.test;
 
 import java.util.HashMap;
 import java.util.HashSet;

@@ -10,11 +10,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.sun.org.apache.xerces.internal.parsers.StandardParserConfiguration;
 import com.sun.xml.internal.bind.api.impl.NameConverter.Standard;
 
-import cn.bronzeware.muppet.test.A;
-import cn.bronzeware.muppet.test.StaticClass;
-import cn.bronzeware.muppet.test.TestHashMap1;
 import cn.bronzeware.muppet.util.ArrayUtil;
 import cn.bronzeware.muppet.util.log.Logger;
+import cn.bronzeware.test.A;
+import cn.bronzeware.test.StaticClass;
+import cn.bronzeware.test.TestHashMap1;
 import net.sf.cglib.core.ReflectUtils;
 
 /**
