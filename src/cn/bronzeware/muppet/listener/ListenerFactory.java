@@ -16,9 +16,9 @@ import cn.bronzeware.util.reflect.ReflectUtil;
 
 public class ListenerFactory{
 
-	private static Listeners listeners = new Listeners();
-	private  String LISTENER_ROOT_PACKAGE= "cn.bronzeware.muppet.listener";
-	private static ResourceLoad standardResourceLoader = 
+	private Listeners listeners = new Listeners();
+	public String LISTENER_ROOT_PACKAGE= "cn.bronzeware.muppet.listener";
+	private ResourceLoad standardResourceLoader = 
 			new StandardResourceLoader();
 	private ApplicationContext applicationContext;
 	
@@ -30,7 +30,7 @@ public class ListenerFactory{
 	
 	
 	
-	public static Listeners getListeners(){
+	public Listeners getListeners(){
 		return listeners;
 	}
 	

@@ -22,6 +22,7 @@ public class TestFrameworkApplicationContext extends AutowiredApplicationContext
 	
 	@Override
 	protected void beforeInitialize(){
+		super.beforeInitialize();
 		testClasses = new HashMap<>();
 	}
 	

@@ -56,7 +56,7 @@ public class AutowiredApplicationContext extends AbstractApplicationContext{
 			//System.out.println(autoScanPackage);
 			//ArrayUtil.println(clazzList);
 			//获取所有添加Component注解的类
-			clazzList = this.componentExecutor.execute(clazzList);
+			clazzList = componentExecutor.execute(clazzList);
 			//获取所有单例类
 			//clazzList = this.singletonBeans(clazzList);
 			configBeanClass(clazzList);

@@ -35,10 +35,13 @@ public class ResourceContext implements Contained,Listened{
 	private ResourceLoad resourceLoader;
 	private StandardResourceBuilder resourceBuild =null;
 	
-	private Listeners listeners = ListenerFactory.getListeners();
+	private Listeners listeners = null;
+	private ListenerFactory listenerFactory = null;
 
 	public ResourceContext(String configFilePath, ApplicationContext applicationContext) throws InitException{
 		this.applicationContext = applicationContext;
+		listenerFactory = new ListenerFactory(applicationContext, "cn.bronzeware.muppet.listener");
+		listeners = listenerFactory.getListeners();
 		init(configFilePath);
 	}
 	

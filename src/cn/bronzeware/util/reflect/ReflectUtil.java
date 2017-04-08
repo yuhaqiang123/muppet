@@ -12,7 +12,6 @@ import com.sun.xml.internal.bind.api.impl.NameConverter.Standard;
 
 import cn.bronzeware.muppet.util.ArrayUtil;
 import cn.bronzeware.muppet.util.log.Logger;
-import cn.bronzeware.test.A;
 import cn.bronzeware.test.StaticClass;
 import cn.bronzeware.test.TestHashMap1;
 import net.sf.cglib.core.ReflectUtils;
@@ -382,7 +381,7 @@ public class ReflectUtil {
 	public static void main(String[] args){
 		List<String> list = new ArrayList<String>();
 		Class clazz = int.class ;
-		TestHashMap1 a = new StaticClass();
+		//TestHashMap1 a = new StaticClass();
 		/*if(StaticClass.class.isInstance(a)){
 			System.out.println(clazz.cast(a).getClass());
 		}*/
