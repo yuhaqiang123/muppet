@@ -1,10 +1,14 @@
 package cn.bronzeware.muppet.core;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import cn.bronzeware.core.ioc.ApplicationContext;
+import cn.bronzeware.muppet.datasource.DataSourceEvent;
+import cn.bronzeware.muppet.datasource.DataSourceListener;
 import cn.bronzeware.muppet.datasource.DataSourceUtil;
 
 public class DataSourceManager{
@@ -13,6 +17,7 @@ public class DataSourceManager{
 	
 	private DataSourceResource[] resources = null;
 	
+	private DataSourceListener datasourceListener;
 	private Map<String, DataSourceUtil> dataSourceUtilMap = new HashMap<>();
 	
 	public DataSourceManager(DataSourceResource[] resources ,ApplicationContext applicationContext){
@@ -20,6 +25,28 @@ public class DataSourceManager{
 		this.resources = resources;
 		applicationContext.registerBean(DataSourceManager.class, this);
 		initialize();
+	}
+	
+	public void setDatasourceListener(DataSourceListener datasourceListener) {
+		this.datasourceListener = datasourceListener;
+	}
+
+	public void datasourceCheck(){
+		for(Map.Entry<String, DataSourceUtil> entry:dataSourceUtilMap.entrySet()){
+			String key = entry.getKey();
+			DataSourceUtil dataSourceUtil = entry.getValue();
+			try{
+				dataSourceUtil.isConnected();
+			}catch(Exception e){
+				if(datasourceListener != null){
+					DataSourceEvent event = new DataSourceEvent();
+					event.setError(e);
+					event.setKey(key);
+					event.setType(DataSourceListener.Type.CONNECTED_ERROR);
+					datasourceListener.event(event);
+				}
+			}
+		}
 	}
 	
 	protected void initialize(){

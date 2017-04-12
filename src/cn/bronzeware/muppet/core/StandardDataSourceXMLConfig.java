@@ -8,26 +8,35 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
+import cn.bronzeware.muppet.datasource.DataSourceListener;
+import cn.bronzeware.muppet.datasource.StandardDataSourceListener;
 import cn.bronzeware.muppet.exceptions.ExcpMsg;
 import cn.bronzeware.muppet.util.log.Logger;
 
-
+/**
+ * 
+ * @author Administrator
+ *
+ */
 public class StandardDataSourceXMLConfig extends AbstractConfig implements DataSourceXMLConfig{
 
 	public StandardDataSourceXMLConfig(XMLConfigResource resource) {
 		super(resource);
 		this.xmlConfigResource = resource;
+		dataSourceListener = new StandardDataSourceListener();
 		config(resource);
 	}
 	private XMLConfigResource xmlConfigResource;
+	
 	private DataSourceResource[] resources;
+	
+	private DataSourceListener dataSourceListener;
 	
 	public static final String XML_DATA_SOURCE_ROOT = "#" + XMLConfig.XML_ROOT_KEY + "#" +"datasource";
 	
 	private void config(XMLConfigResource xmlConfigResource){
 		try
-		{	
+		{
 			Map<String,List<Node>> map = (Map)xmlConfigResource.getProp(XML_MAP);
 			List<Node> dataSources  = map.get(XML_DATA_SOURCE_ROOT);
 			
@@ -67,20 +76,20 @@ public class StandardDataSourceXMLConfig extends AbstractConfig implements DataS
 			if(e instanceof ResourceConfigException){
 					throw e;
 			}
-			e.printStackTrace();
+			//e.printStackTrace();
 			throw new ResourceConfigException(ExcpMsg.CANNOT_CONFIG_RESOURCE_PACKAGENAMES+":"+this.xmlConfigResource.getXmlpath()
 					+e.getMessage());
 		}
 	}
 	
-	public void set(Properties prop,String key,String value){
+	protected void set(Properties prop,String key,String value){
 		if(value==null){
 			return;
 		}
 		prop.setProperty(key, value);
 	}
 	
-	public String getValue(NamedNodeMap nodeMap,String key){
+	protected String getValue(NamedNodeMap nodeMap,String key){
 		Node node = nodeMap.getNamedItem(key);
 		if(node!=null){
 			return node.getNodeValue();
@@ -93,5 +102,13 @@ public class StandardDataSourceXMLConfig extends AbstractConfig implements DataS
 	public DataSourceResource[] getDataSourceInfo() {
 		
 		return this.resources;
+	}
+
+	
+	
+	@Override
+	public DataSourceListener getDataSourceListener() {
+		
+		return dataSourceListener;
 	}
 }

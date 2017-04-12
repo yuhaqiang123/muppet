@@ -1,11 +1,16 @@
 package cn.bronzeware.muppet.core;
 
+import javax.activation.DataSource;
+
 public class DataSourceException extends InitException {
 
 	private String msg = "";
 	
 	public  DataSourceException(String msg) {
 		this.msg = msg;
+	}
+	public DataSourceException(Throwable throwable){
+		super(throwable);
 	}
 	
 	public  DataSourceException(Throwable throwable, String msg) {

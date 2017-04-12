@@ -6,6 +6,7 @@ import java.util.Map;
 import org.w3c.dom.Node;
 
 import cn.bronzeware.core.ioc.ApplicationContext;
+import cn.bronzeware.muppet.datasource.DataSourceListener;
 import cn.bronzeware.muppet.datasource.DataSourceUtil;
 import cn.bronzeware.muppet.util.XMLUtil;
 import cn.bronzeware.muppet.util.log.Logger;
@@ -21,9 +22,10 @@ public class StandardXMLConfig extends AbstractConfig implements XMLConfig{
 		
 		config = new StandardDataSourceXMLConfig(getXMLConfigResource());
 		DataSourceResource[] dataSourceResources = config.getDataSourceInfo();
+		DataSourceListener dataSourceListener = config.getDataSourceListener();
+		
 		dataSourceManager = new DataSourceManager(dataSourceResources, applicationContext);
-		//Logger.println(dataSourceResource.getProp().getProperty("url"));
-		//new DataSourceUtil(dataSourceResource.getProp());
+		dataSourceManager.setDatasourceListener(dataSourceListener);
 	}
 	
 	

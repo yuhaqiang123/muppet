@@ -3,6 +3,8 @@ package cn.bronzeware.muppet.core;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.activation.DataSource;
+
 import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.core.ioc.AutowiredApplicationContext;
 import cn.bronzeware.muppet.context.ContextFactory;
@@ -37,6 +39,8 @@ public class ResourceContext implements Contained,Listened{
 	
 	private Listeners listeners = null;
 	private ListenerFactory listenerFactory = null;
+	
+	private DataSourceManager dataSourceManager;
 
 	public ResourceContext(String configFilePath, ApplicationContext applicationContext) throws InitException{
 		this.applicationContext = applicationContext;
@@ -80,6 +84,10 @@ public class ResourceContext implements Contained,Listened{
 		applicationContext.registerBean(StandardEntityMappingDBXMLConfig.class, resourceConfig);
 		
 		isBuilded = resourceConfig.isBuilded();
+		
+		dataSourceManager = applicationContext.getBean(DataSourceManager.class);
+		dataSourceManager.datasourceCheck();
+		
 		check = new DataBaseCheck(applicationContext);
 		applicationContext.registerBean(DataBaseCheck.class, check);
 		

@@ -17,130 +17,143 @@ import cn.bronzeware.muppet.core.DataSourceException;
 import cn.bronzeware.muppet.sqlgenerate.ParamCanNotBeNullException;
 import cn.bronzeware.muppet.util.log.Logger;
 
-
-
 public class DataSourceUtil {
 
 	private String name;
-	
+
 	/**
 	 * &generateSimpleParameterMetadata=true
 	 */
-	private static String driverName = "com.mysql.jdbc.Driver";
-	private static String DRIVERNAME = "drivername";
-	private static  String username = "root";
-	private static  String USERNAME = "username";
+	private String driverName = "com.mysql.jdbc.Driver";
+	private String DRIVERNAME = "drivername";
+	private String username = "root";
+	private String USERNAME = "username";
+
+	private String password = "root";
+	private String PASSWORD = "password";
+
+	private String url = "jdbc:mysql://localhost:3306/muppet?Unicode=true&characterEncoding=utf-8";
+	private String URL = "url";
+
+	private int initialPoolSize = 5;
+	private String INITIALPOOLSIZE = "initialpoolsize";
+
+	private boolean autocommit = true;
+	private String AUTOCOMMIT = "aotocommit";
+
+	private int maxactive = 20;
+	private String MAXACTIVE = "maxactive";
+
+	private int maxidle = 5;
+	private String MAXIDLE = "maxidle";
+
+	private String MINIDLE = "minidle";
+	private int minidle = 1;
+
+	private String MAXWAIT = "maxwait";
+	private int maxwait = 10000;
+
+	private final String CAN_NOT_CONNECTED = "无法获取数据库连接，检查请检查数据库配置是否出现问题";
 	
-	private static String password = "root";
-	private static String PASSWORD = "password";
-	
-	private static String url = "jdbc:mysql://localhost:3306/muppet?Unicode=true&characterEncoding=utf-8";
-	private static String URL = "url";
-	
-	private static int  initialPoolSize = 5;
-	private static String INITIALPOOLSIZE = "initialpoolsize";
-	
-	private static boolean autocommit = true;
-	private static String AUTOCOMMIT = "aotocommit";
-	
-	private static int maxactive = 20;
-	private static String MAXACTIVE = "maxactive";
-	
-	private static int maxidle = 5;
-	private static String MAXIDLE = "maxidle";
-	
-	private static String MINIDLE = "minidle";
-	private static int minidle = 1;
-	
-	private static String MAXWAIT = "maxwait";
-	private static int maxwait = 10000;
-	
-	private static BasicDataSource source = new BasicDataSource();
-	private static boolean isinit = false;
-	
-	
-	
-	
-	public DataSourceUtil(){
-		
+	private BasicDataSource source = new BasicDataSource();
+	private boolean isinit = false;
+
+	public DataSourceUtil() {
+
 	}
-	public String getName(){
+
+	public String getName() {
 		return name;
 	}
 	
-	public DataSourceUtil(Properties properties){
-		if(properties == null){
+	
+	public void isConnected(){
+		Connection connection = null;
+		try{
+			connection = source.getConnection();
+		}catch(Throwable throwable){
+			throw new DataSourceException(throwable, CAN_NOT_CONNECTED);
+		}
+		finally{
+			if(connection != null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					
+				}
+			}
+		}
+	}
+
+	public DataSourceUtil(Properties properties) {
+		if (properties == null) {
 			new ParamCanNotBeNullException("properties").printStackTrace();
-			return ;
-		}else {
-			if(properties.containsKey("datasource_name"))
-			{
+			return;
+		} else {
+			if (properties.containsKey("datasource_name")) {
 				name = properties.getProperty("datasource_name");
 			}
-			
-			if(properties.containsKey(DRIVERNAME)){
+
+			if (properties.containsKey(DRIVERNAME)) {
 				driverName = properties.getProperty(DRIVERNAME);
 			}
-			
-			if(properties.containsKey(AUTOCOMMIT)){
-				if(properties.getProperty(AUTOCOMMIT).equals("true")){
+
+			if (properties.containsKey(AUTOCOMMIT)) {
+				if (properties.getProperty(AUTOCOMMIT).equals("true")) {
 					autocommit = true;
-				}else{
+				} else {
 					autocommit = false;
 				}
 			}
-			
-			if(properties.containsKey(USERNAME))
-			{
+
+			if (properties.containsKey(USERNAME)) {
 				username = properties.getProperty(USERNAME);
 			}
-			
-			if(properties.containsKey(PASSWORD)){
+
+			if (properties.containsKey(PASSWORD)) {
 				password = properties.getProperty(PASSWORD);
 			}
-			
-			if(properties.containsKey(INITIALPOOLSIZE)){
-				initialPoolSize = Integer.parseInt(
-						properties.getProperty(INITIALPOOLSIZE));
+
+			if (properties.containsKey(INITIALPOOLSIZE)) {
+				initialPoolSize = Integer.parseInt(properties.getProperty(INITIALPOOLSIZE));
 			}
-			
-			if(properties.containsKey(URL)){
-				
+
+			if (properties.containsKey(URL)) {
+
 				url = properties.getProperty(URL);
 			}
-			
-			if(properties.containsKey(MAXWAIT)){
+
+			if (properties.containsKey(MAXWAIT)) {
 				maxwait = Integer.parseInt(properties.getProperty(MAXWAIT));
 			}
-			
-			if(properties.containsKey(MAXACTIVE)){
+
+			if (properties.containsKey(MAXACTIVE)) {
 				maxactive = Integer.parseInt(properties.getProperty(MAXACTIVE));
 			}
-			
-			if(properties.containsKey(MAXIDLE)){
+
+			if (properties.containsKey(MAXIDLE)) {
 				maxidle = Integer.parseInt(properties.getProperty(MAXIDLE));
 			}
-			
-			
+
 		}
-		
+
 		initial();
 	}
-	
+
 	@SuppressWarnings("deprecation")
-	private static void initial(){
+	private void initial() {
 		/**
 		 * 初始化数据源
 		 */
 		{
 			// 2. 设置连接池对象
-			//source.
-			if(isinit == true){
-				return ;
+			// source.
+			if (isinit == true) {
+				return;
 			}
-			
+
 			isinit = true;
-			
+
 			source.setDriverClassName(driverName);
 
 			source.setUrl(url);
@@ -168,7 +181,6 @@ public class DataSourceUtil {
 			 */
 			source.setMaxIdle(maxidle);
 
-			
 			/**
 			 * 最小空闲时间
 			 */
@@ -178,74 +190,20 @@ public class DataSourceUtil {
 			 * 最大等待时间
 			 */
 			source.setMaxWait(maxwait);
-			
-			
-			
 		}
-		
 	}
 
-	public  Connection getConnection()
-			throws SQLException {
+	public Connection getConnection() throws SQLException {
 		initial();
 		Connection connection = null;
-		try{
+		try {
 			connection = source.getConnection();
-		}catch(Throwable throwable){
-			DataSourceException e =  new  DataSourceException(throwable, "无法获取数据库连接，检查请检查数据库配置是否出现问题");
+		} catch (Throwable throwable) {
+			DataSourceException e = new DataSourceException(throwable, CAN_NOT_CONNECTED);
 			throw e;
 		}
 		return connection;
 	}
+
 	
-	
-	
-	/*@Override
-	public PrintWriter getLogWriter() throws SQLException {
-		
-		
-		return source.getLogWriter();
-	}
-
-	@Override
-	public void setLogWriter(PrintWriter out) throws SQLException {
-		source.setLogWriter(out);
-	}
-
-	@Override
-	public void setLoginTimeout(int seconds) throws SQLException {
-		source.setLoginTimeout(seconds);
-	}
-
-	@Override
-	public int getLoginTimeout() throws SQLException {
-		
-		return source.getLoginTimeout();
-	}
-
-	@Override
-	public <T> T unwrap(Class<T> iface) throws SQLException {
-		
-		return source.unwrap(iface);
-	}
-
-	@Override
-	public boolean isWrapperFor(Class<?> iface) throws SQLException {
-		
-		return true;
-	}
-
-	@Override
-	public Connection getConnection() throws SQLException {
-		
-		return source.getConnection();
-	}
-
-	@Override
-	public Connection getConnection(String username, String password)
-			throws SQLException {
-		
-		return source.getConnection(username, password);
-	}
-	*/
 }

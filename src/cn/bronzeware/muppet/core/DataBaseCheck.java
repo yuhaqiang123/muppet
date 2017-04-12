@@ -47,6 +47,17 @@ public class DataBaseCheck {
 		}
 	}
 	
+	public DataBaseCheck(ApplicationContext context, DataSourceUtil dataSourceUtil){
+		try {
+			applicationContext  = context;
+			this.dataSourceUtil = dataSourceUtil;
+			connection = dataSourceUtil.getConnection();
+			databaseMetaData = connection.getMetaData();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static void main(String[] args){
 		//DataBaseCheck check = new DataBaseCheck();
 		//DataBaseCheck.TableCheck tableCheck = check.createTableCheck("fji");
