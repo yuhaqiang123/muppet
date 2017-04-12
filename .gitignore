@@ -9,3 +9,4 @@ bin
 muppet.iml
 sloc_hashes
 .gitignore
+out/

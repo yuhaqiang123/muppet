@@ -338,15 +338,16 @@ public class DataBaseCheck {
 					return true;
 				}
 				return false;
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				return false;
 			}
 			finally{
 				try {
-					rs.close();
+					if(rs != null){
+						rs.close();
+					}
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					
 				}
 			}
 			
@@ -707,7 +708,10 @@ public class DataBaseCheck {
 	 * @throws SQLException
 	 */
 	private ResultSet getTable(String tableName) throws SQLException {
-		try {
+		try {/*
+			if(databaseMetaData==null){
+				System.out.println("它是空指针");
+			}*/
 			ResultSet rs = databaseMetaData.
 					getTables(null,"" , tableName,TABLE_TYPE);
 			return rs;

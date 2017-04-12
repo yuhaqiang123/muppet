@@ -13,6 +13,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 import com.sun.istack.internal.NotNull;
 import com.sun.org.apache.xalan.internal.utils.XMLSecurityManager.NameMap;
 
+import cn.bronzeware.muppet.core.DataSourceException;
 import cn.bronzeware.muppet.sqlgenerate.ParamCanNotBeNullException;
 import cn.bronzeware.muppet.util.log.Logger;
 
@@ -187,7 +188,14 @@ public class DataSourceUtil {
 	public  Connection getConnection()
 			throws SQLException {
 		initial();
-		return source.getConnection();
+		Connection connection = null;
+		try{
+			connection = source.getConnection();
+		}catch(Throwable throwable){
+			DataSourceException e =  new  DataSourceException(throwable, "无法获取数据库连接，检查请检查数据库配置是否出现问题");
+			throw e;
+		}
+		return connection;
 	}
 	
 	

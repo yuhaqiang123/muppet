@@ -8,6 +8,11 @@ public class DataSourceException extends InitException {
 		this.msg = msg;
 	}
 	
+	public  DataSourceException(Throwable throwable, String msg) {
+		super(throwable, msg);
+	}
+	
+	
 	@Override
 	public String message() {
 		
