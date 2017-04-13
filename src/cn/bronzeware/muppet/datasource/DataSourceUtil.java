@@ -58,6 +58,8 @@ public class DataSourceUtil {
 	private BasicDataSource source = new BasicDataSource();
 	private boolean isinit = false;
 
+	private DataSourceListener dataSourceListener ;
+	
 	/**
 	 * 数据源key
 	 */
@@ -87,11 +89,20 @@ public class DataSourceUtil {
 		}
 	}
 
-	public DataSourceUtil(Properties properties) {
+	/**
+	 * 
+	 * @param properties 数据源配置
+	 * @param dataSourceListener 监听数据源事件的处理器
+	 */
+	public DataSourceUtil(Properties properties, DataSourceListener dataSourceListener) {
+		setDataSourceListener(dataSourceListener);
+		
 		if (properties == null) {
 			new ParamCanNotBeNullException("properties").printStackTrace();
 			return;
 		} else {
+			
+			
 			if (properties.containsKey("datasource_name")) {
 				dataSourceKey = properties.getProperty("datasource_name");
 			}
@@ -195,6 +206,10 @@ public class DataSourceUtil {
 		}
 	}
 
+	public void setDataSourceListener(DataSourceListener dataSourceListener){
+		this.dataSourceListener = dataSourceListener;
+	}
+	
 	public Connection getConnection() throws SQLException {
 		//initial();
 		Connection connection = null;
@@ -202,7 +217,11 @@ public class DataSourceUtil {
 			connection = source.getConnection();
 		} catch (Throwable throwable) {
 			DataSourceException e = new DataSourceException(throwable, CAN_NOT_CONNECTED);
-			throw e;
+			DataSourceEvent  dataSourceEvent = new DataSourceEvent();
+			dataSourceEvent.setError(e);
+			dataSourceEvent.setKey(dataSourceKey);
+			dataSourceEvent.setType(DataSourceListener.Type.CONNECTED_ERROR);
+			dataSourceListener.event(dataSourceEvent);
 		}
 		return connection;
 	}

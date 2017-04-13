@@ -10,9 +10,7 @@ public class ExceptionUtil {
 	 * @return　RuntimeException
 	 */
 	public static RuntimeException getRuntimeException(Exception e){
-		RuntimeException r = new InitializeException(e.getMessage());
-		r.setStackTrace(e.getStackTrace());
-		r.initCause(e.getCause());
+		RuntimeException r = new InitializeException(e);
 		return r;
 	}
 

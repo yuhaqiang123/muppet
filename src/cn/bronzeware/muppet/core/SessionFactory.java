@@ -70,13 +70,31 @@ public class SessionFactory {
 		return getSession(true);
 	}
 	
+	private DataSourceUtil getDataSourceUtil(String dataSourceKey){
+		try{
+			DataSourceUtil dataSourceUtil = dataSourceManager.getDataSourceUtil(dataSourceKey);
+			return dataSourceUtil;
+		}catch(Exception e){
+			throw new DataSourceException(e);
+		}
+	}
 	
-	public Session getSession(boolean autoCommit){
+	private DataSourceUtil getDataSourceUtil(){
+		try{
+			DataSourceUtil dataSourceUtil = dataSourceManager.getDefaultDataSource();
+			return dataSourceUtil;
+		}catch(Exception e){
+			throw new DataSourceException(e);
+		}
+	}
+
+	
+	private Session initializeSessioin(boolean autoCommit, DataSourceUtil dataSourceUtil){
 		Connection conn = null;
 		try {
-			conn = dataSourceManager.getDefaultDataSource().getConnection();
-		} catch (SQLException e) {
-			e.printStackTrace();
+			conn = dataSourceUtil.getConnection();
+		} catch (Exception e) {
+			throw new DataSourceException(e);
 		}
 		Transaction transaction = baseTransactionFactory.newTransaction(conn, autoCommit);
 		StandardSession session = new StandardSession(transaction, applicationContext);
@@ -87,11 +105,23 @@ public class SessionFactory {
 		session.setContainer(context.getContainer());
 		ThreadLocalTransaction.set(transaction);
 		
-		return session;
 		/*return ReflectUtil.getClassProxy(session
-				,closedHandler
-				, new Class[]{Transaction.class, ApplicationContext.class}
-		, new  Object[]{transaction, applicationContext});*/
+		,closedHandler
+		, new Class[]{Transaction.class, ApplicationContext.class}
+, new  Object[]{transaction, applicationContext});*/
+		return session;
 	}
 	
+	public Session getSession(boolean autoCommit, String dataSourceKey){
+		DataSourceUtil dataSourceUtil = getDataSourceUtil(dataSourceKey);
+		Session session = initializeSessioin(autoCommit, dataSourceUtil);
+		return session;
+	}
+	
+	
+	public Session getSession(boolean autoCommit){
+		DataSourceUtil dataSourceUtil = getDataSourceUtil();
+		Session session = initializeSessioin(autoCommit, dataSourceUtil);
+		return session;
+	}
 }

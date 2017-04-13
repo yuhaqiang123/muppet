@@ -1,18 +1,19 @@
 <muppet>
-<datasource name="main">
+<datasource name="master" default="false">
 	<url value="jdbc:mysql://localhost:3306/study?Unicode=true"/>
 	<username value="root"/>
 	<password value="yuhaiqiang"/>
 </datasource>
 
-<datasource name="datasource2">
-	<url value="jdbc:mysql://localhost:3306/study?Unicode=true"/>
+<datasource name="slave" default="true">
+	<url value="jdbc:mysql://localhost:3306/studyslave?Unicode=true"/>
 	<username value="root"/>
 	<password value="yuhaiqiang"/>
 </datasource>
 
 <entity>
-<package name="cn.bronzeware.muppet.entities" datasource="main"/>
+<package name="cn.bronzeware.muppet.entities" datasource="master"/>
+<package name="cn.bronzeware.muppet.entities" datasource="slave"/>
 </entity>
 
 <buildtable value="false"></buildtable>

@@ -10,6 +10,7 @@ import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.muppet.datasource.DataSourceEvent;
 import cn.bronzeware.muppet.datasource.DataSourceListener;
 import cn.bronzeware.muppet.datasource.DataSourceUtil;
+import cn.bronzeware.muppet.util.log.Logger;
 
 public class DataSourceManager{
 	private ApplicationContext applicationContext = null;
@@ -18,6 +19,8 @@ public class DataSourceManager{
 	private DataSourceResource[] resources = null;
 	
 	private DataSourceListener datasourceListener;
+	
+	private DataSourceUtil defaultDataSource;
 	
 	public DataSourceListener getDatasourceListener() {
 		return datasourceListener;
@@ -55,15 +58,24 @@ public class DataSourceManager{
 	}
 	
 	protected void initialize(){
+		if(resources==null || resources.length==0){
+			throw new DataSourceException(String.format("没有配置数据源"));
+		}
+		
+		defaultDataSource = new DataSourceUtil(resources[0].getProp(), datasourceListener);
+		
 		for(int i = 0;i< resources.length;i++){
-			DataSourceUtil dataSourceUtil = new DataSourceUtil(resources[i].getProp());
+			DataSourceUtil dataSourceUtil = new DataSourceUtil(resources[i].getProp(), datasourceListener);
 			if(null != dataSourceUtilMap.put(dataSourceUtil.getDataSourceKey(), dataSourceUtil)){
 				throw new DataSourceException(String.format("数据源Name配置重复:%s", dataSourceUtil.getDataSourceKey()));
 			}
 		}
+		Logger.println(String.format("默认数据源：%s", defaultDataSource.getDataSourceKey()));
+		/*
 		if(!dataSourceUtilMap.containsKey(DEFAULT_DATASOURCE_NAME)){
 			throw new DataSourceException(String.format("数据原配置错误，没有默认数据源:%s", DEFAULT_DATASOURCE_NAME));
 		}
+		*/
 	}
 	
 	public DataSourceUtil getDataSourceUtil(String key){
@@ -75,8 +87,8 @@ public class DataSourceManager{
 	}
 	
 	public DataSourceUtil getDefaultDataSource(){
-		if(dataSourceUtilMap.containsKey(DEFAULT_DATASOURCE_NAME)){
-			return dataSourceUtilMap.get(DEFAULT_DATASOURCE_NAME);
+		if(defaultDataSource != null){
+			return defaultDataSource;
 		}else{
 			throw new DataSourceException(String.format("没有找到默认数据源"));
 		}

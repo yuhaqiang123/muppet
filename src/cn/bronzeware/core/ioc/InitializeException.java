@@ -5,11 +5,17 @@ package cn.bronzeware.core.ioc;
  */
 public class InitializeException extends RuntimeException{
 
+	public InitializeException(Throwable throwable){
+		super(throwable);
+	}
+	
     private String msg = "";
     public InitializeException(String msg){
         this.msg = msg;
     }
 
+    
+    
     @Override
     public String getMessage() {
         return msg;

@@ -27,7 +27,6 @@ public class FileUtil {
 					if(dir){
 						file.mkdir();
 					}else{
-						System.out.println("H:::: "+file.getAbsolutePath());
 						file.createNewFile();
 					}
 				} catch (IOException e) {
