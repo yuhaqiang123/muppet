@@ -11,21 +11,32 @@ import cn.bronzeware.muppet.datasource.DataSourceUtil;
 import cn.bronzeware.muppet.util.XMLUtil;
 import cn.bronzeware.muppet.util.log.Logger;
 
-public class StandardXMLConfig extends AbstractConfig implements XMLConfig{
+public class StandardXMLConfig extends AbstractConfig implements XMLConfig, DataSourceXMLConfig{
 
 	private StandardDataSourceXMLConfig config;
 	
 	private DataSourceManager dataSourceManager;
 	
+	private DataSourceResource[] dataSourceResources;
+	
+	private DataSourceListener dataSourceListener;
+	
 	public StandardXMLConfig(String xmlPath,ApplicationContext applicationContext) {
 		super(xmlPath);
 		
 		config = new StandardDataSourceXMLConfig(getXMLConfigResource());
-		DataSourceResource[] dataSourceResources = config.getDataSourceInfo();
-		DataSourceListener dataSourceListener = config.getDataSourceListener();
-		
-		dataSourceManager = new DataSourceManager(dataSourceResources, applicationContext);
-		dataSourceManager.setDatasourceListener(dataSourceListener);
+		dataSourceResources = config.getDataSourceInfo();
+		dataSourceListener = config.getDataSourceListener();
+	}
+
+	@Override
+	public DataSourceResource[] getDataSourceInfo() {
+		return dataSourceResources;
+	}
+
+	@Override
+	public DataSourceListener getDataSourceListener() {
+		return dataSourceListener;
 	}
 	
 	

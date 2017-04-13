@@ -18,7 +18,7 @@ public class FileUtil {
 		createFile(file, false);
 	}
 	
-	private static void createFile(File file, boolean dir){
+	public static void createFile(File file, boolean dir){
 		if(!file.getParentFile().exists()){
 			createFile(file.getParentFile(), true);
 		}else{
@@ -27,6 +27,7 @@ public class FileUtil {
 					if(dir){
 						file.mkdir();
 					}else{
+						System.out.println("H:::: "+file.getAbsolutePath());
 						file.createNewFile();
 					}
 				} catch (IOException e) {
@@ -36,6 +37,13 @@ public class FileUtil {
 		}
 	}
 	
+	public static String convertFilePathOnOs(String path){
+		String osName = System.getProperty("os.name");
+		if(osName.startsWith("Windows")){
+			path = path.replace("/", File.separator);
+		}
+		return path;
+	}
 	
 	
 	public static void write(byte[] data,String path){

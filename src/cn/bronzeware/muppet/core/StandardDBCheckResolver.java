@@ -7,6 +7,8 @@ import cn.bronzeware.muppet.annotations.NotInTable;
 import cn.bronzeware.muppet.annotations.Table;
 import cn.bronzeware.muppet.core.DataBaseCheck.ColumnCheck;
 import cn.bronzeware.muppet.core.DataBaseCheck.TableCheck;
+import cn.bronzeware.muppet.datasource.DataSourceEvent;
+import cn.bronzeware.muppet.datasource.DataSourceListener;
 import cn.bronzeware.muppet.resource.ColumnInfo;
 import cn.bronzeware.muppet.resource.ResourceInfo;
 import cn.bronzeware.muppet.resource.ResourceNotFoundException;
@@ -16,8 +18,11 @@ public class StandardDBCheckResolver implements ResourceResolve{
 
 	private DataBaseCheck check;
 	
-	public StandardDBCheckResolver(DataBaseCheck check) {
+	private DataSourceListener dataSourceListener;
+	
+	public StandardDBCheckResolver(DataBaseCheck check, DataSourceListener dataSourceListener) {
 		this.check = check;
+		this.dataSourceListener = dataSourceListener;
 	}
 	
 	@Override
@@ -32,15 +37,13 @@ public class StandardDBCheckResolver implements ResourceResolve{
 			TableCheck tableCheck = 
 					check.createTableCheck(tableName);
 			if(!tableCheck.isExist()){
+				InitException e =  new InitException("没有找到与"+clazzName+"相关的表"+tableName1);
+				DataSourceEvent dataSourceEvent = new DataSourceEvent();
+				dataSourceEvent.setError(e);
 				
-				throw new InitException() {
-					
-					@Override
-					public String message() {
-						
-						return "没有找到与"+clazzName+"相关的表"+tableName1;
-					}
-				};
+				dataSourceEvent.setKey(check.getDataSourceUtil().getDataSourceKey());
+				dataSourceEvent.setType(DataSourceListener.Type.TABLE_NOT_EXISTS);
+				dataSourceListener.event(dataSourceEvent);
 			}
 			else{
 				TableInfo tableInfo = checkExistedTable(tableName1, clazz);

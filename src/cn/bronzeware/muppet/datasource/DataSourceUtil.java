@@ -19,7 +19,7 @@ import cn.bronzeware.muppet.util.log.Logger;
 
 public class DataSourceUtil {
 
-	private String name;
+	
 
 	/**
 	 * &generateSimpleParameterMetadata=true
@@ -29,7 +29,7 @@ public class DataSourceUtil {
 	private String username = "root";
 	private String USERNAME = "username";
 
-	private String password = "root";
+	private String password = "yuhaiqiang";
 	private String PASSWORD = "password";
 
 	private String url = "jdbc:mysql://localhost:3306/muppet?Unicode=true&characterEncoding=utf-8";
@@ -58,12 +58,14 @@ public class DataSourceUtil {
 	private BasicDataSource source = new BasicDataSource();
 	private boolean isinit = false;
 
-	public DataSourceUtil() {
-
-	}
-
-	public String getName() {
-		return name;
+	/**
+	 * 数据源key
+	 */
+	private String dataSourceKey;
+	
+	
+	public String getDataSourceKey(){
+		return dataSourceKey;
 	}
 	
 	
@@ -91,7 +93,7 @@ public class DataSourceUtil {
 			return;
 		} else {
 			if (properties.containsKey("datasource_name")) {
-				name = properties.getProperty("datasource_name");
+				dataSourceKey = properties.getProperty("datasource_name");
 			}
 
 			if (properties.containsKey(DRIVERNAME)) {
@@ -194,7 +196,7 @@ public class DataSourceUtil {
 	}
 
 	public Connection getConnection() throws SQLException {
-		initial();
+		//initial();
 		Connection connection = null;
 		try {
 			connection = source.getConnection();

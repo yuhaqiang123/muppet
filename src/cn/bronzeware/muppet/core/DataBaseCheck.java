@@ -58,10 +58,8 @@ public class DataBaseCheck {
 		}
 	}
 	
-	public static void main(String[] args){
-		//DataBaseCheck check = new DataBaseCheck();
-		//DataBaseCheck.TableCheck tableCheck = check.createTableCheck("fji");
- 
+	public DataSourceUtil getDataSourceUtil(){
+		return this.dataSourceUtil;
 	}
 	
 	private class SqlTypeAndLength{

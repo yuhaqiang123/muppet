@@ -53,6 +53,17 @@ public class StandardResourceBuilder {
 		this.dataBaseCheck = context.getBean(DataBaseCheck.class);
 		this.dataSourceUtil = context.getBean(DataSourceManager.class).getDefaultDataSource();
 	}
+	
+	public StandardResourceBuilder(ApplicationContext context
+			,DataBaseCheck dataBaseCheck
+			,DataSourceUtil dataSourceUtil) {
+		this.applicationContext = context;
+		tableGenerate = new TableGenerate(applicationContext);
+		this.dataBaseCheck = dataBaseCheck;
+		this.dataSourceUtil = dataSourceUtil;
+	}
+	
+	
 	private DataBaseCheck dataBaseCheck ;
 	private TableGenerate tableGenerate = null;
 	

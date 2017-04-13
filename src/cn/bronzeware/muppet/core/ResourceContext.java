@@ -1,5 +1,6 @@
 package cn.bronzeware.muppet.core;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -8,6 +9,10 @@ import javax.activation.DataSource;
 import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.core.ioc.AutowiredApplicationContext;
 import cn.bronzeware.muppet.context.ContextFactory;
+import cn.bronzeware.muppet.datasource.DataSourceListener;
+import cn.bronzeware.muppet.datasource.DataSourceUtil;
+import cn.bronzeware.muppet.datasource.EntityPackage;
+import cn.bronzeware.muppet.datasource.EntityPkgOnDataSourceConfig;
 import cn.bronzeware.muppet.listener.Event;
 import cn.bronzeware.muppet.listener.EventType;
 import cn.bronzeware.muppet.listener.Listened;
@@ -34,6 +39,7 @@ public class ResourceContext implements Contained,Listened{
 	private ContextFactory factory = null;
 	private DataBaseCheck check = null;
 	private EntityMappingDBXMLConfig resourceConfig ;
+	private EntityPkgOnDataSourceConfig entityPkgOnDataSourceConfig;
 	private ResourceLoad resourceLoader;
 	private StandardResourceBuilder resourceBuild =null;
 	
@@ -77,41 +83,72 @@ public class ResourceContext implements Contained,Listened{
 		
 		applicationContext.registerBean(ResourceContext.class, this);
 		
-		XMLConfig config = new StandardXMLConfig(configFilePath, applicationContext);
+		StandardXMLConfig config = new StandardXMLConfig(configFilePath, applicationContext);
 		applicationContext.registerBean(StandardXMLConfig.class, config);
 		
-		resourceConfig = new StandardEntityMappingDBXMLConfig(config.getXMLConfigResource());
+		
+		/**
+		 * 获取实体bean和数据scheme映射的信息
+		 */
+		resourceConfig = getEntityMappingDBXMLConfig(config);
+		//注册进容器
 		applicationContext.registerBean(StandardEntityMappingDBXMLConfig.class, resourceConfig);
 		
-		isBuilded = resourceConfig.isBuilded();
 		
-		dataSourceManager = applicationContext.getBean(DataSourceManager.class);
+		/**
+		 * 获取数据源管理器
+		 */
+		dataSourceManager = getDataSourceListener(config);
+		
+		/**
+		 * 检查数据源
+		 */
 		dataSourceManager.datasourceCheck();
 		
-		check = new DataBaseCheck(applicationContext);
-		applicationContext.registerBean(DataBaseCheck.class, check);
 		
-		resourceBuild = new StandardResourceBuilder(applicationContext);
-		applicationContext.registerBean(StandardResourceBuilder.class , resourceBuild);
+		entityPkgOnDataSourceConfig = (EntityPkgOnDataSourceConfig)resourceConfig;
+		List<EntityPackage> entityPackages = entityPkgOnDataSourceConfig.getEntityPackage();
 		
-		if(isBuilded){
-			resolver = new StandardAnnoResolver(applicationContext);
-		}else{
-			resolver = new StandardDBCheckResolver(check);
-		}
-		String[] basePackets = resourceConfig.getResourcePackageNames();
 		resourceLoader = new StandardResourceLoader();
 		applicationContext.registerBean(StandardResourceLoader.class, resourceLoader);
 		
 		applicationContext.registerBean(Container.class, this.container);
-		Map<String, Class<?>[]> map = resourceLoader.loadClass(basePackets);
-		resolveResource(map);
+		/**
+		 * 是否根据数据源配置 建设数据库scheme
+		 */
+		isBuilded = resourceConfig.isBuilded();
+		
+		for(EntityPackage p:entityPackages){
+			String dataSourceKey = p.getDataSourceKey();
+			String pkgName = p.getPkgName();
+			DataSourceUtil dataSourceUtil = dataSourceManager.getDataSourceUtil(dataSourceKey);
+			DataBaseCheck check = new DataBaseCheck(applicationContext, dataSourceUtil);
+			if(isBuilded){
+				resolver = new StandardAnnoResolver(applicationContext);
+			}else{
+				resolver = new StandardDBCheckResolver(check, dataSourceManager.getDatasourceListener());
+			}
+			resourceBuild = new StandardResourceBuilder(applicationContext, check, dataSourceUtil);
+			
+			Map<String, Class<?>[]> map = resourceLoader.loadClass(new String[]{pkgName});
+			resolveResource(map);
+		}
 		
 		started();
 		//RESOURCE_CONTEXT_INIT_POST
 		listeners.event(EventType.RESOURCE_CONTEXT_INIT_POST, new Event(applicationContext, null));
 	}
 	
+	private DataSourceManager getDataSourceListener(StandardXMLConfig config){
+		dataSourceManager = new DataSourceManager(config.getDataSourceInfo(), applicationContext);
+		dataSourceManager.setDatasourceListener(config.getDataSourceListener());
+		return dataSourceManager;
+	}
+	
+	private EntityMappingDBXMLConfig getEntityMappingDBXMLConfig(StandardXMLConfig config){
+		resourceConfig = new StandardEntityMappingDBXMLConfig(config.getXMLConfigResource());
+		return resourceConfig;
+	}
 	
 	private boolean hasStarted(){
 		return isBooted;

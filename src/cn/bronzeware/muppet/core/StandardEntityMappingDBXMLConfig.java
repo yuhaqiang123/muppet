@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import cn.bronzeware.muppet.datasource.EntityPackage;
+import cn.bronzeware.muppet.datasource.EntityPkgOnDataSourceConfig;
 import cn.bronzeware.muppet.exceptions.ExcpMsg;
 import cn.bronzeware.muppet.util.Utils;
 import cn.bronzeware.muppet.util.autogenerate.EntityMappingDBResource;
@@ -33,15 +36,21 @@ import cn.bronzeware.muppet.util.log.Logger;
  * @author 董浩
  *
  */
-public class StandardEntityMappingDBXMLConfig extends AbstractConfig implements EntityMappingDBXMLConfig{
+public class StandardEntityMappingDBXMLConfig extends AbstractConfig 
+								implements EntityMappingDBXMLConfig, EntityPkgOnDataSourceConfig{
 
 	
 	
 	private String[] packetNames = null;
+	
 	private String configPaths;
+	
 	private boolean buildTable = false;
 	
+	private List<EntityPackage> entityPackages;
+	
 	public static final String XML_PACKAGE_ROOT = "#" + XML_ROOT_KEY + "#" +"entity" + "#" +"package";
+	
 	public static final String XML_BUILD_TABLE = "#" + XML_ROOT_KEY + "#" + "buildtable";
 	
 	
@@ -81,13 +90,23 @@ public class StandardEntityMappingDBXMLConfig extends AbstractConfig implements 
 				throw new ResourceConfigException(configPaths+ExcpMsg.CANNOT_FOUND_RESOURCE_PACKAGE_TAGS);
 			}
 			packetNames = new String[list.size()];
+			List<EntityPackage> entityPackages = new ArrayList<>(list.size());
 			int i = 0;
 			for (Node node:list) {
 				NamedNodeMap nodeMap = node.getAttributes();
 				String packetname = nodeMap.getNamedItem("name").getNodeValue();
+				String dataSource = null;
+				if(nodeMap.getNamedItem("datasource") != null){
+					dataSource = nodeMap.getNamedItem("datasource").getNodeValue();
+				}
+				EntityPackage entityPackage = new EntityPackage();
+				entityPackage.setDataSourceKey(dataSource);
+				entityPackage.setPkgName(packetname);
+				entityPackages.add(entityPackage);
 				packetNames[i] = packetname;
 				i++;
 			}
+			this.entityPackages = entityPackages;
 			entityMappingDBXMLResource.setPackages(packetNames);
 		}catch(Exception e){
 			if(e instanceof ResourceConfigException){
@@ -123,6 +142,12 @@ public class StandardEntityMappingDBXMLConfig extends AbstractConfig implements 
 	@Override
 	public boolean isBuilded() {
 		return this.buildTable;
+	}
+
+
+	@Override
+	public List<EntityPackage> getEntityPackage() {
+		return this.entityPackages;
 	}
 
 }

@@ -18,6 +18,11 @@ public class DataSourceManager{
 	private DataSourceResource[] resources = null;
 	
 	private DataSourceListener datasourceListener;
+	
+	public DataSourceListener getDatasourceListener() {
+		return datasourceListener;
+	}
+
 	private Map<String, DataSourceUtil> dataSourceUtilMap = new HashMap<>();
 	
 	public DataSourceManager(DataSourceResource[] resources ,ApplicationContext applicationContext){
@@ -52,8 +57,8 @@ public class DataSourceManager{
 	protected void initialize(){
 		for(int i = 0;i< resources.length;i++){
 			DataSourceUtil dataSourceUtil = new DataSourceUtil(resources[i].getProp());
-			if(null != dataSourceUtilMap.put(dataSourceUtil.getName(), dataSourceUtil)){
-				throw new DataSourceException(String.format("数据源Name配置重复:%s", dataSourceUtil.getName()));
+			if(null != dataSourceUtilMap.put(dataSourceUtil.getDataSourceKey(), dataSourceUtil)){
+				throw new DataSourceException(String.format("数据源Name配置重复:%s", dataSourceUtil.getDataSourceKey()));
 			}
 		}
 		if(!dataSourceUtilMap.containsKey(DEFAULT_DATASOURCE_NAME)){

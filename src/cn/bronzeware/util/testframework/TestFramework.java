@@ -125,14 +125,14 @@ public class TestFramework {
 		TestFrameworkApplicationContext applicationContext = new TestFrameworkApplicationContext(config);
 		TestFramework testFramework = new TestFramework(applicationContext);
 		testFramework.invokeAll();
-		String path = String.format("bin/test/xml/%s.xml", System.currentTimeMillis());
+		String path = String.format(FileUtil.convertFilePathOnOs("bin/test/xml/%s.xml"), System.currentTimeMillis());
 		//String path = String.format("bin/test/serialize/%s.serial", System.currentTimeMillis());
 		TestUnitStorage storage = new XmlTestUnitStorage(path);
 		//ArrayUtil.println(testFramework.getTestUnits());
 
 		Map<String, Map<String, TestUnitMetaData>> oldMap = testFramework.getUnitMap("bin/test/xml");
 		storage.store(testFramework.getTestUnits());
-		HtmlTestUnitStorage html = new HtmlTestUnitStorage("bin/test/html");
+		HtmlTestUnitStorage html = new HtmlTestUnitStorage(FileUtil.convertFilePathOnOs("bin/test/html"));
 		Map<String, File> fileMap = html.initialize(oldMap, testFramework.getTestUnits());
 		
 		//ArrayUtil.println(storage.resolve());

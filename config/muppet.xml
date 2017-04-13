@@ -12,7 +12,7 @@
 </datasource>
 
 <entity>
-<package name="cn.bronzeware.muppet.entities"/>
+<package name="cn.bronzeware.muppet.entities" datasource="main"/>
 </entity>
 
 <buildtable value="false"></buildtable>
@@ -24,7 +24,6 @@
 
 <beans>
 <bean name="" class="" ></bean>
-
 </beans>
 
 

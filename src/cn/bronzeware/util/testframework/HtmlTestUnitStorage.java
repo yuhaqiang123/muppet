@@ -30,7 +30,7 @@ public class HtmlTestUnitStorage {
 	
 	public Map<String, File> initialize(Map<String, Map<String, TestUnitMetaData>> unitMaps,Map<String, TestUnitMetaData> unit){
 		File file = new File(path);
-		FileUtil.createFile(file);
+		FileUtil.createFile(file, true);
 		File[] files = file.listFiles(new FileFilter() {
 			
 			@Override
@@ -38,8 +38,10 @@ public class HtmlTestUnitStorage {
 				return true;
 			}
 		});
-		for(File f:files){
-			f.delete();
+		if(files != null){
+			for(File f:files){
+				f.delete();
+			}
 		}
 		
 		Map<String, File> fileMap = new TreeMap<>(new Comparator<String>() {
@@ -101,7 +103,7 @@ public class HtmlTestUnitStorage {
 		File file = null;
 		try {
 			file = new File(String.format("%s/%s.html", path,
-					new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+					new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss")
 					.format(new Date(Long.parseLong(time)))));
 			FileUtil.createFile(file);
 			FileOutputStream fos = new FileOutputStream(file);

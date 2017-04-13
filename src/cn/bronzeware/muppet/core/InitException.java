@@ -1,10 +1,11 @@
 package cn.bronzeware.muppet.core;
 
 
-public abstract class InitException extends RuntimeException {
+public  class InitException extends RuntimeException {
 
 	
 	public InitException() {
+		
 	}
 	private String msg = null;
 	
@@ -25,10 +26,12 @@ public abstract class InitException extends RuntimeException {
 	@Override
 	public final String getMessage() {
 		
-		return msg == null ? "初始化出现错误->" : msg +message();
+		return msg == null ? "初始化出现错误->" : msg + message();
 	}
 
 	
-	public abstract String message();
+	public  String message(){
+		return "";
+	}
 	
 }

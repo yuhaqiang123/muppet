@@ -17,7 +17,7 @@ public class TestDataBaseMetaData {
 	 * @throws SQLException 
 	 */
 	public static void main(String[] args) throws SQLException{
-		Connection connection = new DataSourceUtil().getConnection();
+		/*Connection connection = new DataSourceUtil().getConnection();
 		DatabaseMetaData metaData = connection.getMetaData();
 		ResultSet rs = metaData.getTypeInfo();
 		while (rs.next()) {
@@ -26,6 +26,6 @@ public class TestDataBaseMetaData {
 			System.out.println(rs.getString("PRECISION"));
 		}
 		CloseUtil.close(connection);
-		CloseUtil.close(rs);
+		CloseUtil.close(rs);*/
 	}
 }

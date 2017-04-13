@@ -26,6 +26,8 @@ public class SessionFactory {
 	private ResourceContext context;
 	private ContextFactory contextFactory;
 	
+	private DataSourceManager dataSourceManager;
+	
 	private  InsertContext insertContext ;
 	private  SelectContext selectContext ;
 	private  UpdateContext updateContext ;
@@ -58,6 +60,8 @@ public class SessionFactory {
 		applicationContext.registerBean(insertContext);
 		applicationContext.registerBean(updateContext);
 		applicationContext.registerBean(deleteContext);
+		dataSourceManager = applicationContext.getBean(DataSourceManager.class);
+		
 		closedHandler = new ClosedInvocationHandler();
 	}
 	
@@ -70,7 +74,7 @@ public class SessionFactory {
 	public Session getSession(boolean autoCommit){
 		Connection conn = null;
 		try {
-			conn = new DataSourceUtil().getConnection();
+			conn = dataSourceManager.getDefaultDataSource().getConnection();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

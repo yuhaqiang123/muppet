@@ -3,7 +3,7 @@ package cn.bronzeware.muppet.core;
 
 /**
  * 
- * @author 董浩
+ * @author 于海强
  * 2016年8月8日 下午2:58:33
  * @version 1.4
  * @since 1.4

@@ -11,5 +11,6 @@ public interface DataSourceListener {
 		AFTER_CHECK,*/
 		CONNECTED_ERROR,
 		CLOSED,
+		TABLE_NOT_EXISTS,
 	}
 }
