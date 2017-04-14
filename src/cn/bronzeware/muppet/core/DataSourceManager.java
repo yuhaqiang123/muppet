@@ -31,6 +31,7 @@ public class DataSourceManager{
 	public DataSourceManager(DataSourceResource[] resources ,ApplicationContext applicationContext){
 		this.applicationContext = applicationContext;
 		this.resources = resources;
+		setDatasourceListener(applicationContext.getBean(DataSourceListener.class));
 		applicationContext.registerBean(DataSourceManager.class, this);
 		initialize();
 	}

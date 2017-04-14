@@ -23,13 +23,13 @@ public class TestBigData {
 	*/
 	public TestBigData(){
 		factroy = new SessionFactory("muppet.xml");
-		muppet = factroy.getSession();
 	}
 	
 	@Test
 	public  void test1(){
+
+		muppet = factroy.getSession();
 		long start = System.currentTimeMillis();
-		
 		Criteria criteria = muppet.createCriteria(BlogHouse.class);
 		//criteria.andPropEqual("source", "http://www.cnblogs.com/wangtao_20/p/3539960.html");
 		criteria.andPropEqual("title", "《数据库系统实现》读书笔记 - 王滔 - 博客园");
@@ -37,10 +37,13 @@ public class TestBigData {
 		List<BlogHouse> list = criteria.list();
 		//ArrayUtil.println(list);
 		long end = System.currentTimeMillis();
+		muppet.close();
 	}
 	@Test
 	public  void test2(){
+		muppet = factroy.getSession();
 		ArrayUtil.println(muppet.query("SHOW CREATE TABLE tb_bloghouse", null));
+		muppet.close();
 	}
 	
 	

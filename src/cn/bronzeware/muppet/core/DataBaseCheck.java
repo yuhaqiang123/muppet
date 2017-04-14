@@ -47,6 +47,10 @@ public class DataBaseCheck {
 		}
 	}
 	
+	/*private DatabaseMetaData getDataSourceMetaData(){
+		
+	}*/
+	
 	public DataBaseCheck(ApplicationContext context, DataSourceUtil dataSourceUtil){
 		try {
 			applicationContext  = context;

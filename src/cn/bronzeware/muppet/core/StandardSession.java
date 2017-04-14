@@ -50,9 +50,9 @@ class StandardSession implements Session,Closed{
 	
 	
 	public boolean close(){
-		/*if(close==true){
+		if(close==true){
 			return true;
-		}*/
+		}
 		try {
 			close = true;
 			commit();//如果是自动提交就默认不执行

@@ -140,8 +140,8 @@ public class ResourceContext implements Contained,Listened{
 	}
 	
 	private DataSourceManager getDataSourceListener(StandardXMLConfig config){
+		applicationContext.registerBean(DataSourceListener.class, config.getDataSourceListener());
 		dataSourceManager = new DataSourceManager(config.getDataSourceInfo(), applicationContext);
-		dataSourceManager.setDatasourceListener(config.getDataSourceListener());
 		return dataSourceManager;
 	}
 	

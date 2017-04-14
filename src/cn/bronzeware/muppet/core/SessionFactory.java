@@ -35,9 +35,9 @@ public class SessionFactory {
 	
 	private ClosedInvocationHandler closedHandler;
 	
-	private TransactionFactory baseTransactionFactory = 
+	/*private TransactionFactory baseTransactionFactory = 
 			new BaseTransactionFactory();
-	
+*/	
 	
 	public SessionFactory(String config){
 		/**
@@ -96,7 +96,8 @@ public class SessionFactory {
 		} catch (Exception e) {
 			throw new DataSourceException(e);
 		}
-		Transaction transaction = baseTransactionFactory.newTransaction(conn, autoCommit);
+		Transaction transaction = BaseTransactionFactory
+									.newBaseTransactionFactory(dataSourceUtil).newTransaction(conn, autoCommit);
 		StandardSession session = new StandardSession(transaction, applicationContext);
 		session.setDeleteContext(deleteContext);
 		session.setInsertContext(insertContext);

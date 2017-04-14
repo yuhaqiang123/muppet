@@ -1,5 +1,6 @@
 package cn.bronzeware.muppet.datasource;
 
+import java.sql.Connection;
 import java.util.Map;
 
 public class DataSourceEvent {
@@ -9,6 +10,18 @@ public class DataSourceEvent {
 	private DataSourceListener.Type type;
 	
 	private Exception error;
+	
+	private ConnectionRecord connectionRecord;
+	
+	
+
+	public ConnectionRecord getConnectionRecord() {
+		return connectionRecord;
+	}
+
+	public void setConnectionRecord(ConnectionRecord connectionRecord) {
+		this.connectionRecord = connectionRecord;
+	}
 
 	public String getKey() {
 		return key;

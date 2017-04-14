@@ -135,8 +135,5 @@ public class TestFramework {
 		HtmlTestUnitStorage html = new HtmlTestUnitStorage(FileUtil.convertFilePathOnOs("bin/test/html"));
 		Map<String, File> fileMap = html.initialize(oldMap, testFramework.getTestUnits());
 		
-		//ArrayUtil.println(storage.resolve());
-		//Set<Object> set = applicationContext.getTestUnit();
-		//System.out.println(set.size());
 	}
 }

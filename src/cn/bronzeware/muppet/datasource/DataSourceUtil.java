@@ -1,15 +1,21 @@
 package cn.bronzeware.muppet.datasource;
 
 import java.io.PrintWriter;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Base64;
 import java.util.Properties;
+import java.util.Random;
+import java.util.UUID;
 
 import javax.sql.DataSource;
 import javax.xml.transform.Source;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
+import com.sun.corba.se.impl.protocol.giopmsgheaders.Message;
 import com.sun.istack.internal.NotNull;
 import com.sun.org.apache.xalan.internal.utils.XMLSecurityManager.NameMap;
 
@@ -61,6 +67,20 @@ public class DataSourceUtil {
 	private DataSourceListener dataSourceListener ;
 	
 	/**
+	 * 每次获取Connection时，将ConnectionId放到局部变量中
+	 */
+	private final ThreadLocal<ConnectionRecord> connectionIdLocal = new ThreadLocal<>();
+	
+	public ThreadLocal<ConnectionRecord> getConnectionIdLocal() {
+		return connectionIdLocal;
+	}
+
+
+	public DataSourceListener getDataSourceListener() {
+		return dataSourceListener;
+	}
+
+	/**
 	 * 数据源key
 	 */
 	private String dataSourceKey;
@@ -75,16 +95,57 @@ public class DataSourceUtil {
 		Connection connection = null;
 		try{
 			connection = source.getConnection();
+			
+			DataSourceEvent event = new DataSourceEvent();
+			event.setKey(dataSourceKey);
+			event.setType(DataSourceListener.Type.BOOT_CONNECTED_SUCCESS);
+			ConnectionRecord connectionRecord = new ConnectionRecord();
+			connectionRecord.setConnectionId(UUID.randomUUID().toString());
+			connectionRecord.setConnectionStartTime(System.currentTimeMillis());
+			connectionRecord.setDataSourceKey(dataSourceKey);
+			connectionIdLocal.set(connectionRecord);
+			event.setConnectionRecord(connectionRecord);
+			dataSourceListener.event(event);
+			
 		}catch(Throwable throwable){
-			throw new DataSourceException(throwable, CAN_NOT_CONNECTED);
+			DataSourceException e =  new DataSourceException(throwable, CAN_NOT_CONNECTED);
+			
+			DataSourceEvent event = new DataSourceEvent();
+			event.setError(e);
+			event.setKey(dataSourceKey);
+			event.setType(DataSourceListener.Type.BOOT_CONNECTED_ERROR);
+			ConnectionRecord connectionRecord = new ConnectionRecord();
+			connectionRecord.setConnectionStartTime(System.currentTimeMillis());
+			connectionRecord.setConnectionEndTime(System.currentTimeMillis());
+			connectionRecord.setConnectionId(UUID.randomUUID().toString());
+			connectionRecord.setDataSourceKey(dataSourceKey);
+			event.setConnectionRecord(connectionRecord);
+			
+			dataSourceListener.event(event);
+			throw e;
 		}
 		finally{
 			if(connection != null){
+				DataSourceEvent event = new DataSourceEvent();
 				try {
 					connection.close();
-				} catch (SQLException e) {
+					event.setKey(dataSourceKey);
+					event.setType(DataSourceListener.Type.BOOT_CONNECTION_CLOSED_SUCCESS);
 					
+					ConnectionRecord connectionRecord = connectionIdLocal.get();
+					connectionRecord.setConnectionEndTime(System.currentTimeMillis());
+					event.setConnectionRecord(connectionRecord);
+				} catch (SQLException e) {
+					event.setKey(dataSourceKey);
+					event.setType(DataSourceListener.Type.BOOT_CONNECTION_CLOSED_ERROR);
+					event.setError(e);
+					
+					ConnectionRecord connectionRecord = connectionIdLocal.get();
+					connectionRecord.setConnectionEndTime(System.currentTimeMillis());
+					event.setConnectionRecord(connectionRecord);
 				}
+				connectionIdLocal.remove();
+				dataSourceListener.event(event);
 			}
 		}
 	}
@@ -213,14 +274,33 @@ public class DataSourceUtil {
 	public Connection getConnection() throws SQLException {
 		//initial();
 		Connection connection = null;
+		DataSourceEvent  dataSourceEvent = new DataSourceEvent();
 		try {
 			connection = source.getConnection();
+			
+			dataSourceEvent.setType(DataSourceListener.Type.CONNECTED_SUCCESS);
+			dataSourceEvent.setKey(dataSourceKey);
+			String connectionId = UUID.randomUUID().toString();
+			ConnectionRecord connectionRecord  = new ConnectionRecord();
+			connectionRecord.setConnectionId(connectionId);
+			connectionRecord.setConnectionStartTime(System.currentTimeMillis());
+			connectionRecord.setDataSourceKey(dataSourceKey);
+			connectionRecord.setConnectionEndTime(-1);
+			this.connectionIdLocal.set(connectionRecord);
+			dataSourceEvent.setConnectionRecord(connectionRecord);
+			dataSourceListener.event(dataSourceEvent);
 		} catch (Throwable throwable) {
 			DataSourceException e = new DataSourceException(throwable, CAN_NOT_CONNECTED);
-			DataSourceEvent  dataSourceEvent = new DataSourceEvent();
 			dataSourceEvent.setError(e);
 			dataSourceEvent.setKey(dataSourceKey);
+			
 			dataSourceEvent.setType(DataSourceListener.Type.CONNECTED_ERROR);
+			ConnectionRecord connectionRecord  = new ConnectionRecord();
+			connectionRecord.setConnectionStartTime(System.currentTimeMillis());
+			connectionRecord.setDataSourceKey(dataSourceKey);
+			connectionRecord.setConnectionEndTime(System.currentTimeMillis());
+			dataSourceEvent.setConnectionRecord(connectionRecord);
+			
 			dataSourceListener.event(dataSourceEvent);
 		}
 		return connection;
