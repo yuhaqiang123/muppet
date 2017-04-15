@@ -37,29 +37,26 @@ public class DataBaseCheck {
 	DataSourceUtil dataSourceUtil ;
 	ApplicationContext applicationContext;
 	public DataBaseCheck(ApplicationContext context){
-		try {
-			applicationContext  = context;
-			dataSourceUtil = applicationContext.getBean(DataSourceManager.class).getDefaultDataSource();
-			connection = dataSourceUtil.getConnection();
-			databaseMetaData = connection.getMetaData();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		applicationContext  = context;
+		dataSourceUtil = applicationContext.getBean(DataSourceManager.class).getDefaultDataSource();
 	}
 	
-	/*private DatabaseMetaData getDataSourceMetaData(){
-		
-	}*/
+	private DatabaseMetaData getDataSourceMetaData()throws SQLException{
+		if(databaseMetaData == null){
+			try{
+				connection = dataSourceUtil.getConnection();
+				databaseMetaData = connection.getMetaData();
+				return databaseMetaData;
+			}catch(SQLException e){
+				throw e;
+			}
+		}
+		return databaseMetaData;
+	}
 	
 	public DataBaseCheck(ApplicationContext context, DataSourceUtil dataSourceUtil){
-		try {
-			applicationContext  = context;
-			this.dataSourceUtil = dataSourceUtil;
-			connection = dataSourceUtil.getConnection();
-			databaseMetaData = connection.getMetaData();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		applicationContext  = context;
+		this.dataSourceUtil = dataSourceUtil;
 	}
 	
 	public DataSourceUtil getDataSourceUtil(){
@@ -84,7 +81,7 @@ public class DataBaseCheck {
 	 */
 	private SqlTypeAndLength getSqlTypeWithLength(String tableName,String columnName) throws SQLException{
 		try {
-			ResultSet rs = databaseMetaData.getColumns(null, null, tableName,"%%");
+			ResultSet rs = getDataSourceMetaData().getColumns(null, null, tableName,"%%");
 			while(rs.next()){
 				String column = rs.getString("COLUMN_NAME");
 				if(column.equals(columnName)){
@@ -122,8 +119,7 @@ public class DataBaseCheck {
 	 */
 	private boolean isPrimaryKey(String tableName,String columnName) throws SQLException{
 		try {
-			
-			ResultSet rs = databaseMetaData.getPrimaryKeys(null, null, tableName);
+			ResultSet rs = getDataSourceMetaData().getPrimaryKeys(null, null, tableName);
 			while(rs.next()){
 				String column = rs.getString("COLUMN_NAME");
 				if(column.equals(columnName)){
@@ -147,7 +143,7 @@ public class DataBaseCheck {
 	private String getDefaultValue(String tableName,String columnName) throws SQLException{
 		ResultSet rs = null;
 		try {
-			rs = databaseMetaData.getColumns(null, null, tableName,"%%");
+			rs = getDataSourceMetaData().getColumns(null, null, tableName,"%%");
 			while(rs.next()){
 				String column = rs.getString("COLUMN_NAME");
 				if(columnName.equals(column)){
@@ -175,7 +171,7 @@ public class DataBaseCheck {
 	private boolean isNullable(String tableName,String columnName) throws SQLException{
 		ResultSet rs = null;
 		try {
-			rs = databaseMetaData.getColumns(null, null, tableName,"%%");
+			rs = getDataSourceMetaData().getColumns(null, null, tableName,"%%");
 			while(rs.next()){
 				String column = rs.getString("COLUMN_NAME");
 				if(columnName.equals(column)){
@@ -202,7 +198,7 @@ public class DataBaseCheck {
 	private boolean isForeignKey(String tableName,String columnName){
 		ResultSet rs = null;
 		try {
-			rs = databaseMetaData.getImportedKeys(null, null, tableName);
+			rs = getDataSourceMetaData().getImportedKeys(null, null, tableName);
 			while(rs.next()){
 				/**
 				 * PKTABLE_NAME 主键表名称，意为被引用的表
@@ -249,7 +245,7 @@ public class DataBaseCheck {
 	private  boolean isIndex(String tableName,String columnName){
 		ResultSet rs = null;
 		try {
-			 rs = databaseMetaData.getIndexInfo(null, null, tableName, false, false);
+			 rs = getDataSourceMetaData().getIndexInfo(null, null, tableName, false, false);
 			while(rs.next()){
 				String indexName = rs.getString("INDEX_NAME");
 				String factColumnName = rs.getString("COLUMN_NAME");
@@ -277,7 +273,7 @@ public class DataBaseCheck {
 	private  boolean isUniqueIndex(String tableName,String columnName){
 		ResultSet rs = null;
 		try {
-			 rs = databaseMetaData.getIndexInfo(null, null, tableName, true, false);
+			 rs = getDataSourceMetaData().getIndexInfo(null, null, tableName, true, false);
 			while(rs.next()){
 				String indexName = rs.getString("INDEX_NAME");
 				String factColumnName = rs.getString("COLUMN_NAME");
@@ -297,7 +293,7 @@ public class DataBaseCheck {
 		
 	}
 	
-	public List<TableCheck> getTableChecks(){
+	public List<TableCheck> getTableChecks() throws SQLException{
 		try {
 			ResultSet rs = getTables();
 			Set<String> set = new HashSet<>();
@@ -311,9 +307,8 @@ public class DataBaseCheck {
 			}
 			return list;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw e;
 		}
-		return null;
 	}
 	
 	
@@ -367,11 +362,9 @@ public class DataBaseCheck {
 		}
 		
 		
-		public List<ColumnCheck> getColumns(){
+		public List<ColumnCheck> getColumns() throws SQLException{
 			ResultSet rs = null;
-			
 			try {
-				
 				rs = DataBaseCheck.this.getColumns(tableName);
 				Set<String> set = new HashSet<>();
 				while(rs.next()){
@@ -384,10 +377,8 @@ public class DataBaseCheck {
 				}
 				return list;
 			} catch (SQLException e) {
-				
-				e.printStackTrace();
+				throw e;
 			}
-			return null;
 		}
 		
 		
@@ -425,7 +416,7 @@ public class DataBaseCheck {
 		 * @param info
 		 * @return
 		 */
-		public boolean isEquals(ColumnInfo info){
+		public boolean isEquals(ColumnInfo info) throws SQLException{
 			ColumnInfo columnInfo =	new ColumnInfo();
 			columnInfo.setCanNull(isNullable());
 			columnInfo.setDefaultValue(getDefaultValue());
@@ -453,7 +444,7 @@ public class DataBaseCheck {
 		 * 获取sql类型
 		 * @return
 		 */
-		public SqlType getSqlType(){
+		public SqlType getSqlType() throws SQLException{
 			if(!isExist()){
 				throw new ResourceNotFoundException(tableName+"表下的"+columnName+"数据列没有找到");
 			}
@@ -461,9 +452,8 @@ public class DataBaseCheck {
 				sqlTypeAndLength = getSqlTypeWithLength(tableName, columnName);
 				return TypeConvertMapper.stringToSqlType(sqlTypeAndLength.typeName);
 			} catch (SQLException e) {
-				e.printStackTrace();
+				throw e;
 			}
-			return null;
 		}
 		
 		/**
@@ -538,9 +528,8 @@ public class DataBaseCheck {
 			try {
 				return DataBaseCheck.this.isNullable(tableName, columnName);
 			} catch (SQLException e) {
-				e.printStackTrace();
+				throw new InitException(e);
 			}
-			return false;
 		}
 		
 		/**
@@ -556,10 +545,8 @@ public class DataBaseCheck {
 			try {
 				return DataBaseCheck.this.isPrimaryKey(tableName, columnName);
 			} catch (SQLException e) {
-				e.printStackTrace();
+				throw new InitException(e);
 			}
-			
-			return false;
 		}
 		
 		/**
@@ -568,16 +555,14 @@ public class DataBaseCheck {
 		 * @throws InitException
 		 */
 		public String getDefaultValue() throws InitException{
-			
 			if(!isExist()){
 				throw new ResourceNotFoundException(tableName+"表下的"+columnName+"数据列没有找到");
 			}
 			try {
 				return DataBaseCheck.this.getDefaultValue(tableName, columnName);
 			} catch (SQLException e) {
-				e.printStackTrace();
+				throw new InitException(e);
 			}
-			return null;
 		}
 	
 
@@ -601,8 +586,7 @@ public class DataBaseCheck {
 				try {
 					rs.close();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					return false;
 				}
 			}
 		}
@@ -620,7 +604,7 @@ public class DataBaseCheck {
 									,String refTableName,String refColumnName){
 		ResultSet rs = null;
 		try {
-			rs = databaseMetaData.getImportedKeys(null, null, tableName);
+			rs = getDataSourceMetaData().getImportedKeys(null, null, tableName);
 			while(rs.next()){
 				/**
 				 * PKTABLE_NAME 主键表名称，意为被引用的表
@@ -654,8 +638,7 @@ public class DataBaseCheck {
 			}
 			return false;
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
+			throw new InitException(e);
 		}
 		finally{
 			CloseUtil.close(rs);
@@ -676,7 +659,7 @@ public class DataBaseCheck {
 	 * @param columnName
 	 * @return
 	 */
-	private boolean isColumnExist(String tableName,String columnName){
+	private boolean isColumnExist(String tableName,String columnName) throws SQLException{
 		ResultSet rs = null;
 		try {
 			rs = getColumn(tableName, columnName);
@@ -685,14 +668,15 @@ public class DataBaseCheck {
 			}
 			return false;
 		} catch (SQLException e) {
-			return false;
+			throw e;
 		}
 		finally{
 			try {
-				rs.close();
+				if(rs != null){
+					rs.close();
+				}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new InitException(e);
 			}
 		}
 	}
@@ -725,7 +709,7 @@ public class DataBaseCheck {
 			if(databaseMetaData==null){
 				System.out.println("它是空指针");
 			}*/
-			ResultSet rs = databaseMetaData.
+			ResultSet rs = getDataSourceMetaData().
 					getTables(null,"" , tableName,TABLE_TYPE);
 			return rs;
 		} catch (SQLException e) {
@@ -742,7 +726,7 @@ public class DataBaseCheck {
 	 */
 	private ResultSet getColumns(String tableName) throws SQLException{
 		try {
-			ResultSet rs = databaseMetaData.
+			ResultSet rs = getDataSourceMetaData().
 					getColumns(null,"" , tableName,"%%");
 			return rs;
 		} catch (SQLException e) {
@@ -759,7 +743,7 @@ public class DataBaseCheck {
 	 */
 	private ResultSet getColumn(String tableName,String columnName) throws SQLException{
 		try {
-			ResultSet rs = databaseMetaData.
+			ResultSet rs = getDataSourceMetaData().
 					getColumns(null,"" , tableName,columnName);
 			return rs;
 		} catch (SQLException e) {
@@ -772,22 +756,19 @@ public class DataBaseCheck {
 	 * 是否已经关闭
 	 * @return
 	 */
-	public boolean isClosed(){
+	public boolean isClosed() throws SQLException{
 		try {
 			return connection.isClosed();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw e;
 		}
-		return false;
 	}
 	
 	/**
 	 * 关闭连接
 	 * @return
 	 */
-	public boolean close()
-	{
+	public boolean close() throws SQLException{
 		try {
 			if(connection!=null&&!connection.isClosed()){
 				connection.close();
@@ -797,7 +778,7 @@ public class DataBaseCheck {
 				return false;
 			}
 		} catch (SQLException e) {
+			throw e;
 		}
-		return false;
 	}
 }

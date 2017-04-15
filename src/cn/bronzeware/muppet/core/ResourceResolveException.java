@@ -6,6 +6,11 @@ public class ResourceResolveException extends InitException{
 	public static void main(String[] args) {
 
 	}
+	
+	public ResourceResolveException(Throwable throwable){
+		super(throwable);
+	}
+	
 
 	@Override
 	public String message() {

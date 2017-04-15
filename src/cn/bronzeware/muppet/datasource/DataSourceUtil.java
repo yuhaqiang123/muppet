@@ -302,6 +302,7 @@ public class DataSourceUtil {
 			dataSourceEvent.setConnectionRecord(connectionRecord);
 			
 			dataSourceListener.event(dataSourceEvent);
+			throw e;
 		}
 		return connection;
 	}

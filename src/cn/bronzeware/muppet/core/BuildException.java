@@ -14,6 +14,10 @@ public class BuildException extends InitException{
 		
 	}
 	
+	public BuildException(Throwable throwable){
+		super(throwable);
+	}
+	
 	
 	private String message;
 	

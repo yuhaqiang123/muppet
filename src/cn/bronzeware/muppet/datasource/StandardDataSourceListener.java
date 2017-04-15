@@ -10,10 +10,10 @@ public class StandardDataSourceListener implements DataSourceListener{
 
 	@Override
 	public void event(DataSourceEvent event) {
-		Logger.errorln("------------------------------------------------");
-		Logger.errorln(event);
+		Logger.println("------------------------------------------------");
+		Logger.println(event);
 		ArrayUtil.println(Thread.currentThread().getStackTrace());
-		Logger.errorln("------------------------------------------------");
+		Logger.println("------------------------------------------------");
 		//throw ExceptionUtil.getRuntimeException(event.getError());
 	}
 }

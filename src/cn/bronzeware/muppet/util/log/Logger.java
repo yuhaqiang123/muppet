@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.xml.crypto.Data;
 
+import cn.bronzeware.muppet.util.ArrayUtil;
 import cn.bronzeware.util.reflect.ReflectUtil;
 
 public class Logger {
@@ -17,7 +18,9 @@ public class Logger {
 	private static StandardLogger logger = ReflectUtil.getClassProxy(StandardLogger.class
 			,new LoggerInvocationHandler());
 	
-	
+	public static void stackPrintln(){
+		 logger.println(ArrayUtil.getValues(Thread.currentThread().getStackTrace(), ","));
+	}
 	
 	
 	public static void  println(Object object){

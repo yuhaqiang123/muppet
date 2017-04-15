@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import cn.bronzeware.muppet.core.InitException;
+
 
 public class CloseUtil {
 
@@ -22,8 +24,7 @@ public class CloseUtil {
 					return true;
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
-				return false;
+				throw new InitException(e);
 			}
 	}
 	

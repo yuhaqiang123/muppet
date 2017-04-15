@@ -36,6 +36,17 @@ public class ArrayUtil {
 		buffer.delete(buffer.length() - split.length(), buffer.length());
 		return buffer.toString();
 	}
+	
+	public static String getValues(Object[] collections, String split){
+		StringBuffer buffer = new StringBuffer();
+		for(Object object:collections){
+			buffer.append(object.toString());
+			buffer.append(split + "\r\n");
+		}
+		buffer.delete(buffer.length() - split.length(), buffer.length());
+		return buffer.toString();
+	}
+	
 
 	
 	public static void println(Collection<?> collection){
@@ -44,7 +55,6 @@ public class ArrayUtil {
 		}
 		System.out.println(ArrayUtil.class.getName()+"打印Collection:Size="+collection.size());
 		for(Object object:collection){
-			
 			System.out.println(object);
 		}
 	}
@@ -57,6 +67,15 @@ public class ArrayUtil {
 		for(Map.Entry<?, ?> e: map.entrySet()){
 			System.out.println("Key:["+e.getKey().toString()+"] \t Value:["+e.getValue().toString()+"]");
 		}
+	}
+	
+	public static String getValues(Map<?, ?> map){
+		StringBuffer buffer = new StringBuffer();
+		for(Map.Entry<?, ?> e: map.entrySet()){
+			buffer.append("Key:["+e.getKey().toString()+"] \t Value:["+e.getValue().toString()+"]");
+			buffer.append("\r\n");
+		}
+		return buffer.toString();
 	}
 	
 /*	public static void main(String[] args){

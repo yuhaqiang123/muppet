@@ -128,9 +128,8 @@ public class StandardDBCheckResolver implements ResourceResolve{
 				return false;
 			}
 			
-		}catch(ResourceNotFoundException e){
-			e.printStackTrace();
-			return false;
+		}catch(Exception e){
+			throw new ResourceResolveException(e);
 		}
 		
 		
