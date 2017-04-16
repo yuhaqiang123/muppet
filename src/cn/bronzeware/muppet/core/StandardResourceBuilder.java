@@ -12,6 +12,10 @@ import javax.swing.text.View;
 import javax.swing.text.StyledEditorKit.BoldAction;
 
 import cn.bronzeware.core.ioc.ApplicationContext;
+import cn.bronzeware.muppet.datasource.ConnectionRecord;
+import cn.bronzeware.muppet.datasource.ConnectionUtil;
+import cn.bronzeware.muppet.datasource.DataSourceEvent;
+import cn.bronzeware.muppet.datasource.DataSourceListener;
 import cn.bronzeware.muppet.datasource.DataSourceUtil;
 import cn.bronzeware.muppet.resource.ColumnInfo;
 import cn.bronzeware.muppet.resource.ResourceInfo;
@@ -195,8 +199,9 @@ public class StandardResourceBuilder {
 			Logger.println("修改表文件出现异常");
 			throw new BuildException("修改表文件出现异常\n" + e.getMessage());
 		} finally {
-			CloseUtil.close(connection);
 			CloseUtil.close(ps);
+			ConnectionUtil.closeConnection(connection, dataSourceUtil);
+			
 		}
 	}
 
@@ -243,8 +248,8 @@ public class StandardResourceBuilder {
 		boolean isIndex = columnCheck.isIndex();
 		// columnCheck.isForeignKey();
 		String defaultValue = columnCheck.getDefaultValue();
-		int length = columnCheck.getLength();
 		try{
+			int length = columnCheck.getLength();
 			SqlType sqlType = columnCheck.getSqlType();
 		}catch(SQLException e){
 			throw new BuildException(e);
@@ -256,7 +261,7 @@ public class StandardResourceBuilder {
 			alterColumnDefault = generate.generate(info);
 			Logger.println(Msg.ALTER_COLUMN + "修改的Sql语句:" + alterColumnDefault);
 		} catch (SqlGenerateException e) {
-			e.printStackTrace();
+			throw new BuildException(e);
 		}
 
 		String primaryKeySql = "";
@@ -271,7 +276,7 @@ public class StandardResourceBuilder {
 				}
 				Logger.println(Msg.ALTER_PRIMARYKEY + "修改的Sql语句:" + primaryKeySql);
 			} catch (SqlGenerateException e) {
-
+				throw new BuildException(e);
 			}
 		}
 		Map<String, String> map = new HashMap<String, String>(2);
@@ -304,10 +309,12 @@ public class StandardResourceBuilder {
 			return ps.execute();
 
 		} catch (SQLException e) {
-			throw new BuildException(e.getMessage());
+			
+			throw new BuildException(e);
 		} finally {
 			CloseUtil.close(ps);
-			CloseUtil.close(connection);
+			ConnectionUtil.closeConnection(connection, dataSourceUtil);
+			//CloseUtil.close(connection);
 		}
 
 	}

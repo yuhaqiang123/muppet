@@ -16,12 +16,10 @@ import cn.bronzeware.util.testframework.Test;
 @Component
 public class TestCriteria {
 
-	
-//	static SessionFactory factroy = new SessionFactory("muppet.xml");
+	SessionFactory factory;
 	public  Session muppet ;
 	public TestCriteria(){
-		SessionFactory factroy = new SessionFactory("muppet.xml");
-		muppet = factroy.getSession(true);
+		SessionFactory factory = new SessionFactory("muppet.xml");
 	}
 /*	static
 	{
@@ -30,6 +28,8 @@ public class TestCriteria {
 */
 	@Test
 	public  void test1(){
+
+		muppet = factory.getSession(true);
 		Criteria<Note> criteria = muppet.createCriteria(Note.class);
 		//criteria.andPropEqual("id", 37);
 		//criteria.andPropGreater("id", 36);
@@ -55,6 +55,7 @@ public class TestCriteria {
 	
 	
 	public void test2(){
+		muppet = factory.getSession(true);
 		for(int i = 0;i < 1000; i++){
 			Note note = new Note();
 			note.setId(i+2);

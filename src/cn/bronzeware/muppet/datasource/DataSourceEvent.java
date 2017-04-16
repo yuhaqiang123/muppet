@@ -29,7 +29,8 @@ public class DataSourceEvent {
 
 	@Override
 	public String toString() {
-		return "DataSourceEvent [key=" + key + ", type=" + type + ", error=" + error + "]";
+		return "DataSourceEvent [key=" + key + ", type=" + type + ", error=" + error + ", connectionRecord="
+				+ connectionRecord + "]";
 	}
 
 	public void setKey(String key) {

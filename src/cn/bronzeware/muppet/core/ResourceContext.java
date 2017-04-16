@@ -1,5 +1,6 @@
 package cn.bronzeware.muppet.core;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -132,6 +133,11 @@ public class ResourceContext implements Contained,Listened{
 			
 			Map<String, Class<?>[]> map = resourceLoader.loadClass(new String[]{pkgName});
 			resolveResource(map);
+			try{
+				check.close();
+			}catch(SQLException e){
+				throw new InitException(e, "初始化失败，数据库连接关闭失败");
+			}
 		}
 		
 		started();
@@ -160,10 +166,6 @@ public class ResourceContext implements Contained,Listened{
 	}
 	protected void afterStart(ApplicationContext applicationContext){
 		
-	}
-	
-	public static void main(String[] args){
-		//new ResourceContext("muppet.xml");
 	}
 	
 	
@@ -205,11 +207,9 @@ public class ResourceContext implements Contained,Listened{
 					}
 					
 				} catch (ResourceResolveException e) {
-					e.printStackTrace();
 					throw e;
 				}
 				catch (BuildException e) {
-					e.printStackTrace();
 					throw e;
 				}
 			}

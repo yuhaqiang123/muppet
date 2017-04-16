@@ -1,6 +1,11 @@
 package cn.bronzeware.muppet.datasource;
 
 public class ConnectionRecord {
+	@Override
+	public String toString() {
+		return "ConnectionRecord [connectionId=" + connectionId + ", connectionStartTime=" + connectionStartTime
+				+ ", connectionEndTime=" + connectionEndTime + ", dataSourceKey=" + dataSourceKey + "]";
+	}
 	private String connectionId;
 	private long connectionStartTime;
 	private long connectionEndTime;

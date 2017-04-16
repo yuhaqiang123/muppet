@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Set;
 
 import cn.bronzeware.core.ioc.ApplicationContext;
+import cn.bronzeware.muppet.datasource.ConnectionRecord;
+import cn.bronzeware.muppet.datasource.DataSourceEvent;
+import cn.bronzeware.muppet.datasource.DataSourceListener;
 import cn.bronzeware.muppet.datasource.DataSourceUtil;
 import cn.bronzeware.muppet.resource.ColumnInfo;
 import cn.bronzeware.muppet.resource.ResourceNotFoundException;
@@ -502,7 +505,7 @@ public class DataBaseCheck {
 		 * 获取长度
 		 * @return
 		 */
-		public int getLength(){
+		public int getLength() throws SQLException{
 			if(!isExist()){
 				throw new ResourceNotFoundException(tableName+"表下的"+columnName+"数据列没有找到");
 			}
@@ -510,9 +513,8 @@ public class DataBaseCheck {
 				sqlTypeAndLength = getSqlTypeWithLength(tableName, columnName);
 				return sqlTypeAndLength.length;
 			} catch (SQLException e) {
-				e.printStackTrace();
+				throw e;
 			}
-			return -1;
 		}
 		
 		/**
@@ -689,7 +691,7 @@ public class DataBaseCheck {
 	 */
 	private ResultSet getTables() throws SQLException {
 		try {
-			ResultSet rs = databaseMetaData.
+			ResultSet rs = getDataSourceMetaData().
 					getTables(null,"" , "%%",TABLE_TYPE);
 			return rs;
 		} catch (SQLException e) {
@@ -772,12 +774,32 @@ public class DataBaseCheck {
 		try {
 			if(connection!=null&&!connection.isClosed()){
 				connection.close();
+				
+				DataSourceEvent event = new DataSourceEvent();
+				event.setKey(dataSourceUtil.getDataSourceKey());
+				event.setType(DataSourceListener.Type.CONNECTION_CLOSED);
+				ConnectionRecord connectionRecord = dataSourceUtil.getConnectionIdLocal().get();
+				connectionRecord.setConnectionEndTime(System.currentTimeMillis());
+				connectionRecord.setDataSourceKey(dataSourceUtil.getDataSourceKey());
+				event.setConnectionRecord(connectionRecord);
+				dataSourceUtil.getConnectionIdLocal().remove();
+				dataSourceUtil.getDataSourceListener().event(event);
 				return true;
 			}
 			else{
 				return false;
 			}
 		} catch (SQLException e) {
+			DataSourceEvent event = new DataSourceEvent();
+			event.setKey(dataSourceUtil.getDataSourceKey());
+			event.setType(DataSourceListener.Type.CONNECTION_CLOSED_ERROR);
+			event.setError(e);
+			ConnectionRecord connectionRecord = dataSourceUtil.getConnectionIdLocal().get();
+			connectionRecord.setConnectionEndTime(System.currentTimeMillis());
+			connectionRecord.setDataSourceKey(dataSourceUtil.getDataSourceKey());
+			event.setConnectionRecord(connectionRecord);
+			dataSourceUtil.getConnectionIdLocal().remove();
+			dataSourceUtil.getDataSourceListener().event(event);
 			throw e;
 		}
 	}

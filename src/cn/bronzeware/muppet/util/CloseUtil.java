@@ -53,7 +53,6 @@ public class CloseUtil {
 				return true;
 			} catch (SQLException e) {
 				
-				e.printStackTrace();
 				return false;
 			}
 	}
