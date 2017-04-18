@@ -1,5 +1,4 @@
 #忽略如下
-
 bin
 .project
 .settings
@@ -10,3 +9,4 @@ muppet.iml
 sloc_hashes
 .gitignore
 out/
+logs

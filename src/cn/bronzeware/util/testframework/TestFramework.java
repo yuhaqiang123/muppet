@@ -119,6 +119,7 @@ public class TestFramework {
 	}
 	
 	public static void main(String[] args) {
+		long startTime = System.currentTimeMillis();
 		StandardApplicationConfig config = new StandardApplicationConfig();
 		config.setProperty(ApplicationConfig.AUTO_SCAN_PACKAGE_KEY, 
 				new String[]{"cn.bronzeware.muppet.test","cn.bronzeware.util.testframework"});
@@ -134,6 +135,6 @@ public class TestFramework {
 		storage.store(testFramework.getTestUnits());
 		HtmlTestUnitStorage html = new HtmlTestUnitStorage(FileUtil.convertFilePathOnOs("bin/test/html"));
 		Map<String, File> fileMap = html.initialize(oldMap, testFramework.getTestUnits());
-		
+		System.out.println("time:" + (System.currentTimeMillis() - startTime));
 	}
 }
