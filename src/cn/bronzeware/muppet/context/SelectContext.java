@@ -16,12 +16,14 @@ import java.util.Map;
 
 import com.sun.xml.internal.ws.api.addressing.WSEndpointReference.Metadata;
 
+import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.muppet.converter.ObjectConvertor;
 import cn.bronzeware.muppet.core.ThreadLocalTransaction;
 import cn.bronzeware.muppet.datasource.DataSourceUtil;
 import cn.bronzeware.muppet.filters.FilterChain;
 import cn.bronzeware.muppet.resource.Container;
 import cn.bronzeware.muppet.resource.ResourceInfo;
+import cn.bronzeware.muppet.resource.TableInfo;
 import cn.bronzeware.muppet.sqlgenerate.ParamCanNotBeNullException;
 import cn.bronzeware.muppet.sqlgenerate.Sql;
 import cn.bronzeware.muppet.sqlgenerate.SqlGenerate;
@@ -41,14 +43,31 @@ import cn.bronzeware.util.reflect.ReflectUtil;
  */
 public class SelectContext extends AbstractContext implements DefaultFilter {
 
-	public SelectContext(Container<String, ResourceInfo> container) {
+	public SelectContext(Container<String, ResourceInfo> container, ApplicationContext applicationContext) {
 		this.container = container;
-		sqlGenerateHelper = new SqlGenerateHelper(container);
+		this.applicationContext = applicationContext;
+		sqlGenerateHelper = new SqlGenerateHelper(container, applicationContext);
 	}
 
 	private Container<String, ResourceInfo> container;
 	private SqlGenerateHelper sqlGenerateHelper;
 
+	private ApplicationContext applicationContext;
+	
+	public <T> T executeOnPrimaryKey(Class<T> clazz, Object primaryKeyValue){
+		TableInfo tableInfo = (TableInfo)container.get(clazz.getName());
+		if(tableInfo == null){
+			throw new ContextException("%s无法映射到数据库，请检查相关配置");
+		}
+		String primaryKeyName = tableInfo.getPrimaryKey().getName();
+		List<T> list = this.execute(clazz, String.format(" %s = ?",primaryKeyName), new Object[]{primaryKeyValue});
+		if(list != null && list.size() > 0){
+			return list.get(0);
+		}
+		return null;
+	}
+	
+	
 	/**
 	 * 这个类可以处理单表的查询功能，调用方需要提供待查询表的实体类 通过实体类上的{@link @Table}注解，我们可以知道与之匹配的
 	 * 表，进而生成sql语句中select中的部分，通过指定{@link @NotInTable}

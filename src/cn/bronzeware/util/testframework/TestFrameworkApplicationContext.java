@@ -9,9 +9,13 @@ import java.util.Set;
 
 import cn.bronzeware.core.ioc.ApplicationConfig;
 import cn.bronzeware.core.ioc.AutowiredApplicationContext;
+import cn.bronzeware.muppet.util.log.Logger;
 
 public class TestFrameworkApplicationContext extends AutowiredApplicationContext{
 
+	private TestAnnotationExecutor testAnnotationExecutor = null;
+
+	
 	public TestFrameworkApplicationContext(ApplicationConfig config){
 		super(config);
 	}
@@ -23,7 +27,13 @@ public class TestFrameworkApplicationContext extends AutowiredApplicationContext
 	@Override
 	protected void beforeInitialize(){
 		super.beforeInitialize();
+		testAnnotationExecutor = new TestAnnotationExecutor();
 		testClasses = new HashMap<>();
+	}
+	
+	@Override
+	protected List<Class<?>> scanComponentClass(List<Class<?>> clazzList){
+		return testAnnotationExecutor.execute(clazzList);
 	}
 	
 	private  Map<Class, Object> testClasses;
@@ -31,6 +41,9 @@ public class TestFrameworkApplicationContext extends AutowiredApplicationContext
 	@Override
 	protected void beforeRegister(Object key, Object value) {
 		super.beforeRegister(key, value);
+		if(value == null){
+			return;
+		}
 		Class clazz = value.getClass().getSuperclass();
 		if(key instanceof Class){
 			clazz = (Class)key;

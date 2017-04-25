@@ -176,6 +176,10 @@ class StandardSession implements Session,Closed{
 		return list;
 	}
 	
+	public Object queryById(Object primaryKey){
+		return null;
+		//selectContext.execute(clazz, wheres, wherevalues);
+	}
 	
 	/**
 	 * 多表查询
@@ -209,48 +213,7 @@ class StandardSession implements Session,Closed{
 	public void setContainer(Container<String, ResourceInfo> container) {
 		this.container = container;
 	}
-	public static void main(String[] args){
-		
-		/*Properties properties = new Properties();
-		properties.setProperty("url",
-				"jdbc:mysql://123.56.225.214:3999/test?Unicode=true&characterEncoding=utf-8");
-		properties.setProperty("username", "root");
-		properties.setProperty("password", "root");
-		Muppet.initial(properties);
-		Muppet muppet = new Muppet();
-		Note note = new Note();
-		note.setPassword("");
-		note.setUsername("muppet的中文名是大眼蛙");
-		//note.setUser_id(34);
-		note.setValue("萌萌哒");
-		
-		Note note1 = new Note();
-		note1.setPassword("");
-		note1.setUsername("mu");
-		//note1.setUser_id(34);
-		note1.setValue("萌萌哒");
-		
-		
-		
-		note.setId(3340);
-		muppet.insert(note);
-		muppet.insert(note1);*/
-		/*note.setPassword("");
-		note.setUsername("muppet的中文名是大眼蛙");
-		note.setUser_id(34);
-		note.setValue("萌萌哒");
-		note.setId(3340);*/
-		/*String  queryString = "select u.id as user_id" +
-				",u.username as username,u.password as password ,n.value,u.id" +
-				" from t_user u,t_note n where u.id != n.user_id";
-		
-		List list = muppet.query(queryString, new Object[]{}, Note.class);
-		for (Iterator iterator = list.iterator();iterator.hasNext();) {
-			Note resultNote = (Note) iterator.next();
-			System.out.println(resultNote);
-		}*/
-		
-	}
+	
 	public InsertContext getInsertContext() {
 		return insertContext;
 	}

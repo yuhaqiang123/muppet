@@ -3,6 +3,7 @@ package cn.bronzeware.muppet.sqlgenerate;
 import java.lang.reflect.Field;
 import java.util.Map;
 
+import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.muppet.annotations.AnnotationException;
 import cn.bronzeware.muppet.annotations.RowRecord;
 import cn.bronzeware.muppet.core.RowsRecordKeeper;
@@ -24,10 +25,13 @@ import cn.bronzeware.muppet.resource.ResourceInfo;
 public class SqlGenerateHelper {
 
 	private Container<String, ResourceInfo> container;
-	public SqlGenerateHelper(Container<String, ResourceInfo> container){
+	
+	private ApplicationContext applicationContext;
+	
+	public SqlGenerateHelper(Container<String, ResourceInfo> container,ApplicationContext applicationContext){
 		this.container = container;
-		
-		this.rowsRecordKeeper = new StandardRowRecordKeeper(container);
+		this.applicationContext = applicationContext;
+		this.rowsRecordKeeper = new StandardRowRecordKeeper(container, applicationContext);
 	}
 	
 	private static SqlGenerate getSqlGenerate(int mode){
@@ -53,7 +57,7 @@ public class SqlGenerateHelper {
 		
 		return sqlGenerate;
 	}
-	private static RowsRecordKeeper rowsRecordKeeper ;
+	private  RowsRecordKeeper rowsRecordKeeper ;
 	public  Sql execute(Object object,Sql sql,int mode) 
 			throws ParamCanNotBeNullException
 			,SqlGenerateException{
@@ -82,6 +86,7 @@ public class SqlGenerateHelper {
 		}
 		sql.setTableName(info.getTableName());
 		sql.setPrimarykey(info.getPrimarykey());
+		sql.setPrimaryKeyName(info.getPrimaryKeyName());
 		Map<Field, Object> map = info.getMap();
 		sql.setObjectkeys(map.keySet().toArray(new Field[map.size()]));
 		sql.setValues(map);

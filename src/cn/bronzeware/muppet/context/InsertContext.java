@@ -11,8 +11,7 @@ import java.util.Map.Entry;
 import java.util.Date;
 import java.util.Map;
 
-
-
+import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.muppet.converter.ObjectConvertor;
 import cn.bronzeware.muppet.core.ThreadLocalTransaction;
 import cn.bronzeware.muppet.datasource.DataSourceUtil;
@@ -31,10 +30,10 @@ import cn.bronzeware.muppet.util.log.Logger;
 public class InsertContext  extends AbstractContext{
 
 	
-	public InsertContext(Container<String, ResourceInfo> container){
+	public InsertContext(Container<String, ResourceInfo> container, ApplicationContext applicationContext){
 		this.container = container;
 		
-		this.sqlGenerateHelper  = new SqlGenerateHelper(container);
+		this.sqlGenerateHelper  = new SqlGenerateHelper(container, applicationContext);
 	}
 	private Container<String, ResourceInfo> container;
 	private SqlGenerateHelper sqlGenerateHelper;

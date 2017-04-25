@@ -4,6 +4,9 @@ import java.lang.reflect.InvocationHandler;
 
 import javax.swing.text.AbstractDocument.BranchElement;
 
+import com.sun.glass.ui.Application;
+
+import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.muppet.core.ResourceContext;
 import cn.bronzeware.muppet.resource.Container;
 import cn.bronzeware.muppet.resource.ResourceInfo;
@@ -19,19 +22,21 @@ public class ContextFactory {
 	private UpdateContext updateContext;
 	private InsertContext insertContext;
 	private DeleteContext deleteContext;
+	private ApplicationContext applicationContext;
 	
 	private InvocationHandler handler = new ContextInvocationHandler();
-	public ContextFactory(ResourceContext context){
+	public ContextFactory(ResourceContext context, ApplicationContext applicationContext){
 		this.context = context;
+		this.applicationContext = applicationContext;
 		this.container = context.getContainer();
 		
 		 
 		
 		
-		selectContext = new SelectContext(container);
-		updateContext = new UpdateContext(container);
-		insertContext = new InsertContext(container);
-		deleteContext = new DeleteContext(container);
+		selectContext = new SelectContext(container, applicationContext);
+		updateContext = new UpdateContext(container, applicationContext);
+		insertContext = new InsertContext(container, applicationContext);
+		deleteContext = new DeleteContext(container, applicationContext);
 		
 		/*
 		selectContext = proxy(selectContext);

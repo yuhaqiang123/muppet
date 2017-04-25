@@ -7,8 +7,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Map;
 
-
-
+import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.muppet.converter.ObjectConvertor;
 import cn.bronzeware.muppet.core.ThreadLocalTransaction;
 import cn.bronzeware.muppet.datasource.DataSourceUtil;
@@ -25,12 +24,14 @@ import cn.bronzeware.muppet.util.log.Logger;
 
 public class DeleteContext  extends AbstractContext{
 
-	public DeleteContext(Container<String, ResourceInfo> container){
+	public DeleteContext(Container<String, ResourceInfo> container, ApplicationContext applicationContext){
 		this.container = container;
-		this.sqlGenerateHelper = new SqlGenerateHelper(container);
+		this.sqlGenerateHelper = new SqlGenerateHelper(container, applicationContext);
 	}
 	private Container<String, ResourceInfo> container;
 	private SqlGenerateHelper sqlGenerateHelper ;
+	private ApplicationContext applicationContext;
+	
 	public Object executeByPrimaryKey(Object object) throws ContextException{
 		Sql sql = new Sql();
 		try {

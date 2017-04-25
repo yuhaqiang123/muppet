@@ -19,7 +19,7 @@ public class TestCriteria {
 	SessionFactory factory;
 	public  Session muppet ;
 	public TestCriteria(){
-		SessionFactory factory = new SessionFactory("muppet.xml");
+		factory = new SessionFactory("muppet.xml");
 	}
 /*	static
 	{
@@ -50,6 +50,7 @@ public class TestCriteria {
 		//System.out.println(criteria.one());
 		Logger.println(criteria.one());
 		Logger.println(criteria.count());
+		muppet.close();
 		//ArrayUtil.println(list);
 	}
 	

@@ -82,8 +82,9 @@ abstract class AbstractApplicationContext implements ApplicationContext {
 					Object bean = beanInitializor.initializeBean(clazz);
 					if (Objects.nonNull(bean)) {
 						list.add(bean);
+						//如果非空，注册
+						registerBean(clazz, bean);
 					}
-					registerBean(clazz, bean);
 				}
 			} catch (InitializeException e) {
 				throw e;
@@ -93,7 +94,7 @@ abstract class AbstractApplicationContext implements ApplicationContext {
 	}
 	
 
-	protected void configBeanClass(List<Class<?>> list){
+	protected void publishConfigBeanClassEvent(List<Class<?>> list){
 		for(Class<?> clazz:list){
 			listeners.event(EventType.BEAN_CLASS_CONFIG, new Event(this, clazz));
 		}

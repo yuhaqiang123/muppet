@@ -6,6 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.sun.glass.ui.Application;
+
+import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.muppet.annotations.AnnotationException;
 import cn.bronzeware.muppet.annotations.RowRecord;
 import cn.bronzeware.muppet.resource.ColumnInfo;
@@ -32,9 +35,13 @@ public class StandardRowRecordKeeper extends RowsRecordKeeper{
 
 	private Container<String, ResourceInfo> container;
 	
+	private ApplicationContext applicationContext;
 	
-	public StandardRowRecordKeeper(Container<String, ResourceInfo> container) {
+	
+	public StandardRowRecordKeeper(Container<String, ResourceInfo> container
+			,ApplicationContext applicationContext) {
 		this.container = container;
+		this.applicationContext = applicationContext;
 	}
 	
 	/**
@@ -104,6 +111,7 @@ public class StandardRowRecordKeeper extends RowsRecordKeeper{
 			Field field = columnInfo.getField();
 			if(columnInfo.isIsprivarykey()){
 				info.setPrimarykey(field);
+				info.setPrimaryKeyName(columnInfo.getName());
 			}
 			Object value = ReflectUtil.getValue(field, object);
 			map.put(columnInfo.getField(), value);
@@ -115,6 +123,7 @@ public class StandardRowRecordKeeper extends RowsRecordKeeper{
 		setValue(clazz, info);
 		return info;
 	}
+	
 	
 	@Override
 	public RowRecord execute(Object object)

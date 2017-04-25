@@ -15,6 +15,15 @@ public class RowRecord {
 	}
 	private String tableName ;
 	private Field primarykey;
+	
+	private String primaryKeyName;
+	
+	public String getPrimaryKeyName() {
+		return primaryKeyName;
+	}
+	public void setPrimaryKeyName(String primaryKeyName) {
+		this.primaryKeyName = primaryKeyName;
+	}
 	public static void main(String[] args) {
 
 	}

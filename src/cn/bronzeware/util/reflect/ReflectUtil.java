@@ -28,7 +28,15 @@ public class ReflectUtil {
 	private final static Map<Class<?>,Field[]> fieldsMap = 
 			new ConcurrentHashMap();
 
+	public static void main(String[] args){
+		getClassPath();
+	}
 
+	public static String getClassPath(){
+		return (Thread.class.getResource("/").getPath());
+	}
+	
+	
 	public static String getMethodFullName(Method method){
 		Class clazz = method.getDeclaringClass();
 		return String.format("%s.%s", clazz.getName(), method.getName());
@@ -378,15 +386,7 @@ public class ReflectUtil {
 		}
 	}
 	
-	public static void main(String[] args){
-		List<String> list = new ArrayList<String>();
-		Class clazz = int.class ;
-		//TestHashMap1 a = new StaticClass();
-		/*if(StaticClass.class.isInstance(a)){
-			System.out.println(clazz.cast(a).getClass());
-		}*/
-		System.out.println();
-	}
+	
 	
 	public static boolean isNummic(Class<?> clazz){
 		if(Number.class.isAssignableFrom(clazz)){

@@ -2,7 +2,9 @@ package cn.bronzeware.core.ioc;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import cn.bronzeware.core.ioc.annotation.AutowiredExecutor;
 import cn.bronzeware.core.ioc.annotation.Component;
@@ -56,10 +58,10 @@ public class AutowiredApplicationContext extends AbstractApplicationContext{
 			//System.out.println(autoScanPackage);
 			//ArrayUtil.println(clazzList);
 			//获取所有添加Component注解的类
-			clazzList = componentExecutor.execute(clazzList);
+			clazzList = baseScanComponentClass(clazzList);
 			//获取所有单例类
 			//clazzList = this.singletonBeans(clazzList);
-			configBeanClass(clazzList);
+			publishConfigBeanClassEvent(clazzList);
 			//初始化所有 singleton Class实例
 			List list = initializeBeans(clazzList);
 			//ArrayUtil.println(list);
@@ -77,6 +79,31 @@ public class AutowiredApplicationContext extends AbstractApplicationContext{
 			throw new BeanInitializationException("bean initialization has error happend , can not found autowird configs, please check");
 		}
 	}
+	
+	private List<Class<?>> baseScanComponentClass(List<Class<?>> clazzList){
+		List superScanResults = componentExecutor.execute(clazzList);
+		List childScanResults = scanComponentClass(clazzList);
+		if(superScanResults != null && childScanResults != null){
+			Set<Class<?>> set = new HashSet<>(superScanResults);
+			set.addAll(childScanResults);
+			return new ArrayList<>(set);
+		}
+		if(superScanResults != null){
+			Set<Class<?>> set = new HashSet<>(superScanResults);
+			return new ArrayList<>(set);
+		}
+		
+		if(childScanResults != null){
+			Set<Class<?>> set = new HashSet<>(childScanResults);
+			return new ArrayList<>(set);
+		}
+		return new ArrayList<>();
+	}
+	
+	protected List<Class<?>> scanComponentClass(List<Class<?>> clazzList){
+		return null;
+	}
+	
 	
 	protected List<Class<?>> singletonBeans(List<Class<?>> list){
 		List<Class<?>> results = new ArrayList<>(list.size() * 9/10);

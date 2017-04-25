@@ -6,6 +6,15 @@ public class TableInfo extends ResourceInfo{
 	private ColumnInfo columns[];
 	private String sql;
 	private Class<?> clazz ;
+	
+	private ColumnInfo primaryKey;
+	
+	public ColumnInfo getPrimaryKey() {
+		return primaryKey;
+	}
+	public void setPrimaryKey(ColumnInfo primaryKey) {
+		this.primaryKey = primaryKey;
+	}
 	public Class<?> getClazz() {
 		return clazz;
 	}

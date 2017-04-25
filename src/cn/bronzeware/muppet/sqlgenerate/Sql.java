@@ -44,6 +44,17 @@ public class Sql {
 	
 	private Field primarykey;
 
+	private String primaryKeyName;
+
+	
+	public String getPrimaryKeyName() {
+		return primaryKeyName;
+	}
+
+	public void setPrimaryKeyName(String primaryKeyName) {
+		this.primaryKeyName = primaryKeyName;
+	}
+
 	/**
 	 * where子句
 	 */

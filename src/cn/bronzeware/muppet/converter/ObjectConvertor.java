@@ -54,8 +54,6 @@ public class ObjectConvertor {
 	
 	
 	public static void load(Map<Field, Object> map,Object object) throws ParamCanNotBeNullException{
-		
-		
 		if(object != null){
 			try {
 				

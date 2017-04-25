@@ -1,8 +1,12 @@
 package cn.bronzeware.muppet.util.log;
 
 import java.util.Date;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.xml.crypto.Data;
+
+import com.sun.org.apache.bcel.internal.util.ClassPath;
 
 import cn.bronzeware.muppet.util.ArrayUtil;
 import cn.bronzeware.util.reflect.ReflectUtil;
@@ -15,29 +19,32 @@ public class Logger {
 	public static boolean isInfo = true;
 	public static boolean isPrintTime = false;
 	
-	private static StandardLogger logger = ReflectUtil.getClassProxy(StandardLogger.class
-			,new LoggerInvocationHandler());
+	static{
+		org.apache.log4j.PropertyConfigurator.configure((ReflectUtil.getClassPath() + "cn/bronzeware/muppet/util/log/log4j.properties"));
+	}
+	private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getRootLogger();
 	
+	private static StandardLogger standardLogger = new StandardLogger();
 	public static void stackPrintln(){
-		 logger.println(ArrayUtil.getValues(Thread.currentThread().getStackTrace(), ","));
+		 standardLogger.println(ArrayUtil.getValues(Thread.currentThread().getStackTrace(), ","));
 	}
 	
 	
 	public static void  println(Object object){
-		logger.println(object);
+		standardLogger.println(object);
 	}
 	
 	
 	public static void print(Object message){
-		logger.print(message);
+		logger.info(message);
 	}
 	
 	public static void error(Object message){
-		logger.error(message);
+		logger.info(message);
 	}
 	
 	public static void errorln(Object message){
-		logger.errorln(message);
+		logger.error(message);
 	}
 	
 	public static void info(Object message){
@@ -45,7 +52,7 @@ public class Logger {
 	}
 	
 	public static void infoln(Object message){
-		logger.infoln(message);
+		logger.info(message);
 	}
 	
 	public static void debug(Object message){
@@ -53,27 +60,10 @@ public class Logger {
 	}
 	
 	public static void debugln(Object message){
-		logger.debugln(message);
+		logger.debug(message);
 	}
 	
 	
 	
-	
-	/*public static void main(String[] args){
-		Logger.println("println");
-		Logger.debug("debug");
-		System.out.println();
-		Logger.debugln("debuglb");
-		Logger.print("print");
-		System.out.println();
-		Logger.info("info");
-		System.out.println();
-		Logger.infoln("infoln");
-		Logger.error("error");
-		System.out.println();
-		Logger.errorln("errorln");
-	}*/
-	
-
 	
 }

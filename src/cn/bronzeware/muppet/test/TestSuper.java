@@ -7,7 +7,9 @@ public class TestSuper {
 
 	protected SessionFactory factory = null;
 	protected Session session = null;
+	protected SessionFactory sessionFactory;
 	public TestSuper(){
 		factory = new SessionFactory("muppet.xml");
+		sessionFactory = factory;
 	}
 }

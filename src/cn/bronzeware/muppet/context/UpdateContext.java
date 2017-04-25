@@ -7,8 +7,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Map;
 
-
-
+import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.muppet.converter.ObjectConvertor;
 import cn.bronzeware.muppet.core.ThreadLocalTransaction;
 import cn.bronzeware.muppet.datasource.DataSourceUtil;
@@ -26,27 +25,16 @@ import cn.bronzeware.muppet.util.log.Logger;
 
 public class UpdateContext  extends AbstractContext{
 
-	public UpdateContext(Container<String, ResourceInfo> container)
+	public UpdateContext(Container<String, ResourceInfo> container, ApplicationContext applicationContext)
 	{
 		this.container = container;
-		this.sqlGenerateHelper = new SqlGenerateHelper(container);
+		this.sqlGenerateHelper = new SqlGenerateHelper(container, applicationContext);
 	}
 	
 	private Container<String, ResourceInfo> container;
 	private SqlGenerateHelper sqlGenerateHelper;
 	
-	public static void main(String[] args) throws SqlGenerateContextException {
-
-		/*UpdateContext updateContext = new UpdateContext();
-		User testEntity = new User(); 
-		testEntity.setPassword("yyyyg");
-		//testEntity.setUsername("passssssssswod");
-		//Date date = new Date(System.currentTimeMillis());
-		//testEntity.setDate(date);
-		String wheres = "id = ?";
-		//testEntity.setDate(new Date(System.currentTimeMillis()));
-		updateContext.execute(testEntity,wheres,new Object[]{2});*/
-	}
+	
 	
 	public Object executeByPrimaryKey(Object object){
 		Sql sql = new Sql();

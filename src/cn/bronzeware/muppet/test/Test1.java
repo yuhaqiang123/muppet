@@ -9,7 +9,7 @@ import cn.bronzeware.util.testframework.Test;
 public class Test1 {
 
 	public  Test1(){
-		System.out.println("Test1");
+		//System.out.println("Test1");
 	}
 	
 	@Test

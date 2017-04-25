@@ -59,12 +59,17 @@ public class ResourceContext implements Contained,Listened{
 	
 	public ContextFactory getContextFactory(){
 		if(factory==null){
-			factory = new ContextFactory(this);
+			factory = new ContextFactory(this, applicationContext);
 			return factory;
 		}else{
 			return factory;
 		}
 	}
+	/**
+	 * key 为Clazz的名字getName
+	 */
+	private Container<String,ResourceInfo> container = new StandardContainer();
+	
 	
 	//public void setApplicationContext(ApplicationContext context = )
 	
@@ -95,6 +100,7 @@ public class ResourceContext implements Contained,Listened{
 		//注册进容器
 		applicationContext.registerBean(StandardEntityMappingDBXMLConfig.class, resourceConfig);
 		
+		applicationContext.registerBean(Container.class, this.container);
 		
 		/**
 		 * 获取数据源管理器
@@ -113,7 +119,7 @@ public class ResourceContext implements Contained,Listened{
 		resourceLoader = new StandardResourceLoader();
 		applicationContext.registerBean(StandardResourceLoader.class, resourceLoader);
 		
-		applicationContext.registerBean(Container.class, this.container);
+		
 		/**
 		 * 是否根据数据源配置 建设数据库scheme
 		 */
@@ -125,7 +131,7 @@ public class ResourceContext implements Contained,Listened{
 			DataSourceUtil dataSourceUtil = dataSourceManager.getDataSourceUtil(dataSourceKey);
 			DataBaseCheck check = new DataBaseCheck(applicationContext, dataSourceUtil);
 			if(isBuilded){
-				resolver = new StandardAnnoResolver(applicationContext);
+				resolver = new StandardAnnoResolver(applicationContext, check);
 			}else{
 				resolver = new StandardDBCheckResolver(check, dataSourceManager.getDatasourceListener());
 			}
@@ -172,10 +178,6 @@ public class ResourceContext implements Contained,Listened{
 	
 	private ResourceResolve resolver ;
 	
-	/**
-	 * key 为Clazz的名字getName
-	 */
-	private Container<String,ResourceInfo> container = new StandardContainer();
 	
 	private void resolveResource(Map<String, Class<?>[]> map) throws InitException{
 		if(map!=null&&map.size()>0){

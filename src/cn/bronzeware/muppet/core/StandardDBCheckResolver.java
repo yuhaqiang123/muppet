@@ -83,6 +83,9 @@ public class StandardDBCheckResolver implements ResourceResolve{
 					else{
 						columnInfos[inTableNums] = columnInfo;
 						inTableNums++;
+						if(columnInfo.isIsprivarykey()){
+							info.setPrimaryKey(columnInfo);
+						}
 					}
 				}
 			}
@@ -94,6 +97,7 @@ public class StandardDBCheckResolver implements ResourceResolve{
 				info.setColumns(columnInfos2);
 			}else{
 				info.setColumns(columnInfos);
+				
 			}
 			
 			return info;

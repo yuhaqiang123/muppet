@@ -57,7 +57,7 @@ public class RowsRecordKeeper{
 	}
 	
 	//这个方法被调用是当前线程因为没有找到对应的实例
-	protected synchronized void setValue(Class<?> clazz,RowRecord record){
+	protected  void setValue(Class<?> clazz,RowRecord record){
 		ThreadLocal<RowRecord> local = null;
 		if(factory.containsKey(clazz)){
 			local = factory.get(clazz);
@@ -85,17 +85,13 @@ public class RowsRecordKeeper{
 			Class<?> clazz = object.getClass();
 			ThreadLocal<RowRecord> local = null;
 			//获取时锁定map
-			synchronized (factory) {
-				if(factory.containsKey(clazz)){
-					
-					local = factory.get(clazz);
-					
-				}
+			if(factory.containsKey(clazz)){
+				local = factory.get(clazz);
 			}
 			RowRecord info =null;
 			//如果可以获取到，那么则获取info，对象，同时获取到Field的map
 			if(local!=null){
-				 info = local.get();
+				info = local.get();
 				Map<Field, Object> map = info.getMap();
 				Map<Field, Object> newmap = new LinkedHashMap<Field, Object>(map.size());
 				for(Entry<Field,Object> e:map.entrySet()){
@@ -116,9 +112,6 @@ public class RowsRecordKeeper{
 			 */
 			Map<Field, Object> map = 
 					new LinkedHashMap<Field, Object>();
-			
-			
-			
 			Annotation[] annotation = clazz.getDeclaredAnnotations();
 			
 			/*
@@ -179,6 +172,7 @@ public class RowsRecordKeeper{
 					}
 					if(is_have_primarykey==false&&default_primary_key_field!=null){
 						info.setPrimarykey(default_primary_key_field);
+						//info.setPrimaryKeyName(primaryKeyName);
 					}
 					
 					

@@ -136,6 +136,22 @@ public class DataBaseCheck {
 		}
 	}
 	
+	private String getPrimaryKey(String tableName) throws SQLException{
+		try {
+			ResultSet rs = getDataSourceMetaData().getPrimaryKeys(null, null, tableName);
+			while(rs.next()){
+				String column = rs.getString("COLUMN_NAME");
+				return column;
+			}
+			throw new SQLException(String.format("%s没有设置主键"), tableName);
+		} catch (SQLException e) {
+			throw e;
+		}
+	}
+	
+	
+	
+	
 	/**
 	 * 获取默认值
 	 * @param tableName
@@ -332,6 +348,18 @@ public class DataBaseCheck {
 				throw new ResourceNotFoundException(tableName+"表没有找到");
 			}*/
 		}
+		
+		public String getPrimaryKey(){
+			if(!isExist()){
+				throw new ResourceNotFoundException(tableName+String.format("表 在数据源 :%s 中没有找到", getDataSourceUtil().getDataSourceKey()));
+			}
+			try{
+				return DataBaseCheck.this.getPrimaryKey(tableName);
+			}catch(SQLException e){
+				throw new InitException(e);
+			}
+		}
+		
 		
 		public String getTableName(){
 			return tableName;
@@ -550,6 +578,10 @@ public class DataBaseCheck {
 				throw new InitException(e);
 			}
 		}
+		
+		
+		
+		
 		
 		/**
 		 * 获取默认值
