@@ -176,10 +176,6 @@ class StandardSession implements Session,Closed{
 		return list;
 	}
 	
-	public Object queryById(Object primaryKey){
-		return null;
-		//selectContext.execute(clazz, wheres, wherevalues);
-	}
 	
 	/**
 	 * 多表查询
@@ -205,6 +201,9 @@ class StandardSession implements Session,Closed{
 	}
 
 
+	public <T> T queryById(Class<T> clazz, Object primaryKeyValue){
+		return this.selectContext.executeOnPrimaryKey(clazz, primaryKeyValue);
+	}
 
 
 	public Container<String, ResourceInfo> getContainer() {

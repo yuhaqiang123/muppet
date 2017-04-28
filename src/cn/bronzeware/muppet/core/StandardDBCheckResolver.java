@@ -113,7 +113,6 @@ public class StandardDBCheckResolver implements ResourceResolve{
 		}
 		else{
 			columnName = field.getName();
-			
 		}
 		try
 		{

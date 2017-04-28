@@ -22,7 +22,7 @@ import cn.bronzeware.util.reflect.ReflectUtil;
 public class SessionFactory {
 
 	private ApplicationContext applicationContext = null;
-	private StandardSession session;
+	//private StandardSession session;
 	private ResourceContext context;
 	private ContextFactory contextFactory;
 	

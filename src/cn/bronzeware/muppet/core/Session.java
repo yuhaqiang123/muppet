@@ -38,4 +38,5 @@ public interface Session {
 	
 	public List<Map<String, Object>> query(String sql,Object[] values);
 	
+	public <T> T queryById(Class<T> clazz, Object primaryKeyValue);
 }

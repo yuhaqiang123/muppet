@@ -42,15 +42,18 @@ public class TestCriteria {
 		criteria1.andPropEqual("user_id", 35);
 		criteria.or(criteria1);*/
 		
-		System.out.println(criteria.select("id,value,username,password,user_id")
+		Logger.println(criteria.select("value,pk,password,user_id")
 				.andPropGreater("user_id", 100).list().size());
 		//list.get(200);
 		//list.add(new Note());
 		//list.get(-1);
 		//System.out.println(criteria.one());
-		Logger.println(criteria.one());
-		Logger.println(criteria.count());
+		Logger.println("hello");
+		Logger.println(criteria.one() );
+		Logger.println(criteria.count() + 3);
 		muppet.close();
+		Logger.println("于海强你好");
+		Logger.println("中午好");
 		//ArrayUtil.println(list);
 	}
 	

@@ -30,7 +30,7 @@ public class ContextException extends RuntimeException {
 	}
 
 	public String Message() {
-		return "";
+		return msg == null ? "":msg;
 	}
 
 }

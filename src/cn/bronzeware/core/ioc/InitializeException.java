@@ -18,6 +18,6 @@ public class InitializeException extends RuntimeException{
     
     @Override
     public String getMessage() {
-        return msg;
+        return msg .equals("") ? super.getMessage():msg;
     }
 }

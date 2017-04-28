@@ -10,6 +10,9 @@ public class SqlGenerateContextException extends ContextException{
 	public SqlGenerateContextException(String message){
 		this.message = message;
 	}
+	public SqlGenerateContextException(Throwable throwable){
+		super(throwable);
+	}
 	
 	private String message;
 	

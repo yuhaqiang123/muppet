@@ -18,6 +18,8 @@ import org.apache.commons.collections.Unmodifiable;
 
 import cn.bronzeware.muppet.util.FileUtil;
 import cn.bronzeware.muppet.util.TimeUtil;
+import wiki.diff2.Diff;
+import wiki.diff2.Difference;
 
 public class HtmlTestUnitStorage {
 
@@ -83,10 +85,11 @@ public class HtmlTestUnitStorage {
 		ps.println("<meta charset='utf-8'/>");
 		ps.println("<body>");
 		long curr = System.currentTimeMillis();
+		ps.println(String.format("<h2>本次测试时间：%s</h2>", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(curr))));
 		for(Map.Entry<String, File> entry:fileMap.entrySet()){
 			
 			long old = Long.parseLong(entry.getKey());
-			ps.println(String.format("<a href='%s'>%s : %s</a>", entry.getValue().getName()
+			ps.println(String.format("<a href='%s'>与%s : %s</a>", entry.getValue().getName()
 					, TimeUtil.interval(old, curr)+"之前的结果比对　"
 					, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(old))));
 			ps.println("<br/><br/><br/>");
@@ -147,26 +150,26 @@ public class HtmlTestUnitStorage {
 			}
 		}
 		
-		ps.println("<h3>untracked</h3>");
+		ps.println("<h2>untracked</h2>");
 		for(TestUnitMetaData m:untracked){
 			initializePs(ps, m);
 		}
 		ps.println("<br/><br/><br/>");
 		
-		ps.println("<h3>deleted</h3>");
+		ps.println("<h2>deleted</h2>");
 		for(TestUnitMetaData m:deleted){
 			initializePs(ps, m);
 		}
 		ps.println("<br/><br/><br/>");
 		
-		ps.println("<h3>modified</h3>");
+		ps.println("<h2>modified</h2>");
 		for(int i = 0;i < modified.size();i +=2){
 			initializeModifiedPs(ps, modified.get(i), modified.get(i+1));
 			ps.println("<br/>");
 		}
 		ps.println("<br/><br/><br/>");
 		
-		ps.println("<h3>unmodified</h3>");
+		ps.println("<h2>unmodified</h2>");
 		for(TestUnitMetaData m:notModified){
 			initializePs(ps, m);
 		}
@@ -189,10 +192,10 @@ public class HtmlTestUnitStorage {
 
 		ps.println("<tr>");
 		if(TestUnitMetaData.equal(curr.getReturnValue(), old.getReturnValue())){
-			ps.println("<td>returnValue</td>");
+			ps.println("<td><h2>returnValue</h2></td>");
 			ps.println(String.format("<td>%s</td>", curr.getReturnValue()));
 		}else{
-			ps.println("<td>ReturnValue New</td>");
+			ps.println("<td><h2>ReturnValue New</h2></td>");
 			ps.println(String.format("<td><font color='red'>%s</font></td>", curr.getReturnValue()));
 			ps.println("</tr><tr>");
 			ps.println("<td>ReturnValue Old</td>");
@@ -202,27 +205,25 @@ public class HtmlTestUnitStorage {
 		
 		ps.println("<tr>");
 		if(TestUnitMetaData.equal(curr.getCmdErr(), old.getCmdErr())){
-			ps.println("<td>CmdErr</td>");
+			ps.println("<td><h2>CmdErr</h2></td>");
 			ps.println(String.format("<td>%s</td>", curr.getCmdErr().replace("\n", "<br/>")));
 		}else{
-			ps.println("<td>CmdErr New</td>");
-			ps.println(String.format("<td><font color='red'>%s</font></td>", curr.getCmdErr().replace("\n", "<br/>")));
+			String cmdErr = diffLineShow(old.getCmdErr(), curr.getCmdErr());
+			ps.println("<td><h2>CmdErr</h2></td>");
+			ps.println(String.format("<td>%s</td>", cmdErr.replace("\n", "<br/>")));
 			ps.println("</tr><tr>");
-			ps.println("<td>CmdErr Old</td>");
-			ps.println(String.format("<td><font color='red'>%s</font></td>", old.getCmdErr().replace("\n", "<br/>")));
+			
 		}
 		ps.println("</tr>");
 		
 		ps.println("<tr>");
 		if(TestUnitMetaData.equal(curr.getCmdOutput(), old.getCmdOutput())){
-			ps.println("<td>CmdOut</td>");
+			ps.println("<td><h2>CmdOut</h2></td>");
 			ps.println(String.format("<td>%s</td>", curr.getCmdOutput().replace("\n", "<br/>")));
 		}else{
-			ps.println("<td>CmdOut New</td>");
-			ps.println(String.format("<td><font color='red'>%s</font></td>", curr.getCmdOutput().replace("\n", "<br/>")));
-			ps.println("</tr><tr>");
-			ps.println("<td>CmdOut Old</td>");
-			ps.println(String.format("<td><font color='red'>%s</font></td>", old.getCmdOutput().replace("\n", "<br/>")));
+			String cmdOut = diffLineShow(old.getCmdOutput(), curr.getCmdOutput());
+			ps.println("<td><h2>CmdOut</h2></td>");
+			ps.println(String.format("<td>%s</td>", cmdOut.replace("\n", "<br/>")));
 		}
 		ps.println("</tr>");
 		
@@ -259,6 +260,46 @@ public class HtmlTestUnitStorage {
 		ps.println("</tr>");
 		ps.println("<br/>");
 		ps.println("</table>");
+	}
+	
+	private String diffLineShow(String old, String curr){
+		String[] oldLines = old.split("\n");
+		String[] currLines = curr.split("\n");
+		List<Difference> diffs  = (new Diff(oldLines, currLines)).diff();
+		int i = 0;
+		StringBuffer buffer = new StringBuffer();
+		for(Difference diff: diffs){
+			int addStart =diff.getAddedStart();
+			int addEnd = diff.getAddedEnd();
+			int delStart = diff.getDeletedStart();
+			int delEnd = diff.getDeletedEnd();
+			int a = i;
+			int d = i;
+			if(addEnd > -1){
+				for(;i < addStart;i++){
+					buffer.append(currLines[i]+ "\n");
+				}
+				a = i;
+				for(; a <= addEnd;a++){
+					buffer.append(String.format("+<b><font color='green'>%s</font>\n", currLines[a] ));
+				}
+			}
+			
+			if(delEnd > -1){
+				for(; i < delStart;i++){
+					buffer.append(oldLines[i] + "\n");
+				}
+				d = i;
+				for(; d <= delEnd; d++){
+					buffer.append(String.format("- <font color='red'>%s</font>\n", oldLines[d]));
+				}
+			}
+			i = Math.max(addEnd, delEnd) + 1;
+		}
+		for(; i < currLines.length; i++){
+			buffer.append(currLines[i] + "\n");
+		}
+		return buffer.toString();
 	}
 	
 }

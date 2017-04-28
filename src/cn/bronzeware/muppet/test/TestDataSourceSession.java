@@ -8,6 +8,7 @@ public class TestDataSourceSession extends TestSuper{
 	public void test1(){
 		session = factory.getSession(false, "slave");
 		ArrayUtil.println(session.query("select * from t_note", null));
+		session.close();
 	}
 	
 	public static void main(String[] args){

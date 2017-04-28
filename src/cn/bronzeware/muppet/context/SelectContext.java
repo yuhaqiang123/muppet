@@ -21,6 +21,7 @@ import cn.bronzeware.muppet.converter.ObjectConvertor;
 import cn.bronzeware.muppet.core.ThreadLocalTransaction;
 import cn.bronzeware.muppet.datasource.DataSourceUtil;
 import cn.bronzeware.muppet.filters.FilterChain;
+import cn.bronzeware.muppet.resource.ColumnInfo;
 import cn.bronzeware.muppet.resource.Container;
 import cn.bronzeware.muppet.resource.ResourceInfo;
 import cn.bronzeware.muppet.resource.TableInfo;
@@ -59,8 +60,12 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 		if(tableInfo == null){
 			throw new ContextException("%s无法映射到数据库，请检查相关配置");
 		}
-		String primaryKeyName = tableInfo.getPrimaryKey().getName();
-		List<T> list = this.execute(clazz, String.format(" %s = ?",primaryKeyName), new Object[]{primaryKeyValue});
+		ColumnInfo primaryKeyColumnInfo = tableInfo.getPrimaryKey();
+		if(primaryKeyColumnInfo == null){
+			throw new ContextException(String.format("没找到匹配的主键，请检查%s 类的配置", clazz.getName()));
+		}
+		String primaryKeyName = primaryKeyColumnInfo.getName();
+		List<T> list = this.execute(clazz, String.format(" where %s = ?",primaryKeyName), new Object[]{primaryKeyValue});
 		if(list != null && list.size() > 0){
 			return list.get(0);
 		}
@@ -112,6 +117,8 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 			 * 获取相关实体类的属性数组，
 			 */
 			Field[] fields = sql.getObjectkeys();
+			
+			Map<Field , String> columnFields = sql.getColumnNames();
 
 			/**
 			 * 相关属性域与其值得map
@@ -136,11 +143,12 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 				}
 			}
 			rs = ps.executeQuery();
+			
 			List list = new LinkedList();
 			while (rs != null && rs.next()) {
-				Map<Field, Object> newmap = new LinkedHashMap<Field, Object>(fields.length);
-				for (Field field : fields) {
-					newmap.put(field, rs.getObject(field.getName()));
+				Map<Field, Object> newmap = new LinkedHashMap<Field, Object>(columnFields.size());
+				for (Map.Entry<Field, String> fieldEntry:columnFields.entrySet()) {
+					newmap.put(fieldEntry.getKey(), rs.getObject(fieldEntry.getValue()));
 				}
 
 				Object newObject = object.getClass().newInstance();
@@ -151,19 +159,19 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 			return list;
 		} catch (SQLException e) {
 			//
-			throw new SqlGenerateContextException(e.getMessage());
+			throw new SqlGenerateContextException(e);
 		} catch (ParamCanNotBeNullException e) {
 			//
-			throw new SqlGenerateContextException(e.getMessage());
+			throw new SqlGenerateContextException(e);
 		} catch (InstantiationException e) {
 			//
-			throw new SqlGenerateContextException(e.getMessage());
+			throw new SqlGenerateContextException(e);
 		} catch (IllegalAccessException e) {
 			//
-			throw new SqlGenerateContextException(e.getMessage());
+			throw new SqlGenerateContextException(e);
 		} catch (SqlGenerateException e) {
 			//
-			throw new SqlGenerateContextException(e.getMessage());
+			throw new SqlGenerateContextException(e);
 		} finally {
 			try {
 				if (rs != null) {
@@ -186,9 +194,9 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 		try {
 			while (rs.next()) {
 				Map<String, Object> map = new HashMap<String, Object>(keys.length);
-				for (int i = 0; i < keys.length; i++) {
-					Object value = rs.getObject(keys[i]);
-					map.put(keys[i], value);
+				for (String key : keys) {
+					Object value = rs.getObject(key);
+					map.put(key, value);
 				}
 				result.add(map);
 			}
@@ -210,14 +218,14 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 		}
 	}
 
-	private <T> List<T> mappingResult(ResultSet rs, String[] keys, Class<T> clazz) {
+	private <T> List<T> mappingResult(ResultSet rs, Map<String, Field> keys, Class<T> clazz) {
 		try {
 			List<T> list = new ArrayList<>(rs.getRow());
 			while (rs.next()) {
-				Map<String, Object> map = new HashMap<String, Object>(keys.length);
-				for (int i = 0; i < keys.length; i++) {
-					Object value = rs.getObject(keys[i]);
-					map.put(keys[i], value);
+				Map<String, Object> map = new HashMap<String, Object>(keys.size());
+				for (Map.Entry<String, Field> key : keys.entrySet()) {
+					Object value = rs.getObject(key.getKey());
+					map.put(key.getValue().getName(), value);//设置为对应field的值
 				}
 				T object = (T) ObjectConvertor.load(map, clazz);
 				list.add(object);
@@ -304,7 +312,9 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 			}
 			*/
 			querys = getColumnNames(rs);
-
+			
+			
+			
 			if (List.class.isAssignableFrom(t.getClass())) {
 				List<Map<String, Object>> list = new ArrayList<>(rs.getRow());
 				mappingResult(rs, querys, list);
@@ -314,7 +324,13 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 				mappingResult(rs, querys, map);
 				return (T) map;
 			} else {
-				List<T> list = (List<T>) mappingResult(rs, querys, t.getClass());
+				Map<String, Field> queryKey2Field = new HashMap<>(querys.length);
+				for(String query : querys){
+					ColumnInfo columnInfo = (ColumnInfo) container.get(t.getClass().getName(), query);
+					queryKey2Field.put(query, columnInfo.getField());
+				}
+				
+				List<T> list = (List<T>) mappingResult(rs, queryKey2Field, t.getClass());
 				return (T) list;
 			}
 

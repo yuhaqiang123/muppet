@@ -7,9 +7,13 @@ public class TestSuper {
 
 	protected SessionFactory factory = null;
 	protected Session session = null;
-	protected SessionFactory sessionFactory;
+	protected static  SessionFactory sessionFactory;
+	
 	public TestSuper(){
-		factory = new SessionFactory("muppet.xml");
-		sessionFactory = factory;
+		if(sessionFactory == null){
+			factory = new SessionFactory("muppet.xml");
+			sessionFactory = factory;
+		}
+		factory  = sessionFactory;
 	}
 }
