@@ -1,5 +1,6 @@
 package cn.bronzeware.muppet.util.log;
 
+import java.io.File;
 import java.util.Date;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -20,8 +21,14 @@ public class Logger {
 	public static boolean isPrintTime = false;
 	
 	static{
-		org.apache.log4j.PropertyConfigurator.configure((ReflectUtil.getClassPath() + "cn/bronzeware/muppet/util/log/log4j.properties"));
+		String defaultLogFile = ReflectUtil.getClassPath() + "cn/bronzeware/muppet/util/log/log4j.properties";
+		if(new File(defaultLogFile).exists()){
+			org.apache.log4j.PropertyConfigurator.configure(defaultLogFile);
+		}else{
+			
+		}
 	}
+	
 	private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getRootLogger();
 	
 	private static StandardLogger standardLogger = new StandardLogger();
