@@ -104,7 +104,7 @@ public class XMLUtil {
 			builder = documentBuilderFactory.newDocumentBuilder();
 			String classPath = FileUtil.getClassPath();
 			try {
-				document = builder.parse(new File(URLDecoder.decode(classPath+"muppet.xml","UTF-8")));
+				document = builder.parse(new File(URLDecoder.decode(classPath + xmlpath,"UTF-8")));
 				NodeList nodeList = document.getChildNodes();
 				for(int i= 0;i<nodeList.getLength();i++){
 					Node node = nodeList.item(i);
