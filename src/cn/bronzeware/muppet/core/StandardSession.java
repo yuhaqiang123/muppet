@@ -133,11 +133,11 @@ class StandardSession implements Session,Closed{
 		return success;
 	}
 	
-	public boolean delete(Object object,String wheres ,Object[] wherevalues)
+	public boolean delete(Class clazz,String wheres ,Object[] wherevalues)
 	{
 		Boolean success = false;
 		try {
-			success = (Boolean)deleteContext.execute(object, wheres, wherevalues);
+			success = (Boolean)deleteContext.execute(clazz, wheres, wherevalues);
 		} catch (ContextException e) {
 			// 
 			e.printStackTrace();
@@ -145,10 +145,10 @@ class StandardSession implements Session,Closed{
 		return success;
 	}
 	
-	public boolean deleteByPrimaryKey(Object object){
+	public boolean deleteByPrimaryKey(Class clazz, Object primaryKeyValue){
 		Boolean success = false;
 		try {
-			success = (Boolean)deleteContext.executeByPrimaryKey(object);
+			success = (Boolean)deleteContext.executeByPrimaryKey(clazz, primaryKeyValue);
 		} catch (ContextException e) {
 			// 
 			e.printStackTrace();

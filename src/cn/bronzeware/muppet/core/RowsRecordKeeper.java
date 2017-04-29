@@ -70,6 +70,11 @@ public class RowsRecordKeeper{
 		}
 	}
 	
+	public RowRecord execute(Class clazz) throws AnnotationException{
+		return null;
+	}
+	
+	
 	
 	/**
 	 * 负责解析class的注解，包括{@link PrimaryKey } ,{@link Table}

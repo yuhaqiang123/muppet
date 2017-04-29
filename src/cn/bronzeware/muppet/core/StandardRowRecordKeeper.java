@@ -62,8 +62,10 @@ public class StandardRowRecordKeeper extends RowsRecordKeeper{
 						Map<Field, Object> map = info.getMap();
 						//Map<Field, Object> newmap = new LinkedHashMap<Field, Object>(map.size());
 						for(Entry<Field,Object> e:map.entrySet()){
-							Object value;
-							value = e.getKey().get(object);
+							Object value = null;
+							if(object != null){
+								value = e.getKey().get(object);
+							}
 							map.put(e.getKey(), value);
 						}
 						//setValue(clazz, record);
@@ -113,7 +115,11 @@ public class StandardRowRecordKeeper extends RowsRecordKeeper{
 				info.setPrimarykey(field);
 				info.setPrimaryKeyName(columnInfo.getName());
 			}
-			Object value = ReflectUtil.getValue(field, object);
+			Object value = null;
+			if(object != null){
+				value = ReflectUtil.getValue(field, object);
+			}
+			//如果object == null 那么 value == null
 			map.put(columnInfo.getField(), value);
 			columnNames.put(columnInfo.getField(), columnInfo.getName());
 		}
@@ -130,6 +136,14 @@ public class StandardRowRecordKeeper extends RowsRecordKeeper{
 			throws AnnotationException
 	{
 		Class<?> clazz = object.getClass();
+		return execute(clazz, object);
+	}
+	
+	public RowRecord execute(Class clazz){
+		return execute(clazz, null);
+	}
+	
+	public RowRecord execute(Class clazz, Object object){
 		RowRecord record = getExisted(clazz, object);
 		if(record==null){
 			//如果没有获取到Info，说明是第一次 解析
@@ -137,8 +151,7 @@ public class StandardRowRecordKeeper extends RowsRecordKeeper{
 		}else{
 			return record;
 		}
-				
-		
 	}
+	
 	
 }

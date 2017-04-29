@@ -21,11 +21,7 @@ public class TestCriteria {
 	public TestCriteria(){
 		factory = new SessionFactory("muppet.xml");
 	}
-/*	static
-	{
-		muppet = factroy.getSession(true);
-	}
-*/
+
 	@Test
 	public  void test1(){
 

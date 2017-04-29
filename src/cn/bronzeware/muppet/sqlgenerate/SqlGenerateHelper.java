@@ -3,6 +3,8 @@ package cn.bronzeware.muppet.sqlgenerate;
 import java.lang.reflect.Field;
 import java.util.Map;
 
+import com.sun.rowset.internal.Row;
+
 import cn.bronzeware.core.ioc.ApplicationContext;
 import cn.bronzeware.muppet.annotations.AnnotationException;
 import cn.bronzeware.muppet.annotations.RowRecord;
@@ -58,6 +60,22 @@ public class SqlGenerateHelper {
 		return sqlGenerate;
 	}
 	private  RowsRecordKeeper rowsRecordKeeper ;
+	public Sql executeClass(Class clazz, Sql sql, int mode)
+			throws ParamCanNotBeNullException, SqlGenerateException{
+		return execute(clazz, sql, mode);
+	}
+	
+	private RowRecord getRowRecord(Object object) throws AnnotationException{
+		if(object instanceof Class){
+			return rowsRecordKeeper.execute((Class) object);
+		}
+		else{
+			return rowsRecordKeeper.execute(object);
+		}
+		
+	}
+	
+	
 	public  Sql execute(Object object,Sql sql,int mode) 
 			throws ParamCanNotBeNullException
 			,SqlGenerateException{
@@ -79,7 +97,7 @@ public class SqlGenerateHelper {
 		 */
 		RowRecord info = null;
 		try {
-			info = rowsRecordKeeper.execute(object);
+			info = getRowRecord(object);
 		} catch (AnnotationException e1) {
 			// 
 		   throw new SqlGenerateException(e1.getMessage());

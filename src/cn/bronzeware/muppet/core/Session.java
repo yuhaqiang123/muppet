@@ -23,10 +23,10 @@ public interface Session {
 	public boolean insert(Object object);
 	
 	
-	public boolean delete(Object object,String wheres ,Object[] wherevalues);
+	public boolean delete(Class clazz, String wheres ,Object[] wherevalues);
 	
 	
-	public boolean deleteByPrimaryKey(Object object);
+	public boolean deleteByPrimaryKey(Class clazz, Object primaryKeyValue);
 	
 	public <T> List<T>  query(Class<T> clazz
 			,String wheres 

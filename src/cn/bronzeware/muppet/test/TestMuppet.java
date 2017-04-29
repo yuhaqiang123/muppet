@@ -56,7 +56,7 @@ public class TestMuppet {
 		note.setUser_id("34");
 		note.setValue("value");
 		note.setUsername("e");
-		System.out.println(muppet.deleteByPrimaryKey(note));
+		//System.out.println(muppet.deleteByPrimaryKey(note));
 	}
 	
 	public static void test4(){
