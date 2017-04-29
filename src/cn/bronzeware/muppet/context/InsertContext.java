@@ -32,38 +32,14 @@ public class InsertContext  extends AbstractContext{
 	
 	public InsertContext(Container<String, ResourceInfo> container, ApplicationContext applicationContext){
 		this.container = container;
-		
+		log = new SqlExecuteLog(applicationContext, SqlExecuteLog.SqlContextLogMode.INSERT);
 		this.sqlGenerateHelper  = new SqlGenerateHelper(container, applicationContext);
 	}
+	private SqlExecuteLog log;
+	
 	private Container<String, ResourceInfo> container;
+	
 	private SqlGenerateHelper sqlGenerateHelper;
-	public static void main(String[] args) throws ContextException {
-	
-		/*InsertContext insertContext = new InsertContext();
-		long sum = 0;
-		
-		for(int i = 0;i<CIRCLE;i++){
-			User testEntity = new User(); 
-			testEntity.setPassword("惠晨");
-			testEntity.setUsername("pasd");
-			testEntity.setDate(new Date(System.currentTimeMillis()));
-			//insertContext.execute(testEntity,null,null);
-			Note note = new Note();
-			note.setPassword("yujing");
-			note.setUsername("yujing");
-			note.setValue("jingjing");
-			long start = System.currentTimeMillis();
-			insertContext.execute(note,null,null);
-			long end = System.currentTimeMillis();
-			sum=sum+(end-start);
-		}
-		
-		System.out.println(sum);
-		System.out.println(time);*/
-	}
-
-	
-
 	
 	public Object execute(Object object
 			,String wheres 
@@ -78,19 +54,17 @@ public class InsertContext  extends AbstractContext{
 			Transaction transaction = ThreadLocalTransaction.get();
 			connection = transaction.getConnection();
 			Sql sql = sqlGenerateHelper.execute(object,null,SqlGenerate.INSERT);
-			
+			sql.setWhereValues(sql.getValues().values().toArray());
 			String sqlString = sql.getSql();
 			Map<Field, Object> map = sql.getValues();
 			ps = connection.prepareStatement(sqlString,Statement.RETURN_GENERATED_KEYS);
 			int i = 1;
 			for(Entry<Field, Object> e:map.entrySet()){
 				ps.setObject(i,e.getValue());
-				//System.out.println(e.getKey().getName()+e.getValue());
+				
 				i++;
 			}
-			System.out.println("Time:"+
-					new Date(System.currentTimeMillis()).toLocaleString()
-					+"  "+sqlString);
+			log.log(null, sql);
 			int rows = ps.executeUpdate();
 			success= (rows== 1 ?true:false);
 			results = ps.getGeneratedKeys();

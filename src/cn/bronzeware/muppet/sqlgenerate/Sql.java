@@ -60,6 +60,16 @@ public class Sql {
 	 */
 	private String wheres;
 	
+	private Object[] whereValues;
+	
+	public Object[] getWhereValues() {
+		return whereValues;
+	}
+
+	public void setWhereValues(Object[] whereValues) {
+		this.whereValues = whereValues;
+	}
+
 	/**
 	 * 对应对象相关属性域中的值 的Map，可以反射生成一个对象
 	 */

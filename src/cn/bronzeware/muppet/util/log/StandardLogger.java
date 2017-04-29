@@ -13,7 +13,7 @@ public class StandardLogger {
 			buffer.append(new Date(System.currentTimeMillis()).toLocaleString());
 		}*/
 		if(args==null){
-			buffer.append("debug: ");
+			buffer.append("");
 		}else{
 			buffer.append(args+": ");
 			if(args.startsWith("error")){
@@ -26,7 +26,7 @@ public class StandardLogger {
 	}
 	
 	private  void print(){
-		System.out.print("debug: ");
+		System.out.print("");
 	}
 	
 	
@@ -57,7 +57,7 @@ public class StandardLogger {
 	}
 	
 	public void debug(Object object){
-		print("debug");
+		print("");
 		System.out.print(object);
 	}
 	
@@ -72,7 +72,7 @@ public class StandardLogger {
 	}
 	
 	public void debugln(Object object){
-		print("debug");
+		print("");
 		System.out.println(object);
 	}
 	

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Map;
 
 import cn.bronzeware.core.ioc.ApplicationContext;
+import cn.bronzeware.muppet.context.SqlExecuteLog.SqlContextLogMode;
 import cn.bronzeware.muppet.converter.ObjectConvertor;
 import cn.bronzeware.muppet.core.ThreadLocalTransaction;
 import cn.bronzeware.muppet.datasource.DataSourceUtil;
@@ -29,8 +30,10 @@ public class DeleteContext extends AbstractContext {
 	public DeleteContext(Container<String, ResourceInfo> container, ApplicationContext applicationContext) {
 		this.container = container;
 		this.sqlGenerateHelper = new SqlGenerateHelper(container, applicationContext);
+		log = new SqlExecuteLog(applicationContext, SqlExecuteLog.SqlContextLogMode.DELETE);
 	}
 
+	private SqlExecuteLog log ;
 	private Container<String, ResourceInfo> container;
 	private SqlGenerateHelper sqlGenerateHelper;
 	private ApplicationContext applicationContext;
@@ -69,6 +72,7 @@ public class DeleteContext extends AbstractContext {
 			connection = transaction.getConnection();
 			Sql sql = new Sql();
 			sql.setWheres(wheres);
+			sql.setWhereValues(wherevalues);
 			sql = getSql(object, sql, SqlGenerate.DELETE);
 
 			String sqlString = sql.getSql();
@@ -80,7 +84,8 @@ public class DeleteContext extends AbstractContext {
 			 * Date(System.currentTimeMillis()).toLocaleString() +"  "
 			 * +sqlString);
 			 */
-			Logger.println(sqlString);
+			log.log(null, sql);
+			
 			int i = 1;
 			/*
 			 * for(Field field:sql.getObjectkeys()){ ps.setObject(i,

@@ -22,7 +22,7 @@ public class TestDeleteSupport extends TestSuper{
 		Session session = sessionFactory.getSession();
 		
 		String deleteContidition = " value = ? ";
-		Object[] conditionValue = new Object[]{"a"};
+		Object[] conditionValue = new Object[]{"2"};
 		Transaction transaction = null;
 		try{
 			transaction = session.beginTransaction();

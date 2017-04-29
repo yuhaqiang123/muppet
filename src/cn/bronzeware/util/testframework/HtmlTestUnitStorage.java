@@ -64,6 +64,8 @@ public class HtmlTestUnitStorage {
 			String time = entry.getKey();
 			fileMap.put(time, initializeHtml(map, unit, time));
 		}
+		String time = String.valueOf(System.currentTimeMillis());
+		fileMap.put(time, initializeHtml(unit, unit, time));
 		initializeIndex(fileMap);
 		
 		return fileMap;
@@ -206,11 +208,11 @@ public class HtmlTestUnitStorage {
 		ps.println("<tr>");
 		if(TestUnitMetaData.equal(curr.getCmdErr(), old.getCmdErr())){
 			ps.println("<td><h2>CmdErr</h2></td>");
-			ps.println(String.format("<td>%s</td>", curr.getCmdErr().replace("\n", "<br/>")));
+			ps.println(String.format("<td>%s</td>", replaceBackSpace2Html(curr.getCmdErr().replace("\n", "<br/>"))));
 		}else{
 			String cmdErr = diffLineShow(old.getCmdErr(), curr.getCmdErr());
 			ps.println("<td><h2>CmdErr</h2></td>");
-			ps.println(String.format("<td>%s</td>", cmdErr.replace("\n", "<br/>")));
+			ps.println(String.format("<td>%s</td>", replaceBackSpace2Html(cmdErr.replace("\n", "<br/>"))));
 			ps.println("</tr><tr>");
 			
 		}
@@ -219,11 +221,11 @@ public class HtmlTestUnitStorage {
 		ps.println("<tr>");
 		if(TestUnitMetaData.equal(curr.getCmdOutput(), old.getCmdOutput())){
 			ps.println("<td><h2>CmdOut</h2></td>");
-			ps.println(String.format("<td>%s</td>", curr.getCmdOutput().replace("\n", "<br/>")));
+			ps.println(String.format("<td>%s</td>", replaceBackSpace2Html(curr.getCmdOutput().replace("\n", "<br/>"))));
 		}else{
 			String cmdOut = diffLineShow(old.getCmdOutput(), curr.getCmdOutput());
 			ps.println("<td><h2>CmdOut</h2></td>");
-			ps.println(String.format("<td>%s</td>", cmdOut.replace("\n", "<br/>")));
+			ps.println(String.format("<td>%s</td>", replaceBackSpace2Html(cmdOut.replace("\n", "<br/>"))));
 		}
 		ps.println("</tr>");
 		
@@ -250,13 +252,13 @@ public class HtmlTestUnitStorage {
 		
 		ps.println("<tr>");
 		ps.println(String.format("<td>CmdOut:</td>"));
-		ps.println(String.format("<td>%s</td>", m.getCmdOutput().replace("\n", "<br/>")));
+		ps.println(String.format("<td>%s</td>", replaceBackSpace2Html(m.getCmdOutput().replace("\n", "<br/>"))));
 		ps.println("</tr>");
 		ps.println("<br/>");
 		
 		ps.println("<tr>");
 		ps.println(String.format("<td>CmdErr:</td>"));
-		ps.println(String.format("<td>%s</td>", m.getCmdErr().replace("\n", "<br/>")));
+		ps.println(String.format("<td>%s</td>", replaceBackSpace2Html(m.getCmdErr().replace("\n", "<br/>"))));
 		ps.println("</tr>");
 		ps.println("<br/>");
 		ps.println("</table>");
@@ -300,6 +302,10 @@ public class HtmlTestUnitStorage {
 			buffer.append(currLines[i] + "\n");
 		}
 		return buffer.toString();
+	}
+	
+	private static String replaceBackSpace2Html(String string){
+		return string.replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;").replace(" ", "&nbsp;&nbsp;");
 	}
 	
 }

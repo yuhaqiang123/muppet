@@ -17,6 +17,7 @@ import java.util.Map;
 import com.sun.xml.internal.ws.api.addressing.WSEndpointReference.Metadata;
 
 import cn.bronzeware.core.ioc.ApplicationContext;
+import cn.bronzeware.muppet.context.SqlExecuteLog.SqlContextLogMode;
 import cn.bronzeware.muppet.converter.ObjectConvertor;
 import cn.bronzeware.muppet.core.ThreadLocalTransaction;
 import cn.bronzeware.muppet.datasource.DataSourceUtil;
@@ -48,6 +49,7 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 		this.container = container;
 		this.applicationContext = applicationContext;
 		sqlGenerateHelper = new SqlGenerateHelper(container, applicationContext);
+		log = new SqlExecuteLog(applicationContext, SqlContextLogMode.SELECT);
 	}
 
 	private Container<String, ResourceInfo> container;
@@ -55,6 +57,7 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 
 	private ApplicationContext applicationContext;
 	
+	private SqlExecuteLog log ;	
 	public <T> T executeOnPrimaryKey(Class<T> clazz, Object primaryKeyValue){
 		TableInfo tableInfo = (TableInfo)container.get(clazz.getName());
 		if(tableInfo == null){
@@ -65,7 +68,7 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 			throw new ContextException(String.format("没找到匹配的主键，请检查%s 类的配置", clazz.getName()));
 		}
 		String primaryKeyName = primaryKeyColumnInfo.getName();
-		List<T> list = this.execute(clazz, String.format(" where %s = ?",primaryKeyName), new Object[]{primaryKeyValue});
+		List<T> list = this.execute(clazz, String.format(" %s = ?",primaryKeyName), new Object[]{primaryKeyValue});
 		if(list != null && list.size() > 0){
 			return list.get(0);
 		}
@@ -106,7 +109,7 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 			connection = transaction.getConnection();
 			Sql sql = new Sql();
 			sql.setWheres(wheres);
-
+			sql.setWhereValues(wherevalues);
 			/**
 			 * 构造sql语句，需要select模式，
 			 */
@@ -131,7 +134,9 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 			 * Date(System.currentTimeMillis()).toLocaleString()
 			 * +"  "+sqlString);
 			 */
-			Logger.println(sqlString);
+			
+			log.log(null, sql);
+			
 			if (wherevalues != null) {
 				int i = 1;
 				/**
@@ -142,6 +147,7 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 					i++;
 				}
 			}
+			
 			rs = ps.executeQuery();
 			
 			List list = new LinkedList();
@@ -288,8 +294,8 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 		try {
 			Transaction transaction = ThreadLocalTransaction.get();
 			Connection connection = transaction.getConnection();
-			Logger.println(queryString);
-			////////
+			
+			log.log(null, queryString, values);
 			ps = connection.prepareStatement(queryString);
 
 			if (values != null) {

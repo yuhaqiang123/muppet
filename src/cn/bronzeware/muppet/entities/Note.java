@@ -16,14 +16,13 @@ public class Note {
 	
 	@Override
 	public String toString() {
-		return "Note [id=" + id + ", value=" + value + ", value1=" + value1 + ", username=" + username + ", password="
-				+ password + ", user_id=" + user_id + "]";
+		return "Note [id=" + id + ", value=" + value + ", username=" + username + ", password=" + password
+				+ ", user_id=" + user_id + "]";
 	}
 	@Column(columnname="value",type=@Type(type=SqlType.VARCHAR,length=255))
 	private String value;
 	
-	@Column(columnname="value",type=@Type(type=SqlType.VARCHAR,length=255))
-	private String value1;
+
 	
 	@Column(columnname="username",type=@Type(type=SqlType.VARCHAR,length=255))
 	private String username;

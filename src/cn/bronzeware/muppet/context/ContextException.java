@@ -26,7 +26,7 @@ public class ContextException extends RuntimeException {
 	@Override
 	public final String getMessage() {
 
-		return "数据操作上下文环境错误->" + Message();
+		return "数据操作上下文环境错误->" + Message() == null ? super.getMessage() : Message();
 	}
 
 	public String Message() {

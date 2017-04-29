@@ -48,8 +48,6 @@ public class TestCriteria {
 		Logger.println(criteria.one() );
 		Logger.println(criteria.count() + 3);
 		muppet.close();
-		Logger.println("于海强你好");
-		Logger.println("中午好");
 		//ArrayUtil.println(list);
 	}
 	

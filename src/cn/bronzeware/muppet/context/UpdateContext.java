@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Map;
 
 import cn.bronzeware.core.ioc.ApplicationContext;
+import cn.bronzeware.muppet.context.SqlExecuteLog.SqlContextLogMode;
 import cn.bronzeware.muppet.converter.ObjectConvertor;
 import cn.bronzeware.muppet.core.ThreadLocalTransaction;
 import cn.bronzeware.muppet.datasource.DataSourceUtil;
@@ -29,19 +30,21 @@ public class UpdateContext  extends AbstractContext{
 	{
 		this.container = container;
 		this.sqlGenerateHelper = new SqlGenerateHelper(container, applicationContext);
+		log = new SqlExecuteLog(applicationContext, SqlContextLogMode.UPDATE);
 	}
 	
 	private Container<String, ResourceInfo> container;
 	private SqlGenerateHelper sqlGenerateHelper;
 	
-	
+	private SqlExecuteLog log = null;
 	
 	public Object executeByPrimaryKey(Object object){
 		Sql sql = new Sql();
 		try {
 			sql = sqlGenerateHelper.execute(object,sql, SqlGenerate.UPDATE);
 			Field primarykeyField = sql.getPrimarykey();
-			String wheres = primarykeyField.getName() + " = ?";
+			String primaryKeyName = sql.getPrimaryKeyName();
+			String wheres = primaryKeyName + " = ?";
 			Object value = ObjectConvertor.getValue(object, primarykeyField);
 			return this.execute(object, wheres, new Object[]{value});
 				
@@ -71,13 +74,16 @@ public class UpdateContext  extends AbstractContext{
 					connection = transaction.getConnection();
 					Sql sql = new Sql();
 					sql.setWheres(wheres);
+					sql.setWhereValues(wherevalues);
 					sql = sqlGenerateHelper.execute(object,sql, SqlGenerate.UPDATE);
 					
 					String sqlString = sql.getSql();
 					Map<Field, Object> map = sql.getValues();
 					
 					ps = connection.prepareStatement(sqlString);
-					//Logger.println(sqlString);
+					
+					log.log(null, sql);
+					
 					int i = 1; 
 					for(Field field:sql.getObjectkeys()){
 						ps.setObject(i, map.get(field));
@@ -103,17 +109,11 @@ public class UpdateContext  extends AbstractContext{
 					throw new SqlGenerateContextException(e.getMessage());
 				}
 				try {
-					/*if(results!=null){
-						results.close();
-					}*/
-					
+				
 					if(ps!=null){
 						ps.close();
 					}
 					
-					/*if(connection!=null){
-						connection.close();
-					}*/
 					
 				} catch (SQLException e) {
 					// 
@@ -121,14 +121,6 @@ public class UpdateContext  extends AbstractContext{
 				}
 				return false;
 	}
-	
-	/*private void execute(String sql,Object[] values){
-
-		int select_index = sql.indexOf("sql");
-		int from_index = sql.indexOf("from");
-		String string = new StringBuffer(sql).substring(select_index+6, from_index);
-		System.out.println(string);
-	}*/
 	
 
 }

@@ -40,10 +40,12 @@ public class ArrayUtil {
 	public static String getValues(Object[] collections, String split){
 		StringBuffer buffer = new StringBuffer();
 		for(Object object:collections){
-			buffer.append(object.toString());
-			buffer.append(split + "\r\n");
+			buffer.append(object == null ? "null" : object.toString());
+			buffer.append(split);
 		}
-		buffer.delete(buffer.length() - split.length(), buffer.length());
+		if(collections != null && collections.length > 0){
+			buffer.delete(buffer.length() - split.length(), buffer.length());
+		}
 		return buffer.toString();
 	}
 	
