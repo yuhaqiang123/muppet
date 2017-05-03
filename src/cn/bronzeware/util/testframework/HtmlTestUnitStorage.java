@@ -210,9 +210,9 @@ public class HtmlTestUnitStorage {
 			ps.println("<td><h2>CmdErr</h2></td>");
 			ps.println(String.format("<td>%s</td>", replaceBackSpace2Html(curr.getCmdErr().replace("\n", "<br/>"))));
 		}else{
-			String cmdErr = diffLineShow(old.getCmdErr(), curr.getCmdErr());
+			String cmdErr = diffLineShow(replaceBackSpace2Html(old.getCmdErr()), replaceBackSpace2Html(curr.getCmdErr()));
 			ps.println("<td><h2>CmdErr</h2></td>");
-			ps.println(String.format("<td>%s</td>", replaceBackSpace2Html(cmdErr.replace("\n", "<br/>"))));
+			ps.println(String.format("<td>%s</td>", (cmdErr.replace("\n", "<br/>"))));
 			ps.println("</tr><tr>");
 			
 		}
@@ -223,9 +223,9 @@ public class HtmlTestUnitStorage {
 			ps.println("<td><h2>CmdOut</h2></td>");
 			ps.println(String.format("<td>%s</td>", replaceBackSpace2Html(curr.getCmdOutput().replace("\n", "<br/>"))));
 		}else{
-			String cmdOut = diffLineShow(old.getCmdOutput(), curr.getCmdOutput());
+			String cmdOut = diffLineShow(replaceBackSpace2Html(old.getCmdOutput()), replaceBackSpace2Html(curr.getCmdOutput()));
 			ps.println("<td><h2>CmdOut</h2></td>");
-			ps.println(String.format("<td>%s</td>", replaceBackSpace2Html(cmdOut.replace("\n", "<br/>"))));
+			ps.println(String.format("<td>%s</td>", (cmdOut.replace("\n", "<br/>"))));
 		}
 		ps.println("</tr>");
 		
@@ -252,13 +252,13 @@ public class HtmlTestUnitStorage {
 		
 		ps.println("<tr>");
 		ps.println(String.format("<td>CmdOut:</td>"));
-		ps.println(String.format("<td>%s</td>", replaceBackSpace2Html(m.getCmdOutput().replace("\n", "<br/>"))));
+		ps.println(String.format("<td>%s</td>", (replaceBackSpace2Html(m.getCmdOutput()).replace("\n", "<br/>"))));
 		ps.println("</tr>");
 		ps.println("<br/>");
 		
 		ps.println("<tr>");
 		ps.println(String.format("<td>CmdErr:</td>"));
-		ps.println(String.format("<td>%s</td>", replaceBackSpace2Html(m.getCmdErr().replace("\n", "<br/>"))));
+		ps.println(String.format("<td>%s</td>", (replaceBackSpace2Html(m.getCmdErr()).replace("\n", "<br/>"))));
 		ps.println("</tr>");
 		ps.println("<br/>");
 		ps.println("</table>");

@@ -100,6 +100,11 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 	 *
 	 */
 	public <T> List<T> execute(Class<T> clazz, String wheres, Object[] wherevalues) throws ContextException {
+		return this.execute(clazz, wheres, null,wherevalues);
+	}
+
+
+	public <T> List<T> execute(Class<T> clazz, String wheres, String others,Object[] placeHolderValues) throws ContextException {
 		Object object = ReflectUtil.getObject(clazz);
 		Connection connection = null;
 		PreparedStatement ps = null;
@@ -109,7 +114,8 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 			connection = transaction.getConnection();
 			Sql sql = new Sql();
 			sql.setWheres(wheres);
-			sql.setWhereValues(wherevalues);
+			sql.setWhereValues(placeHolderValues);
+			sql.setOthers(others);
 			/**
 			 * 构造sql语句，需要select模式，
 			 */
@@ -137,12 +143,12 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 			
 			log.log(null, sql);
 			
-			if (wherevalues != null) {
+			if (placeHolderValues != null) {
 				int i = 1;
 				/**
 				 * 预编译sql语句
 				 */
-				for (Object object2 : wherevalues) {
+				for (Object object2 : placeHolderValues) {
 					ps.setObject(i, object2);
 					i++;
 				}
@@ -193,8 +199,8 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 			}
 		}
 	}
-
-
+	
+	
 
 	private void mappingResult(ResultSet rs, String[] keys, List<Map<String, Object>> result) {
 		try {

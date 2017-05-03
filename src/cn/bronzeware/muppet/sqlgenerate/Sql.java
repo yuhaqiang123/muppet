@@ -60,6 +60,19 @@ public class Sql {
 	 */
 	private String wheres;
 	
+	/**
+	 * 查询中除where部分,之外
+	 */
+	private String others;
+	
+	public String getOthers() {
+		return others;
+	}
+
+	public void setOthers(String others) {
+		this.others = others;
+	}
+
 	private Object[] whereValues;
 	
 	public Object[] getWhereValues() {

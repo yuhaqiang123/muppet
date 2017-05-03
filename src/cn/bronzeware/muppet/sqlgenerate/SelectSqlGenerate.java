@@ -63,13 +63,24 @@ public class SelectSqlGenerate implements SqlGenerate {
 			stringBuffer.append(" where ");
 			stringBuffer.append(wheres);
 		}
-
+		
+		if(isAddOthers(sql.getOthers())){
+			stringBuffer.append(String.format(" %s ", sql.getOthers()));
+		}
+		
 		String sqlString = stringBuffer.toString();
 		/* factory.put(tableName,sqlString); */
 		return sqlString;
 
 	}
 
+	private boolean isAddOthers(String others){
+		if (others == null || others.length() == 0 ||others.equals("")) {
+			return false;
+		}
+		return true;
+	}
+	
 	private boolean isAddWheres(String wheres) {
 		if (wheres == null || wheres.length() == 0 ||wheres.equals("")) {
 			return false;

@@ -80,7 +80,7 @@ public class TestDeleteSupport extends TestSuper{
 	
 	public static void main(String[] args){
 		TestDeleteSupport s = new TestDeleteSupport();
-		s.testDeleteByPrimaryKeyOnTransactionExecute();
+		s.testDeleteByPrimaryKey();
 	}
 	
 

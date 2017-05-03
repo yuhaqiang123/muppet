@@ -50,6 +50,7 @@ abstract class AbstractCriteria<T> implements Criteria<T>{
 	private int offset = -1;
 	private StringBuffer limit = null;
 	private SelectContext context ;
+	private StringBuffer otherSql;
 	
 	private void clearCriteria(){
 		selectBuffer = new StringBuffer();
@@ -61,6 +62,8 @@ abstract class AbstractCriteria<T> implements Criteria<T>{
 		isOrderBy = false;
 		orderByBuffer = new StringBuffer();
 		orderByValues = new ArrayList<>();
+		
+		otherSql = new StringBuffer();
 		isWheres = false;
 		whereValues = new ArrayList<>();
 		whereBuffer = new StringBuffer();
@@ -172,7 +175,8 @@ abstract class AbstractCriteria<T> implements Criteria<T>{
 		return this;
 	}
 	@Override
-	public Criteria order(String prop, boolean isAsc) {	
+	public Criteria order(String prop, boolean isAsc) {
+		isOrderBy = true;
 		orderByBuffer = new StringBuffer(" order by "+prop+" "+ (isAsc==true?"ASC":"DESC"));
 		return this;
 	}
@@ -209,19 +213,22 @@ abstract class AbstractCriteria<T> implements Criteria<T>{
 		return this;
 	}
 	
-	private SqlAndParam buildSql(){
+	private SqlAndParam buildSql(boolean select){
 		if(isWheres==true){
-			buffer.insert(0, " where ");
+			if(select){
+				buffer.insert(0, " where ");
+			}
 			buffer.append(whereBuffer);
 			values.addAll(whereValues);
 		}
+		otherSql = new StringBuffer();
 		if(isOrderBy==true){
-			buffer.append(orderByValues);
+			otherSql.append(orderByBuffer);
 			values.addAll(orderByValues);
 		}
 		
 		if(isLimit == true){
-			buffer.append(limit);
+			otherSql.append(limit);
 		}
 		String resultBuffer =  null;
 		if(isSelect == false){
@@ -231,30 +238,36 @@ abstract class AbstractCriteria<T> implements Criteria<T>{
 			resultBuffer = buffer.toString();
 		}
 		Object[] paramVlues = values.toArray();
+		String otherSqlString = otherSql.toString();
 		clearSql();
-		return new SqlAndParam(resultBuffer.toString(), paramVlues);
+		return new SqlAndParam(resultBuffer.toString(), otherSqlString, paramVlues);
 	}
 	
 	class SqlAndParam{
-		public SqlAndParam(String sql, Object[] paramValues){
-			this.sql = sql;
+		public SqlAndParam(String sql, String otherSql, Object[] paramValues){
+			this.whereSql = sql;
+			this.otherSql = otherSql;
 			this.paramValues = paramValues;
 		}
-		public String sql;
+		public String whereSql;
+		public String otherSql;
 		public Object[] paramValues;
 	}
 	
 	public List<T> list(boolean clear){
 		try {
-			SqlAndParam sqlAndParam = buildSql();
-			String sql = sqlAndParam.sql;
+			SqlAndParam sqlAndParam = buildSql(isSelect);
+			String sql = sqlAndParam.whereSql;
+			String otherSql = sqlAndParam.otherSql;
+
 			Object[] paramsValues = sqlAndParam.paramValues;
-			
+			//System.err.println(otherSql);
 			List<T> list = null;
 			if(isSelect == true){
+				sql += otherSql;
 				list = this.context.execute(sql, paramsValues, clazz);
 			}else{
-				list = this.context.execute(clazz, sql, paramsValues);
+				list = this.context.execute(clazz, sql, otherSql, paramsValues);
 			}
 			if(clear){
 				clearCriteria();
@@ -271,6 +284,7 @@ abstract class AbstractCriteria<T> implements Criteria<T>{
 	
 	private void clearSql(){
 		buffer = new StringBuffer();
+		otherSql = new StringBuffer();
 		values.clear();
 	}
 	
@@ -292,9 +306,10 @@ abstract class AbstractCriteria<T> implements Criteria<T>{
 		boolean preIsSelect = isSelect;
 		selectBuffer = new StringBuffer(String.format("select count(*) from %s", info.getName()));
 		isSelect = false;
-		SqlAndParam sqlAndParam = buildSql();
-		String sql = sqlAndParam.sql;
-		sql = selectBuffer.append(sql).toString();
+		SqlAndParam sqlAndParam = buildSql(isSelect);
+		String sql = sqlAndParam.whereSql;
+		
+		sql = selectBuffer.append(sql).append(otherSql).toString();
 		Object[] paramValues = sqlAndParam.paramValues;
 		Map<String, Object> map = this.context.executeToMap(sql, paramValues);
 		selectBuffer = preSelectBuffer;

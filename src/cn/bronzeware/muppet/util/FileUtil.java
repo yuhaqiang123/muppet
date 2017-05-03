@@ -19,7 +19,10 @@ public class FileUtil {
 	}
 	
 	public static void createFile(File file, boolean dir){
-		if(!file.getParentFile().exists()){
+		if(file == null){
+			return;
+		}
+		if(file.getParentFile() != null && !file.getParentFile().exists()){
 			createFile(file.getParentFile(), true);
 		}else{
 			if(!file.exists()){
@@ -35,6 +38,8 @@ public class FileUtil {
 			}
 		}
 	}
+	
+
 	
 	public static String convertFilePathOnOs(String path){
 		String osName = System.getProperty("os.name");
@@ -80,10 +85,10 @@ public class FileUtil {
 		
 	}
 	
-	public static void main(String[] args) throws UnsupportedEncodingException{
+	public static void main(String[] args) {
 		//byte[]  result = FileUtil.read("F://lyyb474871b-a925-4a72-8821-79c8b78fbc85.html");
 		//System.out.println(new String(result,"UTF-8"));
-		File file = new File("bin/temp/l.txt");
+		File file = new File("test/a.txt");
 		FileUtil.createFile(file);
 		/*if(! file.exists()){
 			try {
