@@ -68,11 +68,12 @@ public class InsertContext  extends AbstractContext{
 			int rows = ps.executeUpdate();
 			success= (rows== 1 ?true:false);
 			results = ps.getGeneratedKeys();
-			int num = -1;
+			Object num = null;
 			if(results.next())
 	          {
-	             num = results.getInt(1);
+	             num = results.getObject(1);
 	          }
+			
 			ObjectConvertor.loadField(sql.getPrimarykey(), object, num);
 		} catch (SQLException e) {
 			// 

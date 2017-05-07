@@ -17,7 +17,7 @@ public class SuchBeanNotFoundException extends RuntimeException{
 
     public <T> SuchBeanNotFoundException(String beanName, Class<T> clazz){
         this.beanName = beanName;
-        this.beanClazz = beanClazz;
+        this.beanClazz = clazz;
     }
 
     @Override

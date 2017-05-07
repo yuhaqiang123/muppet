@@ -13,6 +13,13 @@ import cn.bronzeware.muppet.resource.ResourceInfo;
 import cn.bronzeware.muppet.util.log.Logger;
 import cn.bronzeware.util.reflect.ReflectUtil;
 
+/**
+ * 
+ * 获取具体操作数据库操作的Context上下文
+ * 
+ * @author yuhaiqiang  yuhaiqiangvip@sina.com
+ * @time 2017年5月3日 下午5:22:21
+ */
 public class ContextFactory {
 
 	
@@ -25,13 +32,11 @@ public class ContextFactory {
 	private ApplicationContext applicationContext;
 	
 	private InvocationHandler handler = new ContextInvocationHandler();
+	
 	public ContextFactory(ResourceContext context, ApplicationContext applicationContext){
 		this.context = context;
 		this.applicationContext = applicationContext;
 		this.container = context.getContainer();
-		
-		 
-		
 		
 		selectContext = new SelectContext(container, applicationContext);
 		updateContext = new UpdateContext(container, applicationContext);

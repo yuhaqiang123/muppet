@@ -143,7 +143,7 @@ public class DataBaseCheck {
 				String column = rs.getString("COLUMN_NAME");
 				return column;
 			}
-			throw new SQLException(String.format("%s没有设置主键"), tableName);
+			throw new SQLException(String.format("%s没有设置主键", tableName));
 		} catch (SQLException e) {
 			throw e;
 		}
@@ -618,7 +618,9 @@ public class DataBaseCheck {
 			}
 			finally{
 				try {
-					rs.close();
+					if(rs != null){
+						rs.close();
+					}
 				} catch (SQLException e) {
 					return false;
 				}

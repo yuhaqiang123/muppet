@@ -1,0 +1,20 @@
+package PackageName;
+
+public class ClassName extends RuntimeException {
+
+	public ClassName(String message) {
+		super(message);
+	}
+
+	public ClassName(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public ClassName(Throwable cause) {
+		super(cause);
+	}
+
+	protected ClassName(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+		super(message, cause, enableSuppression, writableStackTrace);
+	}
+}

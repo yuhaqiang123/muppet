@@ -132,7 +132,7 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 			/**
 			 * 相关属性域与其值得map
 			 */
-			Map<Field, Object> map = sql.getValues();
+			//Map<Field, Object> map = sql.getValues();
 
 			ps = connection.prepareStatement(sqlString);
 			/*
@@ -371,7 +371,6 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 		int from_index = new StringBuffer(queryString.toUpperCase()).indexOf("FROM");
 		queryString = new StringBuffer(queryString).substring(select_index + 7, from_index);
 		String[] reString = queryString.split(",");
-		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		for (int i = 0; i < reString.length; i++) {
 			String querykey = reString[i].trim();
 			int as_index = new StringBuffer(querykey.toUpperCase()).indexOf(" AS ");

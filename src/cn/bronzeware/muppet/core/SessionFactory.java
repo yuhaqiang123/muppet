@@ -15,6 +15,7 @@ import cn.bronzeware.muppet.context.InsertContext;
 import cn.bronzeware.muppet.context.SelectContext;
 import cn.bronzeware.muppet.context.UpdateContext;
 import cn.bronzeware.muppet.context.Context.TYPE;
+import cn.bronzeware.muppet.context.ContextException;
 import cn.bronzeware.muppet.datasource.DataSourceUtil;
 import cn.bronzeware.muppet.transaction.BaseTransactionFactory;
 import cn.bronzeware.muppet.transaction.Transaction;
@@ -152,9 +153,11 @@ public class SessionFactory {
 			}
 		} catch (SQLException e) {
 			try {
-				transaction.rollback();
+				if(transaction != null){
+					transaction.rollback();
+				}
 			} catch (SQLException e1) {
-				
+				throw new ContextException(e1);
 			}
 		}
 		finally {

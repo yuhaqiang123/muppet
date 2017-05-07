@@ -25,6 +25,15 @@ import cn.bronzeware.muppet.sqlgenerate.SqlGenerateHelper;
 import cn.bronzeware.muppet.transaction.Transaction;
 import cn.bronzeware.muppet.util.log.Logger;
 
+/**
+ * 删除操作支持<br/>
+ * 目前提供单表普通删除.<br/>
+ * &nbsp;&nbsp;&nbsp;&nbsp;按照主键删除 <br/>
+ * 
+ * 
+ * @author yuhaiqiang  yuhaiqiangvip@sina.com
+ * @time 2017年5月3日 下午5:24:25
+ */
 public class DeleteContext extends AbstractContext {
 
 	public DeleteContext(Container<String, ResourceInfo> container, ApplicationContext applicationContext) {
@@ -33,13 +42,34 @@ public class DeleteContext extends AbstractContext {
 		log = new SqlExecuteLog(applicationContext, SqlExecuteLog.SqlContextLogMode.DELETE);
 	}
 
+	/**
+	 * sql 执行记录器,要执行的sql都将托给SqlExecuteLog记录
+	 */
 	private SqlExecuteLog log ;
+	
+	/**
+	 * Container管理.Container通过ClassName为key,查找对应实体bean
+	 */
 	private Container<String, ResourceInfo> container;
+	
+	/**
+	 * SqlGenerateHelper 负责生成sql语句.
+	 */
 	private SqlGenerateHelper sqlGenerateHelper;
+	
+	/**
+	 * 应用上下文,类库所有组件都托管给ApplicationContext管理
+	 */
 	private ApplicationContext applicationContext;
 
+	/**
+	 * 
+	 * @param clazz  删除该参数类型 对应table的记录
+	 * @param primaryKey 
+	 * @return
+	 * @throws ContextException
+	 */
 	public Object executeByPrimaryKey(Class clazz, Object primaryKey) throws ContextException {
-		Sql sql = new Sql();
 		TableInfo tableInfo = (TableInfo) container.get(clazz.getName());
 		ColumnInfo columnInfo = tableInfo.getPrimaryKey();
 		String primaryKeyName = columnInfo.getName();
@@ -79,18 +109,10 @@ public class DeleteContext extends AbstractContext {
 			Map<Field, Object> map = sql.getValues();
 
 			ps = connection.prepareStatement(sqlString);
-			/*
-			 * System.out.println("Time:"+ new
-			 * Date(System.currentTimeMillis()).toLocaleString() +"  "
-			 * +sqlString);
-			 */
+			
 			log.log(null, sql);
 			
 			int i = 1;
-			/*
-			 * for(Field field:sql.getObjectkeys()){ ps.setObject(i,
-			 * map.get(field)); i++; }
-			 */
 
 			for (Object object2 : wherevalues) {
 				ps.setObject(i, object2);
@@ -100,27 +122,17 @@ public class DeleteContext extends AbstractContext {
 			int success = ps.executeUpdate();
 			return success > 0 ? true : false;
 		} catch (SQLException e) {
-			//
-			e.printStackTrace();
+			throw new ContextException(e);
 		} catch (ParamCanNotBeNullException e) {
-			//
-			e.printStackTrace();
+			throw new ContextException(e);
 		} catch (SqlGenerateException e) {
-			//
-			throw new SqlGenerateContextException(e.getMessage());
+			throw new ContextException(e);
 		} finally {
 			try {
-				/*
-				 * if(results!=null){ results.close(); }
-				 */
 
 				if (ps != null) {
 					ps.close();
 				}
-
-				/*
-				 * if(connection!=null){ connection.close(); }
-				 */
 
 			} catch (SQLException e) {
 				//
@@ -128,19 +140,5 @@ public class DeleteContext extends AbstractContext {
 			}
 		}
 
-		return false;
-	}
-
-	public static void main(String[] args) {
-
-		/*
-		 * DeleteContext deleteContext = new DeleteContext(); User testEntity =
-		 * new User(); //testEntity.setPassword("yg");
-		 * //testEntity.setUsername("passssssssswod"); //Date date = new
-		 * Date(System.currentTimeMillis()); //testEntity.setDate(date); String
-		 * wheres = "username = ?";
-		 */
-		// testEntity.setDate(new Date(System.currentTimeMillis()));
-		// deleteContext.execute(testEntity,wheres,new Object[]{"username"});
 	}
 }

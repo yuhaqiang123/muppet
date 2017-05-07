@@ -334,7 +334,6 @@ public class StandardResourceBuilder {
 		}
 		try {
 			connection = dataSourceUtil.getConnection();
-			DatabaseMetaData database = connection.getMetaData();
 
 			// PreparedStatement ps =
 			// connection.prepareStatement(info.getSql());

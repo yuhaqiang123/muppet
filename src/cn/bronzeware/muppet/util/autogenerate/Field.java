@@ -77,7 +77,6 @@ public class Field {
 	@Override
 	public boolean equals(Object obj) {
 		// TODO Auto-generated method stub
-		System.out.println("field equals()");
 		return this.hashCode()==(((Field) obj).hashCode());
 	}
 	

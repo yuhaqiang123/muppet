@@ -13,7 +13,7 @@ public class TestUnitStorageException extends RuntimeException{
 	
 	public TestUnitStorageException(String msg, Throwable throwable){
 		super(throwable);
-		msg = this.msg;
+		this.msg = msg;
 	}
 
 	@Override

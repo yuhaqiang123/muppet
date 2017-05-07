@@ -105,11 +105,11 @@ class StandardSession implements Session,Closed{
 	
 	public  boolean update(Object object,String wheres ,Object[] wherevalues){
 		
-		Object success = null;
+		Object success = false;
 		try {
 			success = updateContext.execute(object, wheres, wherevalues);
-		} catch (SqlGenerateContextException e) {
-			e.printStackTrace();
+		} catch (ContextException e) {
+			throw e;
 		}
 		
 		return (Boolean)success;

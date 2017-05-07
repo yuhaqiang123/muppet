@@ -16,7 +16,6 @@ public class TestArray {
 		list.add("fewa");
 		list.toArray();
 		//Collections.
-		Stack stack = new Stack();
 		
 		//e.
 		ArrayUtil.println(list.toArray(new String[list.size()]));

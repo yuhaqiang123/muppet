@@ -11,7 +11,7 @@ public class FileUtil {
 
 	public static String getClassPath(){
 		//System.out.println(Thread.class.getResource("/").getPath());
-		return Thread.class.getResource("/").getPath();
+		return Thread.currentThread().getContextClassLoader().getResource("/").getPath();
 	}
 	
 	public static void createFile(File file){
@@ -52,6 +52,7 @@ public class FileUtil {
 	
 	public static void write(byte[] data,String path){
 		try {
+			FileUtil.createFile(new File(path));
 			FileOutputStream out = new FileOutputStream(new File(path));
 			out.write(data);
 			out.close();

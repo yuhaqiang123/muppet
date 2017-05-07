@@ -21,10 +21,6 @@ public abstract class AbstractContext implements Context{
 	}
 	
 	
-/*	public void doChain(SqlContext context){
-		standardFilterChain.doChain(context);
-	}*/
-	
 	public String[] getColumnNames(ResultSet set){
 		try{
 			ResultSetMetaData data = set.getMetaData();
@@ -38,11 +34,4 @@ public abstract class AbstractContext implements Context{
 			throw ExceptionUtil.getRuntimeException(e);
 		}
 	}
-	
-	/*public int getRSCounts(ResultSet rs){
-		ResultSetMetaData data = rs.getMetaData();
-		
-	}*/
-	
-	
 }

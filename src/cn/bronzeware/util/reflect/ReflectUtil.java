@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.sun.org.apache.bcel.internal.util.ClassPath;
 import com.sun.org.apache.xerces.internal.parsers.StandardParserConfiguration;
 import com.sun.xml.internal.bind.api.impl.NameConverter.Standard;
 
@@ -33,7 +34,17 @@ public class ReflectUtil {
 	}
 
 	public static String getClassPath(){
-		return (Thread.class.getResource("/").getPath());
+		//System.out.println("hi" + Thread.currentThread().getContextClassLoader().getResource("/"));
+		String classPath = null;
+		try{
+			classPath = (Thread.currentThread().getContextClassLoader().getResource("/").getPath());
+		}catch(NullPointerException e){
+			if(classPath == null){
+				classPath = ClassPath.getClassPath().substring(0, ClassPath.getClassPath().indexOf(";"));
+			}
+		}
+		
+		return classPath;
 	}
 	
 	
@@ -494,10 +505,5 @@ public class ReflectUtil {
 		}
 		return  null;
 	}
-	
-	
-	
-	
-	
-	
+		
 }
