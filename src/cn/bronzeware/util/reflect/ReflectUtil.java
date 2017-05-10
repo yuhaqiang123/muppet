@@ -33,8 +33,12 @@ public class ReflectUtil {
 		getClassPath();
 	}
 
+	private static String classPath = null;
 	public static String getClassPath(){
 		//System.out.println("hi" + Thread.currentThread().getContextClassLoader().getResource("/"));
+		if(classPath != null){
+			return classPath;
+		}
 		String classPath = null;
 		try{
 			classPath = (Thread.currentThread().getContextClassLoader().getResource("/").getPath());
@@ -42,8 +46,9 @@ public class ReflectUtil {
 			if(classPath == null){
 				classPath = ClassPath.getClassPath().substring(0, ClassPath.getClassPath().indexOf(";"));
 			}
+		}finally {
+			classPath+="/";
 		}
-		
 		return classPath;
 	}
 	

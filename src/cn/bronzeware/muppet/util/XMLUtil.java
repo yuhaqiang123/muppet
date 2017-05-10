@@ -25,6 +25,7 @@ import org.xml.sax.SAXException;
 
 import cn.bronzeware.muppet.core.XMLConfig;
 import cn.bronzeware.muppet.util.log.Logger;
+import cn.bronzeware.util.reflect.ReflectUtil;
 import cn.bronzeware.util.testframework.TestUnitMetaData;
 import cn.bronzeware.util.testframework.TestUnitStorageException;
 
@@ -102,7 +103,7 @@ public class XMLUtil {
 		DocumentBuilder builder = null;
 		try {
 			builder = documentBuilderFactory.newDocumentBuilder();
-			String classPath = FileUtil.getClassPath();
+			String classPath = ReflectUtil.getClassPath();
 			try {
 				document = builder.parse(new File(URLDecoder.decode(classPath + xmlpath,"UTF-8")));
 				NodeList nodeList = document.getChildNodes();

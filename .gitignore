@@ -10,3 +10,5 @@ sloc_hashes
 .gitignore
 out/
 logs
+export
+test/xml

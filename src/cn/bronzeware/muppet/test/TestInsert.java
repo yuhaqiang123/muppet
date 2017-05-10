@@ -15,7 +15,7 @@ public class TestInsert extends TestSuper{
 		sessionFactory.transactionOperationCallbackTest(new TransactionExecute() {
 			
 			@Override
-			public void execute(Session session, Transaction transaction) {
+			public Object execute(Session session, Transaction transaction) {
 				Logger.println("插入前：");
 				Logger.println("\t 值：" + session.queryById(Note.class, 10));
 				
@@ -27,6 +27,7 @@ public class TestInsert extends TestSuper{
 				note.setValue(String.valueOf(10));
 				session.insert(note);
 				Logger.println(session.queryById(Note.class, 10));
+				return null;
 			}
 		});
 	}

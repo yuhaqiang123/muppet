@@ -15,7 +15,7 @@ public class TestUpdateSupport extends TestSuper{
 		sessionFactory.transactionOperationCallbackTest(new TransactionExecute() {
 			
 			@Override
-			public void execute(Session session, Transaction transaction) {
+			public Object execute(Session session, Transaction transaction) {
 				Note note = session.query("select * from t_note where pk = ?", new Object[]{2}, Note.class).get(0);
 				Logger.println("查询前记录");
 				Logger.println(note);
@@ -25,6 +25,7 @@ public class TestUpdateSupport extends TestSuper{
 				note = session.query("select * from t_note where pk = ?", new Object[]{2}, Note.class).get(0);
 				
 				Logger.println(note);
+				return null;
 			}
 		});
 	}
@@ -34,7 +35,7 @@ public class TestUpdateSupport extends TestSuper{
 		sessionFactory.transactionOperationCallbackTest(new TransactionExecute() {
 			
 			@Override
-			public void execute(Session session, Transaction transaction) {
+			public Object execute(Session session, Transaction transaction) {
 				
 				Note note = session.queryById(Note.class, 2);
 				Logger.println("查询前结果" + note);
@@ -45,6 +46,7 @@ public class TestUpdateSupport extends TestSuper{
 				
 				note = session.queryById(Note.class, 2);
 				Logger.println("修改后结果" + note);
+				return null;
 			}
 		});
 	}

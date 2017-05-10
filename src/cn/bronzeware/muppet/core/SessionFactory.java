@@ -128,7 +128,7 @@ public class SessionFactory {
 	}
 	
 
-	private void transactionOperationCallback0(String dataSourceKey, TransactionExecute transactionExecute, int mode){
+	private Object transactionOperationCallback0(String dataSourceKey, TransactionExecute transactionExecute, int mode){
 		Session session = null;
 		if(dataSourceKey != null){
 			session = getSession(false, dataSourceKey);
@@ -138,7 +138,7 @@ public class SessionFactory {
 		Transaction transaction = null;
 		try {
 			transaction = session.beginTransaction();
-			transactionExecute.execute(session, transaction);
+			Object result = transactionExecute.execute(session, transaction);
 			
 			switch(mode){
 				case TRANSACTION_OPERATION_CALLBACK:
@@ -149,8 +149,8 @@ public class SessionFactory {
 					break;
 				default:
 					transaction.commit();
-					
 			}
+			return result;
 		} catch (SQLException e) {
 			try {
 				if(transaction != null){
@@ -163,23 +163,24 @@ public class SessionFactory {
 		finally {
 			session.close();
 		}
+		return null;
 	}
 
 	private static final int TRANSACTION_OPERATION_CALLBACK_TEST = 1;
 	private static final int TRANSACTION_OPERATION_CALLBACK = 2;
 
-	public void transactionOperationCallback(String dataSourceKey, TransactionExecute transactionExecute) {
-		transactionOperationCallback0(dataSourceKey, transactionExecute, TRANSACTION_OPERATION_CALLBACK);
+	public Object transactionOperationCallback(String dataSourceKey, TransactionExecute transactionExecute) {
+		return transactionOperationCallback0(dataSourceKey, transactionExecute, TRANSACTION_OPERATION_CALLBACK);
 	}
-	public void transactionOperationCallback(TransactionExecute transactionExecute){
-		transactionOperationCallback0(null, transactionExecute, TRANSACTION_OPERATION_CALLBACK);
+	public Object transactionOperationCallback(TransactionExecute transactionExecute){
+		return transactionOperationCallback0(null, transactionExecute, TRANSACTION_OPERATION_CALLBACK);
 	}
 	
-	public void transactionOperationCallTest(String dataSourceKey, TransactionExecute transactionExecute){
-		transactionOperationCallback0(dataSourceKey, transactionExecute, TRANSACTION_OPERATION_CALLBACK_TEST);
+	public Object transactionOperationCallTest(String dataSourceKey, TransactionExecute transactionExecute){
+		return transactionOperationCallback0(dataSourceKey, transactionExecute, TRANSACTION_OPERATION_CALLBACK_TEST);
 	}
-	public void transactionOperationCallbackTest(TransactionExecute transactionExecute){
-		transactionOperationCallback0(null, transactionExecute, TRANSACTION_OPERATION_CALLBACK_TEST);
+	public Object transactionOperationCallbackTest(TransactionExecute transactionExecute){
+		return transactionOperationCallback0(null, transactionExecute, TRANSACTION_OPERATION_CALLBACK_TEST);
 	}
 	
 }

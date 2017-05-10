@@ -9,10 +9,7 @@ import java.io.UnsupportedEncodingException;
 
 public class FileUtil {
 
-	public static String getClassPath(){
-		//System.out.println(Thread.class.getResource("/").getPath());
-		return Thread.currentThread().getContextClassLoader().getResource("/").getPath();
-	}
+	
 	
 	public static void createFile(File file){
 		createFile(file, false);

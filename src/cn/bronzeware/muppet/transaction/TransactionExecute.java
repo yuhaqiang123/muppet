@@ -5,5 +5,5 @@ import cn.bronzeware.muppet.core.Session;
 public interface TransactionExecute {
 
 	
-	public void execute(Session session, Transaction transaction);
+	public Object execute(Session session, Transaction transaction);
 }

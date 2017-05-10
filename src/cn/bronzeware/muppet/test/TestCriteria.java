@@ -27,12 +27,13 @@ public class TestCriteria extends TestSuper{
 		sessionFactory.transactionOperationCallbackTest(new TransactionExecute() {
 			
 			@Override
-			public void execute(Session session, Transaction transaction) {
+			public Object execute(Session session, Transaction transaction) {
 				Criteria<Note> criteria = session.createCriteria(Note.class);
 				criteria.andPropGreater("user_id", 0);
 				
 				Logger.println("查询结果个数： " + criteria.select("value,pk,password,user_id")
 						.list().size());
+				return null;
 			}
 		});
 	}
@@ -42,13 +43,14 @@ public class TestCriteria extends TestSuper{
 		sessionFactory.transactionOperationCallbackTest(new TransactionExecute() {
 			
 			@Override
-			public void execute(Session session, Transaction transaction) {
+			public Object execute(Session session, Transaction transaction) {
 				Criteria<Note> criteria = session.createCriteria(Note.class);
 				criteria.andPropGreaterEq("pk", 1);
 				criteria.andPropLess("value", 5);
 				List<Note> notes = criteria.list();
 				Logger.println("查询结果:");
 				ArrayUtil.println(notes);
+				return null;
 			}
 		});
 		
@@ -58,12 +60,13 @@ public class TestCriteria extends TestSuper{
 		sessionFactory.transactionOperationCallbackTest(new TransactionExecute() {
 			
 			@Override
-			public void execute(Session session, Transaction transaction) {
+			public Object execute(Session session, Transaction transaction) {
 				Criteria<Note> criteria = session.createCriteria(Note.class);
 				criteria.andPropLessEq("username", 7)
 						.andPropLike("value", "%6%");
 				List<Note> notes = criteria.list();
 				ArrayUtil.println(notes);
+				return null;
 			}
 		});
 	}
@@ -72,12 +75,13 @@ public class TestCriteria extends TestSuper{
 		sessionFactory.transactionOperationCallbackTest(new TransactionExecute() {
 			
 			@Override
-			public void execute(Session session, Transaction transaction) {
+			public Object execute(Session session, Transaction transaction) {
 				Criteria<Note> criteria = session.createCriteria(Note.class);
 				criteria.andPropNotEqual("pk", 3);
 				List<Note> notes = criteria.list();
 				Logger.println("查询结果:");
 				ArrayUtil.println(notes);
+				return null;
 			}
 		});
 	}
@@ -86,11 +90,12 @@ public class TestCriteria extends TestSuper{
 		sessionFactory.transactionOperationCallbackTest(new TransactionExecute() {
 			
 			@Override
-			public void execute(Session session, Transaction transaction) {
+			public Object execute(Session session, Transaction transaction) {
 				Criteria<Note> criteria = session.createCriteria(Note.class);
 				criteria.order("pk", false);
 				List<Note> notes = criteria.list();
 				ArrayUtil.println(notes);
+				return null;
 			}
 		});
 	}
@@ -99,7 +104,7 @@ public class TestCriteria extends TestSuper{
 		sessionFactory.transactionOperationCallbackTest(new TransactionExecute() {
 			
 			@Override
-			public void execute(Session session, Transaction transaction) {
+			public Object execute(Session session, Transaction transaction) {
 				Criteria<Note> criteria = session.createCriteria(Note.class);
 				criteria.andPropLess("pk", 3);
 				Criteria<Note> criteria2 = session.createCriteria(Note.class);
@@ -107,6 +112,7 @@ public class TestCriteria extends TestSuper{
 				criteria.or(criteria2);
 				List<Note> notes = criteria.list();
 				ArrayUtil.println(notes);
+				return null;
 			}
 		});
 	}

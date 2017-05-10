@@ -49,7 +49,7 @@ public class TestDeleteSupport extends TestSuper{
 	public void testDeleteByPrimaryKeyOnTransactionExecute(){
 		sessionFactory.transactionOperationCallbackTest(new TransactionExecute() {
 			@Override
-			public void execute(Session session, Transaction transaction) {
+			public Object execute(Session session, Transaction transaction) {
 				
 				String deleteContidition = " value = ? ";
 				Object[] conditionValue = new Object[]{"2"};
@@ -58,6 +58,7 @@ public class TestDeleteSupport extends TestSuper{
 				session.delete(Note.class, deleteContidition, conditionValue);
 				
 				Logger.println(session.query(Note.class, deleteContidition, conditionValue));
+				return null;
 			}
 		});
 	}
@@ -70,10 +71,11 @@ public class TestDeleteSupport extends TestSuper{
 		sessionFactory.transactionOperationCallbackTest(new TransactionExecute() {
 			
 			@Override
-			public void execute(Session session, Transaction transaction) {
+			public Object execute(Session session, Transaction transaction) {
 				Logger.println(session.queryById(Note.class, 2));
 				session.deleteByPrimaryKey(Note.class, 2);
 				Logger.println(session.queryById(Note.class, 2));
+				return null;
 			}
 		});
 	}

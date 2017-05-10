@@ -20,9 +20,10 @@ public class TestQuery extends TestSuper{
 		sessionFactory.transactionOperationCallbackTest(new TransactionExecute() {
 			
 			@Override
-			public void execute(Session session, Transaction transaction) {
+			public Object execute(Session session, Transaction transaction) {
 				Logger.println("根据主键查询：");
 				Logger.println(session.queryById(Note.class, 2));
+				return null;
 			}
 		});
 	}
@@ -32,9 +33,10 @@ public class TestQuery extends TestSuper{
 		sessionFactory.transactionOperationCallbackTest(new TransactionExecute() {
 			
 			@Override
-			public void execute(Session session, Transaction transaction) {
+			public Object execute(Session session, Transaction transaction) {
 				Logger.println("查询user_id 2,4 间隔 Note ");
 				Logger.println(session.query(Note.class, " user_id > ? and user_id < ?", new Object[]{2,4}));				
+				return null;
 			}
 		});
 	}
@@ -44,9 +46,10 @@ public class TestQuery extends TestSuper{
 		sessionFactory.transactionOperationCallbackTest(new TransactionExecute() {
 			
 			@Override
-			public void execute(Session session, Transaction transaction) {
+			public Object execute(Session session, Transaction transaction) {
 				Logger.println("测试简单sql查询");
 				ArrayUtil.println(session.query("select * from t_note ", null));
+				return null;
 			}
 		});
 	}
@@ -56,9 +59,10 @@ public class TestQuery extends TestSuper{
 		sessionFactory.transactionOperationCallbackTest(new TransactionExecute() {
 			
 			@Override
-			public void execute(Session session, Transaction transaction) {
+			public Object execute(Session session, Transaction transaction) {
 				Logger.println("单表简单查询");
 				ArrayUtil.println(session.query(Note.class, " username = ? or username = ?", new Object[]{2, 4}));
+				return null;
 			}
 		});
 	}
@@ -68,12 +72,12 @@ public class TestQuery extends TestSuper{
 		sessionFactory.transactionOperationCallbackTest(new TransactionExecute() {
 			
 			@Override
-			public void execute(Session session, Transaction transaction) {
+			public Object execute(Session session, Transaction transaction) {
 				Logger.println("查询单个结果");
 				Logger.println(
 						session.queryOne("select * from t_note where password = ? or user_id = ?"
 								, new Object[]{3,4}));
-			
+				return null;
 			}
 		});
 	}
