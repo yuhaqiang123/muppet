@@ -195,7 +195,7 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 				}
 			} catch (SQLException e) {
 				//
-				e.printStackTrace();
+				throw new ContextException(e);
 			}
 		}
 	}

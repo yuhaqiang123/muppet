@@ -135,8 +135,7 @@ public class DeleteContext extends AbstractContext {
 				}
 
 			} catch (SQLException e) {
-				//
-				e.printStackTrace();
+				throw new ContextException(e);
 			}
 		}
 

@@ -49,16 +49,12 @@ public class UpdateContext  extends AbstractContext{
 			return this.execute(object, wheres, new Object[]{value});
 				
 		} catch (ParamCanNotBeNullException e) {
-			// 
-			e.printStackTrace();
+			throw new ContextException(e);
 		} catch (SqlGenerateException e) {
-			// 
-			e.printStackTrace();
+			throw new ContextException(e);
 		} catch (SqlGenerateContextException e) {
-			// 
-			e.printStackTrace();
+			throw new ContextException(e);
 		}
-		return false;
 	}
 
 	
@@ -99,27 +95,20 @@ public class UpdateContext  extends AbstractContext{
 					
 					return success > 0 ? true:false;
 				} catch (SQLException e) {
-					// 
-					e.printStackTrace();
+					throw new ContextException(e);
 				} catch (ParamCanNotBeNullException e) {
-					// 
-					e.printStackTrace();
+					throw new ContextException(e);
 				} catch (SqlGenerateException e) {
-					// 
-					throw new SqlGenerateContextException(e.getMessage());
-				}
-				try {
-				
-					if(ps!=null){
-						ps.close();
+					throw new SqlGenerateContextException(e);
+				}finally {
+					try {
+						if(ps!=null){
+							ps.close();
+						}
+					} catch (SQLException e) {
+						throw new ContextException(e);
 					}
-					
-					
-				} catch (SQLException e) {
-					// 
-					e.printStackTrace();
 				}
-				return false;
 	}
 	
 

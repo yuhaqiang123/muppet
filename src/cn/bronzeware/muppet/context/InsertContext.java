@@ -76,14 +76,12 @@ public class InsertContext  extends AbstractContext{
 			
 			ObjectConvertor.loadField(sql.getPrimarykey(), object, num);
 		} catch (SQLException e) {
-			// 
-			e.printStackTrace();
+			throw new ContextException(e);
 		} catch (ParamCanNotBeNullException e) {
-			// 
-			e.printStackTrace();
+			throw new ContextException(e);
 		} catch (SqlGenerateException e1) {
 			// 
-			throw new SqlGenerateContextException(e1.getMessage());
+			throw new SqlGenerateContextException(e1);
 		}
 		finally{
 			try {

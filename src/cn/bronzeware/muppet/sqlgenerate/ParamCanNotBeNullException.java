@@ -12,6 +12,12 @@ public class ParamCanNotBeNullException extends Exception{
 	private static final long serialVersionUID = 55020266797353347L;
 	private String[] params;
 	
+	
+	
+	public ParamCanNotBeNullException(Throwable e){
+		super(e);
+	}
+	
 	/**
 	 * @param 要求不能为空的参数名
 	 * @author 于海强
