@@ -12,3 +12,4 @@ out/
 logs
 export
 test/xml
+test/html

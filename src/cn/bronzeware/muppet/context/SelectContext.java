@@ -77,7 +77,7 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 	
 	
 	/**
-	 * 这个类可以处理单表的查询功能，调用方需要提供待查询表的实体类 通过实体类上的{@link @Table}注解，我们可以知道与之匹配的
+	 * <p>这个类可以处理单表的查询功能，调用方需要提供待查询表的实体类 通过实体类上的{@link @Table}注解，我们可以知道与之匹配的
 	 * 表，进而生成sql语句中select中的部分，通过指定{@link @NotInTable}
 	 * 注解我们可以将这个字段排除，这样这个字段就不会出现再select中了，同时，可以给我么提供了 这样一种方便，即实体类可以
 	 * 拥有比单表更多的字段。可以不用受实际表的限制，但是相反 表中如果有比实体类多余的字段，实体类同样是无法存储的
@@ -125,7 +125,7 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 			/**
 			 * 获取相关实体类的属性数组，
 			 */
-			Field[] fields = sql.getObjectkeys();
+			//Field[] fields = sql.getObjectkeys();
 			
 			Map<Field , String> columnFields = sql.getColumnNames();
 
@@ -273,26 +273,24 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 	}
 
 	public <T> List<T> execute(String sql, Object[] values, Class<T> clazz){
-		List<T> list = (List<T>)this.execute(sql, values, ReflectUtil.getObject(clazz));
+		List<T> list = (List<T>)this.executeForObject(sql, values, clazz);
 		return list;
 	}
 	
-	private List list = new ArrayList<>(1);
-	private Map<String, Object> map = new HashMap<>();
 	public Map<String, Object> executeToMap(String sql, Object[] values)
 	{
-		return this.execute(sql, values, this.map);
+		return this.executeForObject(sql, values, Map.class);
 	}
 	
 	public  List<Map<String, Object>> executeToList(String sql, Object[] values){
-		return this.execute(sql, values, this.list);
+		return this.executeForObject(sql, values, List.class);
 	}
 	
 	/**
 	 * 
 	 * 支持多表查询
 	 */
-	public <T> T execute(String queryString, Object[] values, T t) {
+	public <T> T executeForObject(String queryString, Object[] values, Class<T> clazz) {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -327,22 +325,27 @@ public class SelectContext extends AbstractContext implements DefaultFilter {
 			
 			
 			
-			if (List.class.isAssignableFrom(t.getClass())) {
+			if (List.class.isAssignableFrom(clazz)) {
 				List<Map<String, Object>> list = new ArrayList<>(rs.getRow());
 				mappingResult(rs, querys, list);
 				return (T) list;
-			} else if (Map.class.isAssignableFrom(t.getClass())) {
+			} else if (Map.class.isAssignableFrom(clazz)) {
 				Map<String, Object> map = new HashMap<>(querys.length);
 				mappingResult(rs, querys, map);
 				return (T) map;
 			} else {
 				Map<String, Field> queryKey2Field = new HashMap<>(querys.length);
 				for(String query : querys){
-					ColumnInfo columnInfo = (ColumnInfo) container.get(t.getClass().getName(), query);
-					queryKey2Field.put(query, columnInfo.getField());
+					ColumnInfo columnInfo = (ColumnInfo) container.get(clazz.getName(), query);
+					//Logger.debug("打印测试信息:" + clazz.getName() + query);
+					if(columnInfo != null){
+						queryKey2Field.put(query, columnInfo.getField());
+					}else{
+						//不做处理,说明此时查询出的结果集中有 实体类中无法映射的列
+					}
 				}
 				
-				List<T> list = (List<T>) mappingResult(rs, queryKey2Field, t.getClass());
+				List<T> list = (List<T>) mappingResult(rs, queryKey2Field, clazz);
 				return (T) list;
 			}
 
