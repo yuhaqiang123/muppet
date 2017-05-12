@@ -7,7 +7,22 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Created by yuhaiqiang on 17/2/12.
+ * <p>{@link BeanFactory}接口的基本实现,提供了四种获取bean的方式.
+ * <li>{@link #getBean(Class)}
+ * <li>{@link #getBean(String)}
+ * <li>{@link #getBean(String, Class)}
+ * <li>{@link #getBeans()}
+ * 具体请参考 {@link BeanFactory}接口
+ * <h3>除实现BeanFactory接口外, {@link BaseBeanFactory}还提供了注册服务.
+ * <p>{@link #registerBean(Class, Object)}注册Class类型的bean实例.
+ * <p>{@link #registerBean(Object)} 通过获取object对象的类型,注册bean实例
+ * <p> {@link #registerBean(String, Object)} 按照给定beanName注册bean实例
+ * 
+ * @see ApplicationContext
+ * 
+ * @throws SuchBeanNotFoundException
+ * @author yuhaiqiang  email: yuhaiqiangvip@sina.com
+ * @time 17/2/12.
  */
 public class BaseBeanFactory implements BeanFactory{
 

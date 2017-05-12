@@ -9,7 +9,6 @@ import java.util.Set;
 import cn.bronzeware.core.ioc.annotation.AutowiredExecutor;
 import cn.bronzeware.core.ioc.annotation.Component;
 import cn.bronzeware.core.ioc.annotation.ComponentExecutor;
-import cn.bronzeware.muppet.util.ArrayUtil;
 import cn.bronzeware.muppet.util.Utils;
 import cn.bronzeware.util.reflect.ReflectUtil;
 

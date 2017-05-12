@@ -1,11 +1,21 @@
 package cn.bronzeware.core.ioc;
 
 /**
- * Created by yuhaiqiang on 17/2/12.
+ * <p>当BeanFactroy,或者应用上下文无法找到对应的bean时,抛出此异常.
+ * 
+ * 
+ * @see BeanFactory
+ * @see ApplicationContext
+ * @author yuhaiqiang  email: yuhaiqiangvip@sina.com
+ * @time 17/2/12.
  */
 public class SuchBeanNotFoundException extends RuntimeException{
 
-    private Object beanName = null;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5420547096676377878L;
+	private Object beanName = null;
     public SuchBeanNotFoundException(String  beanName){
         this.beanName = beanName;
     }
