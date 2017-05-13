@@ -1,4 +1,6 @@
 
+JdbcTemplate for reference and to share my thoughts, muppet is to use Java language development, the JDBC encapsulation, implement a simple Object relational mapping persistence framework. The current implementation of insert, update, delete and query result set Map Map, List, the Object, based on the JavaBean annotations generated modification scheme, the scheme to automatically generate JavaBean, transaction control, query tools to enhance the single table query efficiency.Internal module design: container startup trigger event monitoring, encapsulation, additional JDK agency implementing an interface is unified, ioc module, introduces autowired, bean definition, capable, 
+
 **
 添加单表Criteria批量查询，例如一个结果集过大，可以分页获取，但是客户端调用的list应该是无法感知的，目前完成get(index)…
 
