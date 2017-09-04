@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<muppet>
+	<includes>
+		<include path=''></include>
+	</includes>
+	
+	<data-sources>
+		<data-source name='' default='' properties=''>
+			<property name='' value=''></property>
+		</data-source>
+	</data-sources>
+	
+	<tables generage-model='false' model-base-name='' data-source=''>
+		<table name='' model='' generage-model='false' data-source='' generate-sql='false' generate-sql-path=''>
+			<column></column>
+		</table>
+	</tables>
+	
+</muppet>

@@ -22,10 +22,22 @@
 
 <generate packageName="cn.bronzeware.test1"></generate>
 
+<!-- --新的表格模板 -->
+<muppet>
+	<data-sources>
+		<data-source name='' default='' properties=''>
+			<property name='' value=''></property>
+		</data-source>
+	</data-sources>
+	
+	<tables generage-model='false' model-base-name='' data-source=''>
+		<table name='' model='' generage-model='false' data-source='' generate-sql='false' generate-sql-path=''>
+			<column></column>
+		</table>
+	</tables>
+	
+</muppet>
 
-<beans>
-<bean name="" class="" ></bean>
-</beans>
 
 
 </muppet>
